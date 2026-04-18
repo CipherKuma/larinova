@@ -15,4 +15,14 @@ weasyprint \
   "$SCRIPT_DIR/india/one-pager.pdf"
 echo "  india/one-pager.pdf"
 
+weasyprint \
+  "$SCRIPT_DIR/recruiting/one-pager.html" \
+  "$SCRIPT_DIR/recruiting/one-pager.pdf"
+echo "  recruiting/one-pager.pdf"
+
+weasyprint \
+  "$SCRIPT_DIR/recruiting/source/deck.html" \
+  "$SCRIPT_DIR/recruiting/deck.pdf"
+echo "  recruiting/deck.pdf"
+
 echo "Done."
