@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "skills": {
+    "blog-writing-specialist": {
+      "source": "manojbajaj95/claude-gtm-plugin",
+      "sourceType": "github",
+      "computedHash": "ce1ef6d0306c5b67be8001e6912c4ce7ef7a6c8fb4ee0e88873e5ae6648660d9"
+    },
+    "seo-audit": {
+      "source": "coreyhaines31/marketingskills",
+      "sourceType": "github",
+      "computedHash": "ec3109d213dde1747614ad1112ef0e498e04b24e464538968e156dfbfadb2121"
+    },
+    "seo-content-brief": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "36a3cf9a457463ada0365111d9a61931d0239991570d4eeaed1b5db663ab6928"
+    }
+  }
+}

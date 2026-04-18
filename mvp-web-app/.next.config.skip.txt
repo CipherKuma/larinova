@@ -1,0 +1,4 @@
+# Note: Build error with Next.js 16.1.4 and React 19
+# Error: Cannot read properties of null (reading 'useContext') in _global-error
+# This is a Next.js internal error, not related to our code
+# Dev server works fine

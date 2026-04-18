@@ -1,0 +1,522 @@
+[
+  {
+    "id": "bpom_001",
+    "name": "Parasetamol",
+    "generic": "Paracetamol",
+    "strength": "500 mg",
+    "form": "tablet",
+    "category": "analgesik"
+  },
+  {
+    "id": "bpom_002",
+    "name": "Amoksisilin",
+    "generic": "Amoxicillin",
+    "strength": "500 mg",
+    "form": "kapsul",
+    "category": "antibiotik"
+  },
+  {
+    "id": "bpom_003",
+    "name": "Ibuprofen",
+    "generic": "Ibuprofen",
+    "strength": "400 mg",
+    "form": "tablet",
+    "category": "NSAID"
+  },
+  {
+    "id": "bpom_004",
+    "name": "Metformin",
+    "generic": "Metformin",
+    "strength": "500 mg",
+    "form": "tablet",
+    "category": "antidiabetik"
+  },
+  {
+    "id": "bpom_005",
+    "name": "Amlodipin",
+    "generic": "Amlodipine",
+    "strength": "5 mg",
+    "form": "tablet",
+    "category": "antihipertensi"
+  },
+  {
+    "id": "bpom_006",
+    "name": "Simvastatin",
+    "generic": "Simvastatin",
+    "strength": "20 mg",
+    "form": "tablet",
+    "category": "statin"
+  },
+  {
+    "id": "bpom_007",
+    "name": "Omeprazol",
+    "generic": "Omeprazole",
+    "strength": "20 mg",
+    "form": "kapsul",
+    "category": "PPI"
+  },
+  {
+    "id": "bpom_008",
+    "name": "Salbutamol",
+    "generic": "Salbutamol",
+    "strength": "2 mg",
+    "form": "tablet",
+    "category": "bronkodilator"
+  },
+  {
+    "id": "bpom_009",
+    "name": "Cetirizin",
+    "generic": "Cetirizine",
+    "strength": "10 mg",
+    "form": "tablet",
+    "category": "antihistamin"
+  },
+  {
+    "id": "bpom_010",
+    "name": "Loratadin",
+    "generic": "Loratadine",
+    "strength": "10 mg",
+    "form": "tablet",
+    "category": "antihistamin"
+  },
+  {
+    "id": "bpom_011",
+    "name": "Atorvastatin",
+    "generic": "Atorvastatin",
+    "strength": "20 mg",
+    "form": "tablet",
+    "category": "statin"
+  },
+  {
+    "id": "bpom_012",
+    "name": "Ranitidin",
+    "generic": "Ranitidine",
+    "strength": "150 mg",
+    "form": "tablet",
+    "category": "antasida"
+  },
+  {
+    "id": "bpom_013",
+    "name": "Kotrimoksazol",
+    "generic": "Cotrimoxazole",
+    "strength": "480 mg",
+    "form": "tablet",
+    "category": "antibiotik"
+  },
+  {
+    "id": "bpom_014",
+    "name": "Glibenklamid",
+    "generic": "Glibenclamide",
+    "strength": "5 mg",
+    "form": "tablet",
+    "category": "antidiabetik"
+  },
+  {
+    "id": "bpom_015",
+    "name": "Kaptopril",
+    "generic": "Captopril",
+    "strength": "25 mg",
+    "form": "tablet",
+    "category": "antihipertensi"
+  },
+  {
+    "id": "bpom_016",
+    "name": "Nifedipin",
+    "generic": "Nifedipine",
+    "strength": "10 mg",
+    "form": "tablet",
+    "category": "antihipertensi"
+  },
+  {
+    "id": "bpom_017",
+    "name": "Metronidazol",
+    "generic": "Metronidazole",
+    "strength": "500 mg",
+    "form": "tablet",
+    "category": "antibiotik"
+  },
+  {
+    "id": "bpom_018",
+    "name": "Deksametason",
+    "generic": "Dexamethasone",
+    "strength": "0.5 mg",
+    "form": "tablet",
+    "category": "kortikosteroid"
+  },
+  {
+    "id": "bpom_019",
+    "name": "Prednisolon",
+    "generic": "Prednisolone",
+    "strength": "5 mg",
+    "form": "tablet",
+    "category": "kortikosteroid"
+  },
+  {
+    "id": "bpom_020",
+    "name": "Klorfeniramin",
+    "generic": "Chlorpheniramine",
+    "strength": "4 mg",
+    "form": "tablet",
+    "category": "antihistamin"
+  },
+  {
+    "id": "bpom_021",
+    "name": "Dimenhidrinat",
+    "generic": "Dimenhydrinate",
+    "strength": "50 mg",
+    "form": "tablet",
+    "category": "antiemetik"
+  },
+  {
+    "id": "bpom_022",
+    "name": "Metoklopramid",
+    "generic": "Metoclopramide",
+    "strength": "10 mg",
+    "form": "tablet",
+    "category": "antiemetik"
+  },
+  {
+    "id": "bpom_023",
+    "name": "Vitamin C",
+    "generic": "Ascorbic Acid",
+    "strength": "500 mg",
+    "form": "tablet",
+    "category": "vitamin"
+  },
+  {
+    "id": "bpom_024",
+    "name": "Vitamin B Kompleks",
+    "generic": "Vitamin B Complex",
+    "strength": "—",
+    "form": "tablet",
+    "category": "vitamin"
+  },
+  {
+    "id": "bpom_025",
+    "name": "Antasida DOEN",
+    "generic": "Aluminium Hydroxide + Magnesium Hydroxide",
+    "strength": "200/200 mg",
+    "form": "tablet",
+    "category": "antasida"
+  },
+  {
+    "id": "bpom_026",
+    "name": "Kalsium Laktat",
+    "generic": "Calcium Lactate",
+    "strength": "500 mg",
+    "form": "tablet",
+    "category": "mineral"
+  },
+  {
+    "id": "bpom_027",
+    "name": "Asam Folat",
+    "generic": "Folic Acid",
+    "strength": "0.4 mg",
+    "form": "tablet",
+    "category": "vitamin"
+  },
+  {
+    "id": "bpom_028",
+    "name": "Zat Besi (Ferous Sulfat)",
+    "generic": "Ferrous Sulphate",
+    "strength": "200 mg",
+    "form": "tablet",
+    "category": "mineral"
+  },
+  {
+    "id": "bpom_029",
+    "name": "Tetrasiklin",
+    "generic": "Tetracycline",
+    "strength": "500 mg",
+    "form": "kapsul",
+    "category": "antibiotik"
+  },
+  {
+    "id": "bpom_030",
+    "name": "Eritromisin",
+    "generic": "Erythromycin",
+    "strength": "500 mg",
+    "form": "tablet",
+    "category": "antibiotik"
+  },
+  {
+    "id": "bpom_031",
+    "name": "Siprofloksasin",
+    "generic": "Ciprofloxacin",
+    "strength": "500 mg",
+    "form": "tablet",
+    "category": "antibiotik"
+  },
+  {
+    "id": "bpom_032",
+    "name": "Levofloksasin",
+    "generic": "Levofloxacin",
+    "strength": "500 mg",
+    "form": "tablet",
+    "category": "antibiotik"
+  },
+  {
+    "id": "bpom_033",
+    "name": "Klindamisin",
+    "generic": "Clindamycin",
+    "strength": "300 mg",
+    "form": "kapsul",
+    "category": "antibiotik"
+  },
+  {
+    "id": "bpom_034",
+    "name": "Flukonazol",
+    "generic": "Fluconazole",
+    "strength": "150 mg",
+    "form": "kapsul",
+    "category": "antifungal"
+  },
+  {
+    "id": "bpom_035",
+    "name": "Ketokonazol",
+    "generic": "Ketoconazole",
+    "strength": "200 mg",
+    "form": "tablet",
+    "category": "antifungal"
+  },
+  {
+    "id": "bpom_036",
+    "name": "Griseofulvin",
+    "generic": "Griseofulvin",
+    "strength": "125 mg",
+    "form": "tablet",
+    "category": "antifungal"
+  },
+  {
+    "id": "bpom_037",
+    "name": "Natrium Diklofenak",
+    "generic": "Diclofenac Sodium",
+    "strength": "50 mg",
+    "form": "tablet",
+    "category": "NSAID"
+  },
+  {
+    "id": "bpom_038",
+    "name": "Meloksikam",
+    "generic": "Meloxicam",
+    "strength": "7.5 mg",
+    "form": "tablet",
+    "category": "NSAID"
+  },
+  {
+    "id": "bpom_039",
+    "name": "Asam Mefenamat",
+    "generic": "Mefenamic Acid",
+    "strength": "500 mg",
+    "form": "kapsul",
+    "category": "NSAID"
+  },
+  {
+    "id": "bpom_040",
+    "name": "Piroksikam",
+    "generic": "Piroxicam",
+    "strength": "20 mg",
+    "form": "kapsul",
+    "category": "NSAID"
+  },
+  {
+    "id": "bpom_041",
+    "name": "Tramadol",
+    "generic": "Tramadol",
+    "strength": "50 mg",
+    "form": "kapsul",
+    "category": "analgesik"
+  },
+  {
+    "id": "bpom_042",
+    "name": "Kodein",
+    "generic": "Codeine",
+    "strength": "10 mg",
+    "form": "tablet",
+    "category": "analgesik"
+  },
+  {
+    "id": "bpom_043",
+    "name": "Amitriptilin",
+    "generic": "Amitriptyline",
+    "strength": "25 mg",
+    "form": "tablet",
+    "category": "antidepresan"
+  },
+  {
+    "id": "bpom_044",
+    "name": "Fluoksetin",
+    "generic": "Fluoxetine",
+    "strength": "20 mg",
+    "form": "kapsul",
+    "category": "antidepresan"
+  },
+  {
+    "id": "bpom_045",
+    "name": "Sertralin",
+    "generic": "Sertraline",
+    "strength": "50 mg",
+    "form": "tablet",
+    "category": "antidepresan"
+  },
+  {
+    "id": "bpom_046",
+    "name": "Haloperidol",
+    "generic": "Haloperidol",
+    "strength": "5 mg",
+    "form": "tablet",
+    "category": "antipsikotik"
+  },
+  {
+    "id": "bpom_047",
+    "name": "Klorpromazin",
+    "generic": "Chlorpromazine",
+    "strength": "100 mg",
+    "form": "tablet",
+    "category": "antipsikotik"
+  },
+  {
+    "id": "bpom_048",
+    "name": "Risperidon",
+    "generic": "Risperidone",
+    "strength": "2 mg",
+    "form": "tablet",
+    "category": "antipsikotik"
+  },
+  {
+    "id": "bpom_049",
+    "name": "Diazepam",
+    "generic": "Diazepam",
+    "strength": "5 mg",
+    "form": "tablet",
+    "category": "ansiolitik"
+  },
+  {
+    "id": "bpom_050",
+    "name": "Fenobarbital",
+    "generic": "Phenobarbital",
+    "strength": "30 mg",
+    "form": "tablet",
+    "category": "antikonvulsan"
+  },
+  {
+    "id": "bpom_051",
+    "name": "Fenitoin",
+    "generic": "Phenytoin",
+    "strength": "100 mg",
+    "form": "kapsul",
+    "category": "antikonvulsan"
+  },
+  {
+    "id": "bpom_052",
+    "name": "Karbamazepin",
+    "generic": "Carbamazepine",
+    "strength": "200 mg",
+    "form": "tablet",
+    "category": "antikonvulsan"
+  },
+  {
+    "id": "bpom_053",
+    "name": "Valproat",
+    "generic": "Valproic Acid",
+    "strength": "250 mg",
+    "form": "kapsul",
+    "category": "antikonvulsan"
+  },
+  {
+    "id": "bpom_054",
+    "name": "Digoksin",
+    "generic": "Digoxin",
+    "strength": "0.25 mg",
+    "form": "tablet",
+    "category": "kardiotonik"
+  },
+  {
+    "id": "bpom_055",
+    "name": "Spironolakton",
+    "generic": "Spironolactone",
+    "strength": "25 mg",
+    "form": "tablet",
+    "category": "diuretik"
+  },
+  {
+    "id": "bpom_056",
+    "name": "Furosemid",
+    "generic": "Furosemide",
+    "strength": "40 mg",
+    "form": "tablet",
+    "category": "diuretik"
+  },
+  {
+    "id": "bpom_057",
+    "name": "Hidroklorotiazid",
+    "generic": "Hydrochlorothiazide",
+    "strength": "25 mg",
+    "form": "tablet",
+    "category": "diuretik"
+  },
+  {
+    "id": "bpom_058",
+    "name": "Propranolol",
+    "generic": "Propranolol",
+    "strength": "40 mg",
+    "form": "tablet",
+    "category": "beta-bloker"
+  },
+  {
+    "id": "bpom_059",
+    "name": "Bisoprolol",
+    "generic": "Bisoprolol",
+    "strength": "5 mg",
+    "form": "tablet",
+    "category": "beta-bloker"
+  },
+  {
+    "id": "bpom_060",
+    "name": "Lisinopril",
+    "generic": "Lisinopril",
+    "strength": "10 mg",
+    "form": "tablet",
+    "category": "antihipertensi"
+  },
+  {
+    "id": "bpom_061",
+    "name": "Valsartan",
+    "generic": "Valsartan",
+    "strength": "80 mg",
+    "form": "tablet",
+    "category": "antihipertensi"
+  },
+  {
+    "id": "bpom_062",
+    "name": "Losartan",
+    "generic": "Losartan",
+    "strength": "50 mg",
+    "form": "tablet",
+    "category": "antihipertensi"
+  },
+  {
+    "id": "bpom_063",
+    "name": "Glimepirid",
+    "generic": "Glimepiride",
+    "strength": "2 mg",
+    "form": "tablet",
+    "category": "antidiabetik"
+  },
+  {
+    "id": "bpom_064",
+    "name": "Glipizid",
+    "generic": "Glipizide",
+    "strength": "5 mg",
+    "form": "tablet",
+    "category": "antidiabetik"
+  },
+  {
+    "id": "bpom_065",
+    "name": "Tablet Besi",
+    "generic": "Iron Tablet (Ferrous Gluconate)",
+    "strength": "300 mg",
+    "form": "tablet",
+    "category": "mineral"
+  }
+]

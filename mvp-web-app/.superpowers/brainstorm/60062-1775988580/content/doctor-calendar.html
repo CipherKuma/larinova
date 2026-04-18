@@ -1,0 +1,688 @@
+<h2>Doctor Calendar Page — Layout</h2>
+<p class="subtitle">
+  How is the availability editor + analytics surfaced alongside the calendar?
+</p>
+
+<div class="cards">
+  <!-- Option A: Right drawer -->
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div
+      class="card-image"
+      style="
+        background: #0f172a;
+        padding: 12px;
+        font-family: sans-serif;
+        border-radius: 8px 8px 0 0;
+        min-height: 280px;
+      "
+    >
+      <div style="display: flex; gap: 8px; height: 260px">
+        <!-- Thin sidebar (nav) -->
+        <div
+          style="
+            width: 32px;
+            background: #1e293b;
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 8px 0;
+            gap: 8px;
+          "
+        >
+          <div
+            style="
+              width: 18px;
+              height: 18px;
+              border-radius: 4px;
+              background: #6366f1;
+            "
+          ></div>
+          <div style="width: 14px; height: 2px; background: #334155"></div>
+          <div style="width: 14px; height: 2px; background: #334155"></div>
+          <div style="width: 14px; height: 2px; background: #6366f1"></div>
+          <div style="width: 14px; height: 2px; background: #334155"></div>
+        </div>
+        <!-- Main calendar area -->
+        <div
+          style="
+            flex: 1;
+            background: #1e293b;
+            border-radius: 6px;
+            padding: 8px;
+            overflow: hidden;
+          "
+        >
+          <!-- Top bar -->
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              margin-bottom: 8px;
+            "
+          >
+            <div style="font-size: 10px; font-weight: 700; color: #f1f5f9">
+              Calendar
+            </div>
+            <div style="display: flex; gap: 4px">
+              <div
+                style="
+                  background: #334155;
+                  border-radius: 4px;
+                  padding: 2px 6px;
+                  font-size: 7px;
+                  color: #94a3b8;
+                "
+              >
+                Month
+              </div>
+              <div
+                style="
+                  background: #6366f1;
+                  border-radius: 4px;
+                  padding: 2px 6px;
+                  font-size: 7px;
+                  color: #fff;
+                "
+              >
+                Week
+              </div>
+              <div
+                style="
+                  background: #334155;
+                  border-radius: 4px;
+                  padding: 2px 6px;
+                  font-size: 7px;
+                  color: #94a3b8;
+                "
+              >
+                Day
+              </div>
+              <div
+                style="
+                  background: #0ea5e9;
+                  border-radius: 4px;
+                  padding: 2px 6px;
+                  font-size: 7px;
+                  color: #fff;
+                "
+              >
+                ⚙ Availability
+              </div>
+            </div>
+          </div>
+          <!-- Week view grid -->
+          <div
+            style="
+              display: grid;
+              grid-template-columns: 32px repeat(5, 1fr);
+              gap: 1px;
+              font-size: 7px;
+            "
+          >
+            <div style="color: #64748b"></div>
+            <div style="color: #94a3b8; text-align: center; padding: 2px">
+              Mon 7
+            </div>
+            <div style="color: #94a3b8; text-align: center; padding: 2px">
+              Tue 8
+            </div>
+            <div
+              style="
+                color: #6366f1;
+                text-align: center;
+                padding: 2px;
+                font-weight: 700;
+              "
+            >
+              Wed 9
+            </div>
+            <div style="color: #94a3b8; text-align: center; padding: 2px">
+              Thu 10
+            </div>
+            <div style="color: #94a3b8; text-align: center; padding: 2px">
+              Fri 11
+            </div>
+            <!-- 9am row -->
+            <div style="color: #64748b; padding: 2px">9am</div>
+            <div
+              style="
+                background: #1e1b4b;
+                border-radius: 3px;
+                padding: 2px;
+                margin: 1px;
+                font-size: 6px;
+                color: #a5b4fc;
+              "
+            >
+              📹 Ravi S.
+            </div>
+            <div
+              style="background: #334155; border-radius: 3px; margin: 1px"
+            ></div>
+            <div
+              style="
+                background: #0c4a6e;
+                border-radius: 3px;
+                padding: 2px;
+                margin: 1px;
+                font-size: 6px;
+                color: #7dd3fc;
+              "
+            >
+              🏥 Priya M.
+            </div>
+            <div
+              style="background: #334155; border-radius: 3px; margin: 1px"
+            ></div>
+            <div
+              style="background: #334155; border-radius: 3px; margin: 1px"
+            ></div>
+            <!-- 10am row -->
+            <div style="color: #64748b; padding: 2px">10am</div>
+            <div
+              style="background: #334155; border-radius: 3px; margin: 1px"
+            ></div>
+            <div
+              style="
+                background: #1e1b4b;
+                border-radius: 3px;
+                padding: 2px;
+                margin: 1px;
+                font-size: 6px;
+                color: #a5b4fc;
+              "
+            >
+              📹 Ali K.
+            </div>
+            <div
+              style="background: #334155; border-radius: 3px; margin: 1px"
+            ></div>
+            <div
+              style="
+                background: #1e1b4b;
+                border-radius: 3px;
+                padding: 2px;
+                margin: 1px;
+                font-size: 6px;
+                color: #a5b4fc;
+              "
+            >
+              📹 Siti R.
+            </div>
+            <div
+              style="background: #334155; border-radius: 3px; margin: 1px"
+            ></div>
+          </div>
+          <!-- Stats strip -->
+          <div style="display: flex; gap: 6px; margin-top: 8px">
+            <div
+              style="
+                background: #0f172a;
+                border-radius: 4px;
+                padding: 4px 8px;
+                font-size: 7px;
+                color: #94a3b8;
+              "
+            >
+              This week:
+              <span style="color: #6366f1; font-weight: 700">8 appts</span>
+            </div>
+            <div
+              style="
+                background: #0f172a;
+                border-radius: 4px;
+                padding: 4px 8px;
+                font-size: 7px;
+                color: #94a3b8;
+              "
+            >
+              Pending: <span style="color: #f59e0b; font-weight: 700">2</span>
+            </div>
+          </div>
+        </div>
+        <!-- Right drawer (availability) -->
+        <div
+          style="
+            width: 90px;
+            background: #1e293b;
+            border-radius: 6px;
+            padding: 8px;
+          "
+        >
+          <div
+            style="
+              font-size: 8px;
+              font-weight: 700;
+              color: #f1f5f9;
+              margin-bottom: 6px;
+            "
+          >
+            Availability
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 3px">
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+              "
+            >
+              <span style="font-size: 7px; color: #94a3b8">Mon</span>
+              <div
+                style="
+                  width: 22px;
+                  height: 10px;
+                  background: #6366f1;
+                  border-radius: 5px;
+                "
+              ></div>
+            </div>
+            <div style="font-size: 6px; color: #64748b; margin-left: 0">
+              9am – 5pm
+            </div>
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+              "
+            >
+              <span style="font-size: 7px; color: #94a3b8">Tue</span>
+              <div
+                style="
+                  width: 22px;
+                  height: 10px;
+                  background: #6366f1;
+                  border-radius: 5px;
+                "
+              ></div>
+            </div>
+            <div style="font-size: 6px; color: #64748b">9am – 5pm</div>
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+              "
+            >
+              <span style="font-size: 7px; color: #94a3b8">Wed</span>
+              <div
+                style="
+                  width: 22px;
+                  height: 10px;
+                  background: #6366f1;
+                  border-radius: 5px;
+                "
+              ></div>
+            </div>
+            <div style="font-size: 6px; color: #64748b">9am – 5pm</div>
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+              "
+            >
+              <span style="font-size: 7px; color: #94a3b8">Sat</span>
+              <div
+                style="
+                  width: 22px;
+                  height: 10px;
+                  background: #334155;
+                  border-radius: 5px;
+                "
+              ></div>
+            </div>
+            <div style="font-size: 6px; color: #475569">Off</div>
+          </div>
+          <div
+            style="
+              margin-top: 6px;
+              border-top: 1px solid #334155;
+              padding-top: 6px;
+            "
+          >
+            <div style="font-size: 7px; color: #94a3b8; margin-bottom: 4px">
+              Your link
+            </div>
+            <div
+              style="
+                background: #0f172a;
+                border-radius: 4px;
+                padding: 3px 5px;
+                font-size: 6px;
+                color: #6366f1;
+                word-break: break-all;
+              "
+            >
+              book/dr-gabriel
+            </div>
+            <div
+              style="
+                margin-top: 4px;
+                background: #334155;
+                border-radius: 4px;
+                padding: 2px 6px;
+                font-size: 6px;
+                color: #94a3b8;
+                text-align: center;
+              "
+            >
+              📋 Copy
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A — Persistent right panel</h3>
+      <p>
+        Calendar fills the center. Availability editor + booking link live in a
+        persistent right panel. Always visible, no extra clicks. Stats bar sits
+        below the calendar.
+      </p>
+    </div>
+  </div>
+
+  <!-- Option B: Tabs -->
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div
+      class="card-image"
+      style="
+        background: #0f172a;
+        padding: 12px;
+        font-family: sans-serif;
+        border-radius: 8px 8px 0 0;
+        min-height: 280px;
+      "
+    >
+      <div style="display: flex; gap: 8px; height: 260px">
+        <!-- Thin sidebar (nav) -->
+        <div
+          style="
+            width: 32px;
+            background: #1e293b;
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 8px 0;
+            gap: 8px;
+          "
+        >
+          <div
+            style="
+              width: 18px;
+              height: 18px;
+              border-radius: 4px;
+              background: #6366f1;
+            "
+          ></div>
+          <div style="width: 14px; height: 2px; background: #334155"></div>
+          <div style="width: 14px; height: 2px; background: #334155"></div>
+          <div style="width: 14px; height: 2px; background: #6366f1"></div>
+          <div style="width: 14px; height: 2px; background: #334155"></div>
+        </div>
+        <!-- Main tabbed area -->
+        <div
+          style="
+            flex: 1;
+            background: #1e293b;
+            border-radius: 6px;
+            padding: 8px;
+            overflow: hidden;
+          "
+        >
+          <!-- Tab bar -->
+          <div
+            style="
+              display: flex;
+              gap: 1px;
+              margin-bottom: 8px;
+              background: #0f172a;
+              border-radius: 6px;
+              padding: 2px;
+            "
+          >
+            <div
+              style="
+                flex: 1;
+                background: #6366f1;
+                border-radius: 4px;
+                padding: 3px;
+                font-size: 7px;
+                color: #fff;
+                text-align: center;
+                font-weight: 600;
+              "
+            >
+              📅 Calendar
+            </div>
+            <div
+              style="
+                flex: 1;
+                padding: 3px;
+                font-size: 7px;
+                color: #64748b;
+                text-align: center;
+              "
+            >
+              ⏰ Availability
+            </div>
+            <div
+              style="
+                flex: 1;
+                padding: 3px;
+                font-size: 7px;
+                color: #64748b;
+                text-align: center;
+              "
+            >
+              🔗 Booking Page
+            </div>
+            <div
+              style="
+                flex: 1;
+                padding: 3px;
+                font-size: 7px;
+                color: #64748b;
+                text-align: center;
+              "
+            >
+              📊 Analytics
+            </div>
+          </div>
+          <!-- Calendar tab content (full width) -->
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              margin-bottom: 6px;
+            "
+          >
+            <div style="font-size: 9px; font-weight: 700; color: #f1f5f9">
+              April 2026
+            </div>
+            <div style="display: flex; gap: 3px">
+              <div
+                style="
+                  background: #334155;
+                  border-radius: 3px;
+                  padding: 2px 5px;
+                  font-size: 7px;
+                  color: #94a3b8;
+                "
+              >
+                Month
+              </div>
+              <div
+                style="
+                  background: #6366f1;
+                  border-radius: 3px;
+                  padding: 2px 5px;
+                  font-size: 7px;
+                  color: #fff;
+                "
+              >
+                Week
+              </div>
+              <div
+                style="
+                  background: #334155;
+                  border-radius: 3px;
+                  padding: 2px 5px;
+                  font-size: 7px;
+                  color: #94a3b8;
+                "
+              >
+                Day
+              </div>
+            </div>
+          </div>
+          <!-- Week view (full width) -->
+          <div
+            style="
+              display: grid;
+              grid-template-columns: 28px repeat(5, 1fr);
+              gap: 1px;
+              font-size: 7px;
+            "
+          >
+            <div></div>
+            <div style="color: #94a3b8; text-align: center; padding: 2px">
+              Mon 7
+            </div>
+            <div style="color: #94a3b8; text-align: center; padding: 2px">
+              Tue 8
+            </div>
+            <div
+              style="
+                color: #6366f1;
+                text-align: center;
+                padding: 2px;
+                font-weight: 700;
+              "
+            >
+              Wed 9
+            </div>
+            <div style="color: #94a3b8; text-align: center; padding: 2px">
+              Thu 10
+            </div>
+            <div style="color: #94a3b8; text-align: center; padding: 2px">
+              Fri 11
+            </div>
+            <div style="color: #64748b; padding: 2px">9am</div>
+            <div
+              style="
+                background: #1e1b4b;
+                border-radius: 3px;
+                padding: 2px;
+                margin: 1px;
+                font-size: 6px;
+                color: #a5b4fc;
+              "
+            >
+              📹 Ravi S.
+            </div>
+            <div
+              style="
+                background: #334155;
+                border-radius: 3px;
+                margin: 1px;
+                height: 18px;
+              "
+            ></div>
+            <div
+              style="
+                background: #0c4a6e;
+                border-radius: 3px;
+                padding: 2px;
+                margin: 1px;
+                font-size: 6px;
+                color: #7dd3fc;
+              "
+            >
+              🏥 Priya M.
+            </div>
+            <div
+              style="
+                background: #334155;
+                border-radius: 3px;
+                margin: 1px;
+                height: 18px;
+              "
+            ></div>
+            <div
+              style="
+                background: #334155;
+                border-radius: 3px;
+                margin: 1px;
+                height: 18px;
+              "
+            ></div>
+            <div style="color: #64748b; padding: 2px">10am</div>
+            <div
+              style="
+                background: #334155;
+                border-radius: 3px;
+                margin: 1px;
+                height: 18px;
+              "
+            ></div>
+            <div
+              style="
+                background: #1e1b4b;
+                border-radius: 3px;
+                padding: 2px;
+                margin: 1px;
+                font-size: 6px;
+                color: #a5b4fc;
+              "
+            >
+              📹 Ali K.
+            </div>
+            <div
+              style="
+                background: #334155;
+                border-radius: 3px;
+                margin: 1px;
+                height: 18px;
+              "
+            ></div>
+            <div
+              style="
+                background: #1e1b4b;
+                border-radius: 3px;
+                padding: 2px;
+                margin: 1px;
+                font-size: 6px;
+                color: #a5b4fc;
+              "
+            >
+              📹 Siti R.
+            </div>
+            <div
+              style="
+                background: #334155;
+                border-radius: 3px;
+                margin: 1px;
+                height: 18px;
+              "
+            ></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B — Tabbed layout</h3>
+      <p>
+        4 tabs: Calendar · Availability · Booking Page · Analytics. Calendar
+        gets the full width on its tab. Each concern is isolated — cleaner but
+        requires tab switching to manage availability.
+      </p>
+    </div>
+  </div>
+</div>

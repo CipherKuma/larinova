@@ -1,0 +1,492 @@
+<h2>Background Aesthetic — Pick Your Vibe</h2>
+<p class="subtitle">
+  Subtle, premium, not trying hard. Which direction feels right for Larinova?
+</p>
+
+<div
+  class="cards"
+  style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px"
+>
+  <!-- Option A: Gradient Mesh -->
+  <div
+    class="card"
+    data-choice="gradient-mesh"
+    onclick="toggleSelect(this)"
+    style="overflow: hidden"
+  >
+    <div
+      class="card-image"
+      style="
+        height: 220px;
+        position: relative;
+        background: #0a0f1e;
+        overflow: hidden;
+      "
+    >
+      <!-- Animated gradient blobs -->
+      <div
+        style="
+          position: absolute;
+          width: 300px;
+          height: 300px;
+          border-radius: 50%;
+          background: radial-gradient(
+            circle,
+            rgba(16, 185, 129, 0.15) 0%,
+            transparent 70%
+          );
+          top: -50px;
+          left: -50px;
+          animation: float1 8s ease-in-out infinite;
+        "
+      ></div>
+      <div
+        style="
+          position: absolute;
+          width: 250px;
+          height: 250px;
+          border-radius: 50%;
+          background: radial-gradient(
+            circle,
+            rgba(13, 148, 136, 0.12) 0%,
+            transparent 70%
+          );
+          bottom: -30px;
+          right: -30px;
+          animation: float2 10s ease-in-out infinite;
+        "
+      ></div>
+      <div
+        style="
+          position: absolute;
+          width: 200px;
+          height: 200px;
+          border-radius: 50%;
+          background: radial-gradient(
+            circle,
+            rgba(16, 185, 129, 0.08) 0%,
+            transparent 70%
+          );
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          animation: float3 12s ease-in-out infinite;
+        "
+      ></div>
+      <!-- Mock content -->
+      <div
+        style="
+          position: relative;
+          z-index: 1;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          height: 100%;
+          color: #f9fafb;
+        "
+      >
+        <div
+          style="
+            font-size: 11px;
+            letter-spacing: 2px;
+            color: #94a3b8;
+            margin-bottom: 8px;
+          "
+        >
+          STEP 1 OF 5
+        </div>
+        <div style="font-size: 18px; font-weight: 600">
+          What brings you here?
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A. Gradient Mesh</h3>
+      <p>
+        Slowly drifting emerald/teal gradient blobs on dark navy. Like Apple's
+        iOS wallpapers. Organic, living, effortless. The light moves — the page
+        doesn't.
+      </p>
+    </div>
+  </div>
+
+  <!-- Option B: Grid + Glow -->
+  <div
+    class="card"
+    data-choice="grid-glow"
+    onclick="toggleSelect(this)"
+    style="overflow: hidden"
+  >
+    <div
+      class="card-image"
+      style="
+        height: 220px;
+        position: relative;
+        background: #0a0f1e;
+        overflow: hidden;
+      "
+    >
+      <!-- Grid pattern -->
+      <div
+        style="
+          position: absolute;
+          inset: 0;
+          background-image:
+            linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+            linear-gradient(
+              90deg,
+              rgba(255, 255, 255, 0.03) 1px,
+              transparent 1px
+            );
+          background-size: 40px 40px;
+        "
+      ></div>
+      <!-- Center glow -->
+      <div
+        style="
+          position: absolute;
+          width: 300px;
+          height: 300px;
+          border-radius: 50%;
+          background: radial-gradient(
+            circle,
+            rgba(16, 185, 129, 0.12) 0%,
+            transparent 70%
+          );
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          animation: breathe 6s ease-in-out infinite;
+        "
+      ></div>
+      <!-- Mock content -->
+      <div
+        style="
+          position: relative;
+          z-index: 1;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          height: 100%;
+          color: #f9fafb;
+        "
+      >
+        <div
+          style="
+            font-size: 11px;
+            letter-spacing: 2px;
+            color: #94a3b8;
+            margin-bottom: 8px;
+          "
+        >
+          STEP 1 OF 5
+        </div>
+        <div style="font-size: 18px; font-weight: 600">
+          What brings you here?
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B. Grid + Breathing Glow</h3>
+      <p>
+        Faint grid lines with a soft emerald glow that breathes at center.
+        Technical but warm. The Vercel/Linear aesthetic — structured precision
+        with a living pulse.
+      </p>
+    </div>
+  </div>
+
+  <!-- Option C: Particle Dust -->
+  <div
+    class="card"
+    data-choice="particle-dust"
+    onclick="toggleSelect(this)"
+    style="overflow: hidden"
+  >
+    <div
+      class="card-image"
+      style="
+        height: 220px;
+        position: relative;
+        background: #0a0f1e;
+        overflow: hidden;
+      "
+    >
+      <!-- Simulated particles -->
+      <div
+        style="
+          position: absolute;
+          width: 2px;
+          height: 2px;
+          background: rgba(16, 185, 129, 0.4);
+          border-radius: 50%;
+          top: 20%;
+          left: 15%;
+          animation: drift1 15s linear infinite;
+          box-shadow: 0 0 4px rgba(16, 185, 129, 0.3);
+        "
+      ></div>
+      <div
+        style="
+          position: absolute;
+          width: 1.5px;
+          height: 1.5px;
+          background: rgba(255, 255, 255, 0.2);
+          border-radius: 50%;
+          top: 40%;
+          left: 65%;
+          animation: drift2 20s linear infinite;
+        "
+      ></div>
+      <div
+        style="
+          position: absolute;
+          width: 2px;
+          height: 2px;
+          background: rgba(16, 185, 129, 0.3);
+          border-radius: 50%;
+          top: 70%;
+          left: 35%;
+          animation: drift1 18s linear infinite;
+          box-shadow: 0 0 4px rgba(16, 185, 129, 0.2);
+        "
+      ></div>
+      <div
+        style="
+          position: absolute;
+          width: 1px;
+          height: 1px;
+          background: rgba(255, 255, 255, 0.15);
+          border-radius: 50%;
+          top: 30%;
+          left: 80%;
+          animation: drift2 22s linear infinite;
+        "
+      ></div>
+      <div
+        style="
+          position: absolute;
+          width: 1.5px;
+          height: 1.5px;
+          background: rgba(16, 185, 129, 0.25);
+          border-radius: 50%;
+          top: 55%;
+          left: 20%;
+          animation: drift1 25s linear infinite;
+        "
+      ></div>
+      <div
+        style="
+          position: absolute;
+          width: 2px;
+          height: 2px;
+          background: rgba(255, 255, 255, 0.1);
+          border-radius: 50%;
+          top: 85%;
+          left: 75%;
+          animation: drift2 17s linear infinite;
+        "
+      ></div>
+      <!-- Subtle radial -->
+      <div
+        style="
+          position: absolute;
+          inset: 0;
+          background: radial-gradient(
+            ellipse at 50% 50%,
+            rgba(16, 185, 129, 0.04) 0%,
+            transparent 60%
+          );
+        "
+      ></div>
+      <!-- Mock content -->
+      <div
+        style="
+          position: relative;
+          z-index: 1;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          height: 100%;
+          color: #f9fafb;
+        "
+      >
+        <div
+          style="
+            font-size: 11px;
+            letter-spacing: 2px;
+            color: #94a3b8;
+            margin-bottom: 8px;
+          "
+        >
+          STEP 1 OF 5
+        </div>
+        <div style="font-size: 18px; font-weight: 600">
+          What brings you here?
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C. Particle Dust</h3>
+      <p>
+        Tiny floating dots — some emerald, some white — drifting very slowly
+        across a deep navy canvas. Like stars but closer. Quiet and premium.
+        Almost imperceptible until you notice it.
+      </p>
+    </div>
+  </div>
+
+  <!-- Option D: Noise + Radial -->
+  <div
+    class="card"
+    data-choice="noise-radial"
+    onclick="toggleSelect(this)"
+    style="overflow: hidden"
+  >
+    <div
+      class="card-image"
+      style="
+        height: 220px;
+        position: relative;
+        background: #0a0f1e;
+        overflow: hidden;
+      "
+    >
+      <!-- Grain -->
+      <div
+        style="
+          position: absolute;
+          inset: 0;
+          opacity: 0.4;
+          background-image: url(&quot;data:image/svg+xml,%3Csvg viewBox=%220 0 256 256%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22n%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22 opacity=%220.03%22/%3E%3C/svg%3E&quot;);
+        "
+      ></div>
+      <!-- Emerald radial -->
+      <div
+        style="
+          position: absolute;
+          width: 400px;
+          height: 300px;
+          border-radius: 50%;
+          background: radial-gradient(
+            ellipse,
+            rgba(16, 185, 129, 0.08) 0%,
+            transparent 70%
+          );
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+        "
+      ></div>
+      <!-- Subtle top highlight -->
+      <div
+        style="
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 1px;
+          background: linear-gradient(
+            90deg,
+            transparent 0%,
+            rgba(16, 185, 129, 0.15) 50%,
+            transparent 100%
+          );
+        "
+      ></div>
+      <!-- Mock content -->
+      <div
+        style="
+          position: relative;
+          z-index: 1;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          height: 100%;
+          color: #f9fafb;
+        "
+      >
+        <div
+          style="
+            font-size: 11px;
+            letter-spacing: 2px;
+            color: #94a3b8;
+            margin-bottom: 8px;
+          "
+        >
+          STEP 1 OF 5
+        </div>
+        <div style="font-size: 18px; font-weight: 600">
+          What brings you here?
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>D. Grain + Radial Glow</h3>
+      <p>
+        Just the grain texture you already have, plus a static emerald radial at
+        center and a thin top-edge highlight. Nothing moves. Pure texture and
+        light. The most restrained option.
+      </p>
+    </div>
+  </div>
+</div>
+
+<style>
+  @keyframes float1 {
+    0%,
+    100% {
+      transform: translate(0, 0);
+    }
+    50% {
+      transform: translate(30px, 20px);
+    }
+  }
+  @keyframes float2 {
+    0%,
+    100% {
+      transform: translate(0, 0);
+    }
+    50% {
+      transform: translate(-20px, 30px);
+    }
+  }
+  @keyframes float3 {
+    0%,
+    100% {
+      transform: translate(-50%, -50%) scale(1);
+    }
+    50% {
+      transform: translate(-50%, -50%) scale(1.15);
+    }
+  }
+  @keyframes breathe {
+    0%,
+    100% {
+      opacity: 0.8;
+    }
+    50% {
+      opacity: 1.2;
+    }
+  }
+  @keyframes drift1 {
+    0% {
+      transform: translateY(0) translateX(0);
+    }
+    100% {
+      transform: translateY(-100px) translateX(30px);
+    }
+  }
+  @keyframes drift2 {
+    0% {
+      transform: translateY(0) translateX(0);
+    }
+    100% {
+      transform: translateY(-80px) translateX(-20px);
+    }
+  }
+</style>
