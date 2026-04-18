@@ -94,7 +94,8 @@
 
 ### Urgent — fix before next doctor meeting
 
-- [ ] Regenerate `Larinova_Pitch_Mid_Clinic_EN.pdf` and `_ID.pdf` with IDR 899K (Pro tier, 5-10 doctors)
+- [ ] **Pitch Mid-Clinic EN + ID** (`sales/indonesia/pitch-decks/`): pricing page says "IDR 399,000/month for clinics with up to 4 doctors" — target audience is 5-10 doctors (Pro tier = IDR 899K). **Live sales bug** — a clinic will hold you to IDR 399K. Regenerate both with IDR 899K.
+- [ ] **Pitch Small_Clinic EN + ID**: quotes IDR 149,000/month for "solo practitioners and small clinics (1-4 doctors)." IDR 149K is the Starter (solo) tier; 1-4 doctors is the Basic tier at IDR 399K. Verify intended price before regenerating.
 - [ ] Regenerate all 3 ID pitch PDFs with translated headers ("Fitur / Manual / Dengan Larinova")
 - [ ] **Discovery form EN (`sales/discovery-forms/discovery_form_en.pdf`):** footer still says `larinova.id` — update to `larinova.com` and regenerate
 - [ ] **Both discovery forms (EN + ID):** tagline says "Clinic Management & AI Platform for Indonesian Doctors" / "Platform Manajemen Klinik & AI" — change to "AI Medical Scribe for Doctors" / "Penulis Medis AI untuk Dokter" to match current positioning
