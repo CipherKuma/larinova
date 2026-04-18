@@ -1,0 +1,31 @@
+# Robots.txt for Larinova MVP Web App
+# https://app.larinova.com
+
+User-agent: *
+# Allow auth pages for indexing
+Allow: /en/sign-in
+Allow: /en/sign-up
+Allow: /id/sign-in
+Allow: /id/sign-up
+
+# Disallow all protected/app routes
+Disallow: /en/patients
+Disallow: /en/consultations
+Disallow: /en/documents
+Disallow: /en/tasks
+Disallow: /en/settings
+Disallow: /en/onboarding
+Disallow: /en/voice-ai-testing
+Disallow: /id/patients
+Disallow: /id/consultations
+Disallow: /id/documents
+Disallow: /id/tasks
+Disallow: /id/settings
+Disallow: /id/onboarding
+Disallow: /id/voice-ai-testing
+
+# Disallow API routes
+Disallow: /api/
+
+# Sitemap
+Sitemap: https://app.larinova.com/sitemap.xml

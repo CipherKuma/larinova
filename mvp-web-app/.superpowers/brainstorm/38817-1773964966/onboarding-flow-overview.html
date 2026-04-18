@@ -1,0 +1,107 @@
+<h2>Larinova Onboarding Flow — Step Overview</h2>
+<p class="subtitle">
+  5-step flow that builds to the "aha moment" — speaking Tamil and seeing SOAP
+  notes appear
+</p>
+
+<div class="options">
+  <div class="option" data-choice="step1" onclick="toggleSelect(this)">
+    <div class="letter">1</div>
+    <div class="content">
+      <h3>"What brings you here?"</h3>
+      <p>
+        <strong>Motivation cards</strong> — 3 selectable problem statements.
+        Full-screen animated gradient. Establishes mental model before any
+        form-filling. Doctor feels seen.
+      </p>
+      <ul style="margin-top: 8px; color: #94a3b8; font-size: 13px">
+        <li>"I spend too much time writing notes after consultations"</li>
+        <li>"I want to document in Tamil but type in English"</li>
+        <li>"I need proper Indian prescription formats"</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="option" data-choice="step2" onclick="toggleSelect(this)">
+    <div class="letter">2</div>
+    <div class="content">
+      <h3>"Tell us about you"</h3>
+      <p>
+        <strong>Compact profile step</strong> — specialty selection (visual
+        cards) + registration details (degrees, council, reg number). All merged
+        into one step. Clinic details collected later in settings. Only
+        specialty is required.
+      </p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="step3" onclick="toggleSelect(this)">
+    <div class="letter">3</div>
+    <div class="content">
+      <h3>⭐ "Try the magic" — THE Aha Moment</h3>
+      <p>
+        <strong>Live transcription demo.</strong> Doctor taps mic, speaks
+        Tamil/English for 5-10 seconds. Sarvam STT transcribes live. Then
+        shimmer animation → mock SOAP note generates from their words. "This is
+        what every consultation will look like."
+      </p>
+      <p
+        style="
+          margin-top: 6px;
+          color: #10b981;
+          font-size: 13px;
+          font-weight: 600;
+        "
+      >
+        This is the Whispr Flow-inspired step that hooks the doctor.
+      </p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="step4" onclick="toggleSelect(this)">
+    <div class="letter">4</div>
+    <div class="content">
+      <h3>"Your prescriptions will look like this"</h3>
+      <p>
+        <strong>Prescription preview</strong> — MCI-format PDF preview with
+        THEIR name, degrees, and registration pre-filled from step 2. Slides up
+        from bottom. Quick visual payoff showing the output they'll get.
+      </p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="step5" onclick="toggleSelect(this)">
+    <div class="letter">5</div>
+    <div class="content">
+      <h3>"You're ready, Dr. [Name]"</h3>
+      <p>
+        <strong>Celebration + launch.</strong> Emerald particle burst. Welcome
+        message with their name/specialty. Three quick-start cards pulse in:
+        "Start consultation", "Add patient", "Explore Helena AI". Auto-redirect
+        after 3s.
+      </p>
+    </div>
+  </div>
+</div>
+
+<div
+  style="
+    margin-top: 24px;
+    padding: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    background: rgba(16, 185, 129, 0.05);
+  "
+>
+  <h3 style="margin: 0 0 8px">Design System</h3>
+  <p style="color: #94a3b8; font-size: 13px; margin: 0">
+    <strong>Background:</strong> Video + gradient overlay (same as auth pages)
+    across all steps<br />
+    <strong>Progress:</strong> Animated emerald line at top (not dots)<br />
+    <strong>Transitions:</strong> Full-screen crossfade with scale<br />
+    <strong>Micro-interactions:</strong> Every selection triggers emerald pulse
+    glow<br />
+    <strong>Typography:</strong> Outfit headings, word-by-word entrance
+    animation
+  </p>
+</div>

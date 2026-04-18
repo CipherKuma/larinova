@@ -1,0 +1,489 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useRouter } from "@/src/i18n/routing";
+import { useTranslations } from "next-intl";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import {
+  ArrowLeft,
+  FileText,
+  Sparkles,
+  Hash,
+  ClipboardList,
+  User,
+  Stethoscope,
+  Loader2,
+  Printer,
+  Mail,
+  MessageCircle,
+  CheckCircle,
+  XCircle,
+} from "lucide-react";
+import ReactMarkdown from "react-markdown";
+import { createClient } from "@/lib/supabase/client";
+
+interface Transcript {
+  id: string;
+  speaker: "doctor" | "patient" | "unknown";
+  text: string;
+  timestamp_start: number;
+}
+
+interface MedicalCodes {
+  icd10?: Array<{ code: string; description: string; confidence?: string }>;
+  cpt?: Array<{ code: string; description: string; confidence?: string }>;
+}
+
+interface PatientContact {
+  full_name: string;
+  email: string | null;
+  phone: string | null;
+}
+
+interface ConsultationResultsProps {
+  transcripts: Transcript[];
+  summary: string | null;
+  medicalCodes: MedicalCodes | null | undefined;
+  soapNote: string | null;
+  consultationId: string;
+  patientId: string;
+}
+
+export function ConsultationResults({
+  transcripts,
+  summary,
+  medicalCodes,
+  soapNote,
+  consultationId,
+  patientId,
+}: ConsultationResultsProps) {
+  const router = useRouter();
+  const t = useTranslations("consultationResults");
+
+  const [patient, setPatient] = useState<PatientContact | null>(null);
+  const [emailStatus, setEmailStatus] = useState<
+    "idle" | "sending" | "sent" | "error"
+  >("idle");
+  const [emailError, setEmailError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!patientId) return;
+    const supabase = createClient();
+    supabase
+      .from("larinova_patients")
+      .select("full_name, email, phone")
+      .eq("id", patientId)
+      .single()
+      .then(({ data }) => {
+        if (data) setPatient(data);
+      });
+  }, [patientId]);
+
+  const hasRealEmail =
+    patient?.email &&
+    !patient.email.includes("@unknown.larinova") &&
+    !patient.email.includes("@placeholder.larinova");
+
+  const handlePrint = () => {
+    const date = new Date().toLocaleDateString("en-IN", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+
+    const printWindow = window.open("", "_blank");
+    if (!printWindow) return;
+
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8" />
+          <title>Consultation Summary — ${date}</title>
+          <style>
+            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; line-height: 1.6; color: #000; max-width: 720px; margin: 0 auto; padding: 32px; }
+            h1 { font-size: 22px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; border-bottom: 2px solid #000; padding-bottom: 12px; margin-bottom: 8px; }
+            .meta { font-size: 12px; color: #555; margin-bottom: 32px; }
+            h2 { font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #ccc; padding-bottom: 6px; margin-top: 28px; margin-bottom: 12px; }
+            pre, p { font-size: 13px; white-space: pre-wrap; margin: 0; }
+            .section { margin-bottom: 24px; }
+            .code-row { display: flex; gap: 16px; font-size: 12px; padding: 6px 0; border-bottom: 1px solid #eee; }
+            .code-row .code { font-family: monospace; font-weight: 700; min-width: 80px; }
+            @media print { body { padding: 0; } }
+          </style>
+        </head>
+        <body>
+          <h1>LARINOVA</h1>
+          <div class="meta">
+            ${patient ? `Patient: <strong>${patient.full_name}</strong> &nbsp;|&nbsp; ` : ""}
+            Date: <strong>${date}</strong>
+          </div>
+
+          ${
+            soapNote
+              ? `<div class="section"><h2>SOAP Note</h2><pre>${soapNote.replace(/[<>]/g, (c) => (c === "<" ? "&lt;" : "&gt;"))}</pre></div>`
+              : ""
+          }
+
+          ${
+            summary
+              ? `<div class="section"><h2>AI Summary</h2><pre>${summary.replace(/[<>]/g, (c) => (c === "<" ? "&lt;" : "&gt;"))}</pre></div>`
+              : ""
+          }
+
+          ${
+            medicalCodes?.icd10?.length
+              ? `<div class="section"><h2>ICD-10 Codes</h2>${medicalCodes.icd10.map((c) => `<div class="code-row"><span class="code">${c.code}</span><span>${c.description}</span></div>`).join("")}</div>`
+              : ""
+          }
+
+          ${
+            transcripts.length
+              ? `<div class="section"><h2>Transcript</h2>${transcripts.map((tr) => `<p><strong>${tr.speaker.toUpperCase()}</strong>: ${tr.text}</p>`).join("")}</div>`
+              : ""
+          }
+
+          <p style="margin-top:40px;font-size:11px;color:#999;">Generated by Larinova — AI Medical Scribe &nbsp;|&nbsp; larinova.com</p>
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(() => {
+      printWindow.print();
+    }, 300);
+  };
+
+  const handleEmailToPatient = async () => {
+    if (!hasRealEmail) return;
+    setEmailStatus("sending");
+    setEmailError(null);
+    try {
+      const res = await fetch(
+        `/api/consultations/${consultationId}/send-summary`,
+        { method: "POST" },
+      );
+      const data = await res.json();
+      if (!res.ok) {
+        setEmailError(data.error || t("emailFailed"));
+        setEmailStatus("error");
+      } else {
+        setEmailStatus("sent");
+      }
+    } catch {
+      setEmailError(t("emailFailed"));
+      setEmailStatus("error");
+    }
+  };
+
+  const formatTimestamp = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+  };
+
+  const getSpeakerColor = (speaker: string) => {
+    if (speaker === "doctor") return "text-blue-400 bg-blue-500/10";
+    if (speaker === "patient") return "text-green-400 bg-green-500/10";
+    return "text-muted-foreground bg-muted";
+  };
+
+  const getSpeakerIcon = (speaker: string) => {
+    if (speaker === "doctor") return <Stethoscope className="w-3 h-3" />;
+    if (speaker === "patient") return <User className="w-3 h-3" />;
+    return null;
+  };
+
+  return (
+    <div className="glass-card-strong p-6 space-y-4">
+      <div className="text-center mb-4">
+        <div className="w-12 h-12 rounded-full bg-green-500/20 flex items-center justify-center mx-auto mb-2">
+          <FileText className="w-6 h-6 text-green-500" />
+        </div>
+        <h2 className="text-xl font-bold text-foreground">
+          {t("consultationComplete")}
+        </h2>
+        <p className="text-sm text-muted-foreground">{t("allDocsSaved")}</p>
+      </div>
+
+      <Tabs defaultValue="summary" className="w-full">
+        <TabsList className="w-full bg-transparent border-0 p-1 h-auto rounded-none justify-center gap-1">
+          <TabsTrigger
+            value="summary"
+            className="rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm text-sm px-3 py-1.5"
+          >
+            <Sparkles className="w-3 h-3 mr-1" />
+            {t("aiSummaryTab")}
+          </TabsTrigger>
+          <TabsTrigger
+            value="codes"
+            className="rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm text-sm px-3 py-1.5"
+          >
+            <Hash className="w-3 h-3 mr-1" />
+            {t("medicalCodesTab")}
+          </TabsTrigger>
+          <TabsTrigger
+            value="soap"
+            className="rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm text-sm px-3 py-1.5"
+          >
+            <ClipboardList className="w-3 h-3 mr-1" />
+            {t("soapNoteTab")}
+          </TabsTrigger>
+          <TabsTrigger
+            value="transcript"
+            className="rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm text-sm px-3 py-1.5"
+          >
+            <FileText className="w-3 h-3 mr-1" />
+            {t("transcriptTab")}
+          </TabsTrigger>
+        </TabsList>
+
+        {/* Transcript Tab */}
+        <TabsContent value="transcript" className="mt-4">
+          <div className="glass-card p-4 max-h-[400px] overflow-y-auto space-y-2">
+            {transcripts.length > 0 ? (
+              transcripts.map((tr, i) => (
+                <div
+                  key={tr.id || i}
+                  className="flex items-start gap-2 text-xs"
+                >
+                  <span className="text-muted-foreground font-mono w-12 flex-shrink-0">
+                    {formatTimestamp(tr.timestamp_start)}
+                  </span>
+                  {tr.speaker !== "unknown" && (
+                    <div
+                      className={`flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold flex-shrink-0 ${getSpeakerColor(tr.speaker)}`}
+                    >
+                      {getSpeakerIcon(tr.speaker)}
+                      <span>{tr.speaker.toUpperCase()}</span>
+                    </div>
+                  )}
+                  <span className="text-foreground leading-relaxed">
+                    {tr.text}
+                  </span>
+                </div>
+              ))
+            ) : (
+              <p className="text-center text-muted-foreground py-8 text-sm">
+                {t("noTranscriptSegments")}
+              </p>
+            )}
+          </div>
+        </TabsContent>
+
+        {/* AI Summary Tab */}
+        <TabsContent value="summary" className="mt-4">
+          <div className="glass-card p-4 max-h-[400px] overflow-y-auto">
+            {summary ? (
+              <div className="prose prose-sm dark:prose-invert max-w-none text-foreground">
+                <ReactMarkdown>{summary}</ReactMarkdown>
+              </div>
+            ) : (
+              <p className="text-center text-muted-foreground py-8 text-sm">
+                {t("noAiSummary")}
+              </p>
+            )}
+          </div>
+        </TabsContent>
+
+        {/* Medical Codes Tab */}
+        <TabsContent value="codes" className="mt-4">
+          <div className="glass-card p-4 max-h-[400px] overflow-y-auto space-y-4">
+            {medicalCodes === undefined ? (
+              <div className="flex items-center justify-center gap-2 py-8 text-muted-foreground">
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span className="text-sm">{t("generatingCodes")}</span>
+              </div>
+            ) : medicalCodes ? (
+              <>
+                {medicalCodes.icd10 && medicalCodes.icd10.length > 0 && (
+                  <div>
+                    <h3 className="text-sm font-semibold text-foreground mb-2">
+                      {t("icd10DiagnosisCodes")}
+                    </h3>
+                    <table className="w-full text-xs">
+                      <thead>
+                        <tr className="border-b border-border">
+                          <th className="text-left p-2 font-medium text-muted-foreground">
+                            {t("codeHeader")}
+                          </th>
+                          <th className="text-left p-2 font-medium text-muted-foreground">
+                            {t("descriptionHeader")}
+                          </th>
+                          <th className="text-left p-2 font-medium text-muted-foreground">
+                            {t("confidenceHeader")}
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {medicalCodes.icd10.map((code, i) => (
+                          <tr key={i} className="border-b border-border">
+                            <td className="p-2 font-mono font-semibold">
+                              {code.code}
+                            </td>
+                            <td className="p-2 text-foreground">
+                              {code.description}
+                            </td>
+                            <td className="p-2 text-muted-foreground uppercase">
+                              {code.confidence || "-"}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+                {medicalCodes.cpt && medicalCodes.cpt.length > 0 && (
+                  <div>
+                    <h3 className="text-sm font-semibold text-foreground mb-2">
+                      {t("cptProcedureCodes")}
+                    </h3>
+                    <table className="w-full text-xs">
+                      <thead>
+                        <tr className="border-b border-border">
+                          <th className="text-left p-2 font-medium text-muted-foreground">
+                            {t("codeHeader")}
+                          </th>
+                          <th className="text-left p-2 font-medium text-muted-foreground">
+                            {t("descriptionHeader")}
+                          </th>
+                          <th className="text-left p-2 font-medium text-muted-foreground">
+                            {t("confidenceHeader")}
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {medicalCodes.cpt.map((code, i) => (
+                          <tr key={i} className="border-b border-border">
+                            <td className="p-2 font-mono font-semibold">
+                              {code.code}
+                            </td>
+                            <td className="p-2 text-foreground">
+                              {code.description}
+                            </td>
+                            <td className="p-2 text-muted-foreground uppercase">
+                              {code.confidence || "-"}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+                {(!medicalCodes.icd10 || medicalCodes.icd10.length === 0) &&
+                  (!medicalCodes.cpt || medicalCodes.cpt.length === 0) && (
+                    <p className="text-center text-muted-foreground py-8 text-sm">
+                      {t("noMedicalCodesIdentified")}
+                    </p>
+                  )}
+              </>
+            ) : (
+              <p className="text-center text-muted-foreground py-8 text-sm">
+                {t("noMedicalCodesGenerated")}
+              </p>
+            )}
+          </div>
+        </TabsContent>
+
+        {/* SOAP Note Tab */}
+        <TabsContent value="soap" className="mt-4">
+          <div className="glass-card p-4 max-h-[400px] overflow-y-auto">
+            {soapNote ? (
+              <div className="prose prose-sm dark:prose-invert max-w-none text-foreground">
+                <ReactMarkdown>{soapNote}</ReactMarkdown>
+              </div>
+            ) : (
+              <p className="text-center text-muted-foreground py-8 text-sm">
+                {t("noSoapNote")}
+              </p>
+            )}
+          </div>
+        </TabsContent>
+      </Tabs>
+
+      {/* Action Buttons */}
+      <div className="pt-4 border-t border-border space-y-3">
+        {/* Email status feedback */}
+        {emailStatus === "sent" && (
+          <div className="flex items-center gap-2 text-sm text-green-500 bg-green-500/10 rounded-lg px-3 py-2">
+            <CheckCircle className="w-4 h-4 flex-shrink-0" />
+            <span>{t("emailSent", { email: patient?.email ?? "" })}</span>
+          </div>
+        )}
+        {emailStatus === "error" && emailError && (
+          <div className="flex items-center gap-2 text-sm text-destructive bg-destructive/10 rounded-lg px-3 py-2">
+            <XCircle className="w-4 h-4 flex-shrink-0" />
+            <span>{emailError}</span>
+          </div>
+        )}
+
+        <div className="grid grid-cols-2 gap-3">
+          {/* Back */}
+          <Button
+            variant="outline"
+            onClick={() =>
+              patientId
+                ? router.push(`/patients/${patientId}` as any)
+                : router.push("/consultations" as any)
+            }
+            className="col-span-2 sm:col-span-1"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            {patientId ? t("backToPatient") : t("backToConsultations")}
+          </Button>
+
+          {/* Print */}
+          <Button
+            variant="outline"
+            onClick={handlePrint}
+            className="col-span-2 sm:col-span-1"
+          >
+            <Printer className="w-4 h-4 mr-2" />
+            {t("print")}
+          </Button>
+
+          {/* Email to Patient */}
+          <Button
+            variant="outline"
+            onClick={handleEmailToPatient}
+            disabled={
+              !hasRealEmail ||
+              emailStatus === "sending" ||
+              emailStatus === "sent"
+            }
+            className="col-span-2 sm:col-span-1"
+            title={!hasRealEmail ? t("emailNotAvailable") : undefined}
+          >
+            {emailStatus === "sending" ? (
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+            ) : emailStatus === "sent" ? (
+              <CheckCircle className="w-4 h-4 mr-2 text-green-500" />
+            ) : (
+              <Mail className="w-4 h-4 mr-2" />
+            )}
+            {emailStatus === "sent" ? t("emailSentShort") : t("emailToPatient")}
+            {!hasRealEmail && (
+              <span className="ml-2 text-xs text-muted-foreground">
+                ({t("noEmail")})
+              </span>
+            )}
+          </Button>
+
+          {/* WhatsApp — coming soon */}
+          <Button
+            variant="outline"
+            disabled
+            className="col-span-2 sm:col-span-1 relative opacity-60"
+          >
+            <MessageCircle className="w-4 h-4 mr-2" />
+            {t("whatsapp")}
+            <span className="ml-2 text-[10px] font-semibold uppercase tracking-wide bg-muted text-muted-foreground rounded px-1.5 py-0.5">
+              {t("comingSoon")}
+            </span>
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}

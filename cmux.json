@@ -1,0 +1,82 @@
+[
+  {
+    "name": "larinova",
+    "keywords": ["larinova", "startup", "landing", "command-center", "mvp"],
+    "description": "Larinova — Startup product suite",
+    "restart": "confirm",
+    "workspace": {
+      "name": "larinova",
+      "cwd": ".",
+      "color": "Yellow",
+      "layout": {
+        "direction": "vertical",
+        "split": 0.75,
+        "children": [
+          {
+            "direction": "vertical",
+            "split": 0.6,
+            "children": [
+              {
+                "direction": "horizontal",
+                "split": 0.333,
+                "children": [
+                  {
+                    "surfaces": [
+                      {
+                        "type": "terminal",
+                        "command": "claude",
+                        "name": "claude-1",
+                        "focus": true
+                      }
+                    ]
+                  },
+                  {
+                    "direction": "horizontal",
+                    "split": 0.5,
+                    "children": [
+                      {
+                        "surfaces": [
+                          {
+                            "type": "terminal",
+                            "command": "claude",
+                            "name": "claude-2"
+                          }
+                        ]
+                      },
+                      {
+                        "surfaces": [
+                          {
+                            "type": "terminal",
+                            "command": "claude",
+                            "name": "claude-3"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "surfaces": [
+                  {
+                    "type": "terminal",
+                    "command": "claude",
+                    "name": "agent-teams"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "surfaces": [
+              {
+                "type": "terminal",
+                "name": "terminal"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+]
