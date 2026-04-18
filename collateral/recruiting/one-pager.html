@@ -7,10 +7,41 @@
     <link rel="stylesheet" href="../_shared/design-tokens.css" />
     <link rel="stylesheet" href="../_shared/print.css" />
     <style>
+      @page {
+        size: A4;
+        margin: 12mm 18mm 10mm 18mm;
+      }
+
       :root {
         --accent: #1a7a4f;
         --accent-light: #eaf7f0;
         --accent-dark: #115c3a;
+      }
+
+      /* Compact overrides to keep everything on one page */
+      hr.rule {
+        margin: 6pt 0 !important;
+      }
+      .cta {
+        padding: 10pt 14pt !important;
+      }
+      .cta-offer {
+        margin: 0 0 3pt 0 !important;
+        font-size: var(--ts-sm) !important;
+      }
+      .cta-action {
+        margin: 0 0 2pt 0 !important;
+        font-size: var(--ts-md) !important;
+      }
+      .cta-contact {
+        font-size: var(--ts-xs) !important;
+      }
+      .header {
+        padding-bottom: 6pt !important;
+        margin-bottom: 8pt !important;
+      }
+      .hero {
+        margin-bottom: 10pt !important;
       }
 
       .two-col {
@@ -136,8 +167,6 @@
         </p>
       </section>
 
-      <hr class="rule" />
-
       <!-- SECTION 1: WHAT LARINOVA IS -->
       <p class="section-label">What Larinova Is</p>
       <p class="what-larinova">
@@ -148,8 +177,6 @@
         Indonesia. The only 22-language EMR in India. Live now, paying
         customers, 1-month free trial for new doctors.
       </p>
-
-      <hr class="rule" />
 
       <!-- TWO COLUMN: WHO WE'RE LOOKING FOR + WHAT YOU'D DO -->
       <div class="two-col">
@@ -185,52 +212,63 @@
         </div>
       </div>
 
-      <hr class="rule" />
-
       <!-- SECTION 4: HOW YOU EARN -->
-      <p class="section-label">
-        How You Earn
-        <span class="todo-badge">TODO: Gabriel to fill commission numbers</span>
-      </p>
+      <p class="section-label">How You Earn</p>
       <div class="earn-grid">
         <div class="earn-item">
           <p class="earn-item-title">Per Activation</p>
           <p class="earn-item-desc">
-            [TODO_COMMISSION_STRUCTURE] per doctor who actively uses the app for
-            &#8805;7 days
+            <strong>Rp 300,000</strong> / <strong>&#8377;1,500</strong> per
+            doctor who actively uses the app for &#8805;7 days
           </p>
         </div>
         <div class="earn-item">
           <p class="earn-item-title">Per Paid Conversion</p>
           <p class="earn-item-desc">
-            [TODO_COMMISSION_STRUCTURE] per doctor who converts to a paying plan
-            after the free trial
+            <strong>Rp 500,000</strong> / <strong>&#8377;2,500</strong> per
+            doctor who converts to a paying plan after the free trial
           </p>
         </div>
         <div class="earn-item">
           <p class="earn-item-title">Clinic / Hospital Bonus</p>
           <p class="earn-item-desc">
-            [TODO_COMMISSION_STRUCTURE] bonus for clinic or hospital deals with
-            5+ doctors in one practice
+            <strong>Rp 1,000,000</strong> / <strong>&#8377;5,000</strong>
+            additional per activation for 5+ doctor practices
           </p>
         </div>
       </div>
 
+      <div
+        style="
+          margin-top: 8pt;
+          padding: 6pt 10pt;
+          background: var(--accent-tint, #ebf7ef);
+          border-left: 3px solid var(--accent, #2b8c4a);
+          border-radius: 3px;
+          font-size: 9pt;
+          line-height: 1.4;
+        "
+      >
+        <strong>Founding Ambassador program:</strong> first 10 globally (5
+        Indonesia + 5 India) earn <strong>2&times; activation payout</strong>
+        (Rp 600,000 / &#8377;3,000) on first 20 brought doctors. Lifetime title,
+        direct founder access, first-pick territory.
+      </div>
+
       <!-- SECTION 5: WHAT YOU GET -->
       <p class="section-label">What You Get</p>
-      <ul class="bullet-list" style="margin-bottom: 10pt">
+      <ul class="bullet-list" style="margin-bottom: 8pt">
         <li>
-          <strong>Full sales kit</strong> &#8212; 1-pagers, pitch decks, message
-          templates in Bahasa Indonesia, English, and Tamil
+          <strong>Full sales kit</strong> &#8212; 1-pagers, decks, WhatsApp
+          templates in Bahasa, English, Tamil
         </li>
         <li>
-          <strong>Direct line to Gabriel</strong> (founder) for any question,
-          any time
+          <strong>Direct line to Gabriel</strong> (founder) &#8212; any
+          question, any time
         </li>
         <li>
-          <strong>First-mover advantage</strong> &#8212; the Larinova ambassador
-          network is small right now; early ambassadors get priority support and
-          the best territories
+          <strong>First-mover advantage</strong> &#8212; priority support and
+          first-pick territory as we expand
         </li>
       </ul>
 
@@ -242,25 +280,14 @@
           <p class="cta-offer">
             15-minute intro call &#8212; no commitment, no pressure.
           </p>
-          <p class="cta-action">app.larinova.com/ambassador</p>
+          <p class="cta-action">cal.com/gabrielaxy/larinova</p>
           <p class="cta-contact">
-            or WhatsApp: <strong>[TODO_WHATSAPP_NUMBER]</strong>
-            &nbsp;&nbsp;&#183;&nbsp;&nbsp;
-            <strong>hello@larinova.com</strong>
+            WhatsApp: <strong>+91 84386 11643</strong> (India, direct to
+            founder) &nbsp;&nbsp;&#183;&nbsp;&nbsp;
+            <strong>gabriel@larinova.com</strong>
           </p>
         </div>
       </section>
-
-      <!-- FOOTER -->
-      <footer class="footer">
-        <img
-          class="footer-logo"
-          src="../../logo-gen/larinova-logo-dark.png"
-          alt="Larinova"
-        />
-        <span class="footer-mid">AI Medical Scribe for Doctors</span>
-        <span class="footer-domain">larinova.com</span>
-      </footer>
     </div>
   </body>
 </html>
