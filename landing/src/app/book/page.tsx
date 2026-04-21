@@ -11,9 +11,21 @@ export const metadata: Metadata = {
 
 export default function BookPage() {
   return (
-    <div className="min-h-screen bg-gradient-mesh bg-medical-grid">
+    <div className="relative min-h-screen bg-background overflow-hidden">
+      {/* Ambient emerald glow — mirrors FinalCTA / DiscoveryForm */}
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[700px] bg-primary/10 rounded-full blur-[140px]" />
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(ellipse at 50% 0%, rgba(16,185,129,0.08) 0%, transparent 60%)",
+          }}
+        />
+      </div>
+
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-lg border-b border-border/50">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-background/70 backdrop-blur-lg border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 md:h-20">
             <Link href="/" className="group">
@@ -21,11 +33,12 @@ export default function BookPage() {
                 <Image
                   src="/larinova-icon.png"
                   alt="Larinova"
-                  width={32}
-                  height={32}
-                  className="h-8 w-8 object-contain"
+                  width={36}
+                  height={36}
+                  className="h-9 w-9 object-contain"
+                  priority
                 />
-                <span className="text-lg font-semibold text-white tracking-tight">
+                <span className="text-xl font-semibold text-foreground tracking-tight">
                   Larinova
                 </span>
               </div>
@@ -41,11 +54,11 @@ export default function BookPage() {
       </header>
 
       {/* Main Content */}
-      <main className="pt-32 pb-20">
+      <main className="relative pt-32 pb-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Page Header */}
           <div className="text-center mb-12">
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-4">
+            <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-foreground mb-4">
               Book a <span className="text-gradient">Discovery Call</span>
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -55,9 +68,9 @@ export default function BookPage() {
           </div>
 
           {/* Cal.com Embed */}
-          <div className="bg-white rounded-2xl shadow-xl border border-border/50 overflow-hidden">
+          <div className="bg-card rounded-2xl border border-border overflow-hidden shadow-2xl shadow-primary/5">
             <iframe
-              src="https://cal.com/gabrielaxy/larinova?embed=true&theme=light"
+              src="https://cal.com/gabrielaxy/larinova?embed=true&theme=dark"
               width="100%"
               height="700"
               frameBorder="0"
@@ -68,13 +81,13 @@ export default function BookPage() {
 
           {/* Trust indicators */}
           <div className="mt-12 text-center">
-            <p className="text-sm text-muted-foreground mb-4">
-              What to expect from this call:
+            <p className="font-mono text-xs uppercase tracking-wider text-muted-foreground mb-5">
+              What to expect from this call
             </p>
-            <div className="flex flex-wrap justify-center gap-6 text-sm text-muted-foreground">
+            <div className="flex flex-wrap justify-center gap-x-8 gap-y-3 text-sm text-muted-foreground">
               <div className="flex items-center gap-2">
                 <svg
-                  className="w-5 h-5 text-accent"
+                  className="w-5 h-5 text-primary"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -90,7 +103,7 @@ export default function BookPage() {
               </div>
               <div className="flex items-center gap-2">
                 <svg
-                  className="w-5 h-5 text-accent"
+                  className="w-5 h-5 text-primary"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -102,11 +115,11 @@ export default function BookPage() {
                     d="M5 13l4 4L19 7"
                   />
                 </svg>
-                <span>Q&A session</span>
+                <span>Q&amp;A session</span>
               </div>
               <div className="flex items-center gap-2">
                 <svg
-                  className="w-5 h-5 text-accent"
+                  className="w-5 h-5 text-primary"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
