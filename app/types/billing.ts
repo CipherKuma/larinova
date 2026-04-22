@@ -33,6 +33,8 @@ export const FREE_TIER_LIMITS: Record<AIFeature, number> = {
   helena_chat: 10000,
 };
 
+export const FREE_TIER_CONSULTATION_LIMIT = 20;
+
 export type PricingRegion = "IN" | "ID" | "default";
 
 export const PLAN_PRICES: Record<
