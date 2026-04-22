@@ -49,7 +49,68 @@ export interface FeaturePreviewData {
   prescriptionPreview: { med: string; dose: string; dur: string }[];
 }
 
+export interface OpdPhase {
+  num: string;
+  label: string;
+  verb: string;
+  noun: string;
+  desc: string;
+  accent: string;
+}
+
+export interface OpdHero {
+  headline: string;
+  sub: string;
+  ctaPrimary: string;
+  ctaPrimaryHref: string;
+  ctaSecondary: string;
+  ctaSecondaryHref: string;
+}
+
+export interface OpdFeatures {
+  sectionLabel: string;
+  headlinePre: string;
+  headlineAccent: string;
+  phases: OpdPhase[];
+}
+
+export interface OpdPricingTier {
+  name: string;
+  subtitle: string;
+  priceMonthly: string;
+  priceYearly: string;
+  periodMonthly: string;
+  periodYearly: string;
+  features: string[];
+  cta: string;
+  ctaHref: string;
+  badge?: string;
+  savingsBadge?: string;
+}
+
+export interface OpdPricing {
+  sectionLabel: string;
+  headlinePre: string;
+  headlineAccent: string;
+  monthlyLabel: string;
+  yearlyLabel: string;
+  savingsPill: string;
+  free: OpdPricingTier;
+  pro: OpdPricingTier;
+  enterpriseLabel: string;
+  enterpriseSub: string;
+  enterpriseCta: string;
+  enterpriseHref: string;
+}
+
+export interface OpdContent {
+  hero: OpdHero;
+  features: OpdFeatures;
+  pricing: OpdPricing;
+}
+
 export interface LandingContent {
+  opd?: OpdContent;
   nav: {
     links: string[];
     cta: string;
@@ -174,6 +235,112 @@ export interface LandingContent {
 
 export const content: Record<Locale, LandingContent> = {
   in: {
+    opd: {
+      hero: {
+        headline: "Larinova — the OPD assistant for Indian doctors.",
+        sub: "See more patients. Type less. Send prescriptions on WhatsApp.",
+        ctaPrimary: "Start free",
+        ctaPrimaryHref: "https://app.larinova.com/in/signup",
+        ctaSecondary: "See how it works",
+        ctaSecondaryHref: "#opd-journey",
+      },
+      features: {
+        sectionLabel: "The journey",
+        headlinePre: "One OPD.",
+        headlineAccent: "Five moments you never think about again.",
+        phases: [
+          {
+            num: "01",
+            label: "BOOK",
+            verb: "Your booking page,",
+            noun: "live in 60 seconds.",
+            desc: "Share a single link. Patients pick a slot, fill contact details, and get confirmations over WhatsApp, SMS, and email — automatically.",
+            accent: "#10b981",
+          },
+          {
+            num: "02",
+            label: "INTAKE",
+            verb: "Patients fill your intake form.",
+            noun: "Not ours.",
+            desc: "Design the questions you actually ask. Patients answer before the consult, upload labs and photos. The AI follows up for missing details so you don't have to.",
+            accent: "#0ea5e9",
+          },
+          {
+            num: "03",
+            label: "PREP",
+            verb: "Walk into every consult",
+            noun: "prepared.",
+            desc: "Our pre-consult AI reads the intake, the history, the uploads — and hands you a 60-second Prep Brief the moment the patient arrives. Red flags highlighted.",
+            accent: "#a855f7",
+          },
+          {
+            num: "04",
+            label: "CONSULT",
+            verb: "You talk.",
+            noun: "We write.",
+            desc: "Tap record. Speak Tamil, Hindi, English, code-mixed — anything. Larinova produces SOAP notes, ICD-10 codes, and a signed prescription before you stand up.",
+            accent: "#f59e0b",
+          },
+          {
+            num: "05",
+            label: "FOLLOW-UP",
+            verb: "Follow-ups,",
+            noun: "on autopilot.",
+            desc: "Day 1, 3, 7 — a wellness agent checks in over WhatsApp. It probes, classifies, and flags you only when something actually needs attention.",
+            accent: "#ef4444",
+          },
+        ],
+      },
+      pricing: {
+        sectionLabel: "Pricing",
+        headlinePre: "Simple.",
+        headlineAccent: "Built for a solo OPD.",
+        monthlyLabel: "Monthly",
+        yearlyLabel: "Annual",
+        savingsPill: "Save 17%",
+        free: {
+          name: "Free",
+          subtitle: "Everything, up to a point.",
+          priceMonthly: "₹0",
+          priceYearly: "₹0",
+          periodMonthly: "/month",
+          periodYearly: "/year",
+          features: [
+            "20 consultations per month",
+            "All five OPD phases included",
+            "WhatsApp / SMS / Email follow-ups",
+            "SOAP notes, ICD-10, prescriptions",
+            "No credit card required",
+          ],
+          cta: "Start free",
+          ctaHref: "https://app.larinova.com/in/signup",
+        },
+        pro: {
+          name: "Pro",
+          subtitle: "For doctors with a full day.",
+          priceMonthly: "₹1,500",
+          priceYearly: "₹15,000",
+          periodMonthly: "/month",
+          periodYearly: "/year",
+          savingsBadge: "Save ₹3,000",
+          features: [
+            "Unlimited consultations",
+            "Priority pre-consult AI",
+            "Custom intake templates",
+            "Full Rx formulary + PDF export",
+            "Priority support",
+          ],
+          cta: "Subscribe to Pro",
+          ctaHref: "https://app.larinova.com/in/signup?next=/settings/billing",
+          badge: "POPULAR",
+        },
+        enterpriseLabel: "Hospitals & clinic chains",
+        enterpriseSub:
+          "Multi-doctor deployments, SSO, custom billing cycles, on-prem options.",
+        enterpriseCta: "Talk to us",
+        enterpriseHref: "mailto:hello@larinova.com",
+      },
+    },
     nav: {
       links: ["Features", "Pricing", "Blog"],
       cta: "Try Free for 1 Month",
