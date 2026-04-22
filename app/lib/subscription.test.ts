@@ -12,6 +12,7 @@ import {
   getMonthlyConsultationCount,
   startOfMonthUtcISO,
   checkConsultationLimit,
+  upgradeIfWhitelisted,
 } from "./subscription";
 import { FREE_TIER_CONSULTATION_LIMIT } from "@/types/billing";
 
@@ -102,6 +103,139 @@ describe("startOfMonthUtcISO", () => {
   it("handles December rollover correctly", () => {
     const ref = new Date(Date.UTC(2025, 11, 31, 23, 59, 59));
     expect(startOfMonthUtcISO(ref)).toBe("2025-12-01T00:00:00.000Z");
+  });
+});
+
+function makeUpgradeSupabase(opts: { alphaWelcomedAt: string | null }) {
+  const doctorSelect: any = {
+    select: vi.fn().mockImplementation(() => doctorSelect),
+    eq: vi.fn().mockImplementation(() => doctorSelect),
+    single: vi.fn().mockResolvedValue({
+      data: { id: "doc-1", alpha_welcomed_at: opts.alphaWelcomedAt },
+      error: null,
+    }),
+  };
+  const doctorUpdate = vi.fn().mockReturnValue({
+    eq: vi.fn().mockResolvedValue({ error: null }),
+  });
+  const doctorBuilder: any = {
+    select: doctorSelect.select,
+    eq: doctorSelect.eq,
+    single: doctorSelect.single,
+    update: doctorUpdate,
+  };
+  const upsert = vi.fn().mockResolvedValue({ error: null });
+  const subBuilder: any = { upsert };
+  const from = vi.fn().mockImplementation((table: string) => {
+    if (table === "larinova_doctors") return doctorBuilder;
+    if (table === "larinova_subscriptions") return subBuilder;
+    throw new Error(`unexpected table: ${table}`);
+  });
+  return { supabase: { from }, upsert, doctorUpdate };
+}
+
+describe("upgradeIfWhitelisted", () => {
+  beforeEach(() => {
+    vi.mocked(createClient).mockReset();
+  });
+
+  it("returns {upgraded:false, firstTime:false} for an email not whitelisted", async () => {
+    const { supabase } = makeUpgradeSupabase({ alphaWelcomedAt: null });
+    vi.mocked(createClient).mockResolvedValue(supabase as any);
+    const result = await upgradeIfWhitelisted("outsider@example.com", "doc-1");
+    expect(result).toEqual({ upgraded: false, firstTime: false });
+  });
+
+  it("upserts pro subscription + sets is_alpha + calls welcome on first time", async () => {
+    const whitelistedEmail = "alpha.dr@test.larinova.com";
+    (PRO_WHITELIST as unknown as string[]).push(whitelistedEmail);
+    try {
+      const { supabase, upsert, doctorUpdate } = makeUpgradeSupabase({
+        alphaWelcomedAt: null,
+      });
+      vi.mocked(createClient).mockResolvedValue(supabase as any);
+      const welcome = vi.fn().mockResolvedValue(true);
+
+      const result = await upgradeIfWhitelisted(
+        whitelistedEmail,
+        "doc-1",
+        welcome,
+      );
+
+      expect(result.upgraded).toBe(true);
+      expect(result.firstTime).toBe(true);
+      expect(welcome).toHaveBeenCalledWith("doc-1");
+      expect(upsert).toHaveBeenCalledWith(
+        expect.objectContaining({
+          doctor_id: "doc-1",
+          plan: "pro",
+          status: "whitelisted",
+          billing_interval: null,
+          razorpay_subscription_id: null,
+        }),
+        expect.objectContaining({ onConflict: "doctor_id" }),
+      );
+      expect(doctorUpdate).toHaveBeenCalled();
+      const updatePayload = doctorUpdate.mock.calls[0][0];
+      expect(updatePayload.is_alpha).toBe(true);
+      expect(typeof updatePayload.alpha_welcomed_at).toBe("string");
+    } finally {
+      (PRO_WHITELIST as unknown as string[]).pop();
+    }
+  });
+
+  it("skips welcome + alpha_welcomed_at when already welcomed", async () => {
+    const whitelistedEmail = "alpha.dr2@test.larinova.com";
+    (PRO_WHITELIST as unknown as string[]).push(whitelistedEmail);
+    try {
+      const { supabase, upsert, doctorUpdate } = makeUpgradeSupabase({
+        alphaWelcomedAt: "2026-04-20T10:00:00.000Z",
+      });
+      vi.mocked(createClient).mockResolvedValue(supabase as any);
+      const welcome = vi.fn().mockResolvedValue(true);
+
+      const result = await upgradeIfWhitelisted(
+        whitelistedEmail,
+        "doc-2",
+        welcome,
+      );
+
+      expect(result.upgraded).toBe(true);
+      expect(result.firstTime).toBe(false);
+      expect(welcome).not.toHaveBeenCalled();
+      expect(upsert).toHaveBeenCalled();
+      if (doctorUpdate.mock.calls.length > 0) {
+        const updatePayload = doctorUpdate.mock.calls[0][0];
+        expect(updatePayload.alpha_welcomed_at).toBeUndefined();
+      }
+    } finally {
+      (PRO_WHITELIST as unknown as string[]).pop();
+    }
+  });
+
+  it("does NOT set alpha_welcomed_at when welcome callback fails", async () => {
+    const whitelistedEmail = "alpha.dr3@test.larinova.com";
+    (PRO_WHITELIST as unknown as string[]).push(whitelistedEmail);
+    try {
+      const { supabase, doctorUpdate } = makeUpgradeSupabase({
+        alphaWelcomedAt: null,
+      });
+      vi.mocked(createClient).mockResolvedValue(supabase as any);
+      const welcome = vi.fn().mockResolvedValue(false);
+
+      const result = await upgradeIfWhitelisted(
+        whitelistedEmail,
+        "doc-3",
+        welcome,
+      );
+
+      expect(result.upgraded).toBe(true);
+      expect(result.firstTime).toBe(true);
+      const updatePayload = doctorUpdate.mock.calls[0]?.[0] ?? {};
+      expect(updatePayload.alpha_welcomed_at).toBeUndefined();
+    } finally {
+      (PRO_WHITELIST as unknown as string[]).pop();
+    }
   });
 });
 

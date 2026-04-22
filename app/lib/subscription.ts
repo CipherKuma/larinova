@@ -31,6 +31,60 @@ export function isWhitelisted(email: string): boolean {
   return emailInList(email, PRO_WHITELIST);
 }
 
+export type SendAlphaWelcome = (doctorId: string) => Promise<boolean>;
+
+export async function upgradeIfWhitelisted(
+  email: string,
+  doctorId: string,
+  sendWelcome?: SendAlphaWelcome,
+): Promise<{ upgraded: boolean; firstTime: boolean }> {
+  if (!isWhitelisted(email)) {
+    return { upgraded: false, firstTime: false };
+  }
+
+  const supabase = await createClient();
+
+  const { data: doctor } = await supabase
+    .from("larinova_doctors")
+    .select("id, alpha_welcomed_at")
+    .eq("id", doctorId)
+    .single();
+
+  const alreadyWelcomed = Boolean(doctor?.alpha_welcomed_at);
+  const firstTime = !alreadyWelcomed;
+
+  await supabase.from("larinova_subscriptions").upsert(
+    {
+      doctor_id: doctorId,
+      plan: "pro",
+      status: "whitelisted",
+      billing_interval: null,
+      razorpay_subscription_id: null,
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: "doctor_id" },
+  );
+
+  const doctorPatch: {
+    is_alpha: boolean;
+    alpha_welcomed_at?: string;
+  } = { is_alpha: true };
+
+  if (firstTime && sendWelcome) {
+    const ok = await sendWelcome(doctorId);
+    if (ok) {
+      doctorPatch.alpha_welcomed_at = new Date().toISOString();
+    }
+  }
+
+  await supabase
+    .from("larinova_doctors")
+    .update(doctorPatch)
+    .eq("id", doctorId);
+
+  return { upgraded: true, firstTime };
+}
+
 export async function getSubscription(
   doctorId: string,
 ): Promise<Subscription | null> {
