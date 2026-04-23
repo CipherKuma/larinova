@@ -2,7 +2,6 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { TopNavbar } from "@/components/layout/TopNavbar";
-import AlphaWelcomeBanner from "@/components/alpha-welcome-banner";
 import { ClientProviders } from "./ClientProviders";
 
 export const dynamic = "force-dynamic";
