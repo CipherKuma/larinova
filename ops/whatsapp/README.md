@@ -1,16 +1,16 @@
-# WhatsApp CLI (larinova-ops)
+# WhatsApp CLI (larinova/ops)
 
-Port of the `clan-runtime` WhatsApp setup — minimal `whatsapp-web.js` wrapper for sending messages from this ops project. Pairs via QR once, then session lives on disk.
+Minimal `whatsapp-web.js` wrapper for sending messages from this ops project. **Reuses Marty's already-paired session by default** — no QR pairing needed.
 
-## Setup (once)
+## Quick start (reuse Marty)
 
 ```bash
-cd ~/Documents/products/larinova-ops/whatsapp
-npm install                      # installs whatsapp-web.js + Chromium
-npm run pair                     # prints a QR in the terminal
+cd ~/Documents/products/larinova/ops/whatsapp
+npm install                      # first run only, downloads Chromium
+npm run list                     # verify session is live, print your chats + JIDs
 ```
 
-On your phone: **WhatsApp → Settings → Linked Devices → Link a Device → scan QR**. Session persists to `./data/whatsapp-auth/` (gitignored).
+That's it. By default, scripts point at `~/Documents/agents/marty/data/whatsapp-auth/` with `clientId: "marty"`, so whatever device slot Marty registered is what these scripts use.
 
 ## Use
 
@@ -33,9 +33,43 @@ npm run send -- --to=919884009228@c.us --file=/tmp/brief.pdf --caption="Today's 
 npm run send -- --to=919884009228@c.us --file=~/Desktop/photo.jpg --caption="FYI"
 ```
 
+## Concurrency with Marty
+
+`whatsapp-web.js` only allows **one live process per (dataPath, clientId) pair**. If Marty is currently running against this session, these scripts will fail to attach. Stop Marty first:
+
+```bash
+# Check if Marty is up
+ps aux | grep marty | grep -v grep
+
+# If yes, stop it before running our scripts (see clan-runtime's stop-all.sh)
+```
+
+When you're done with ops work and want to bring Marty back, just restart it. The auth state is shared, so Marty picks up right where you left off.
+
+## Want an isolated session instead?
+
+If you'd rather not share Marty's slot (so both can run concurrently), pair as a new linked device:
+
+```bash
+WHATSAPP_AUTH_DIR=./data/whatsapp-auth \
+WHATSAPP_CLIENT_ID=larinova-ops \
+npm run pair
+# scan the QR from your phone
+```
+
+Then prefix all future `npm run` calls with the same two env vars, or `export` them in your shell. That uses `ops/whatsapp/data/whatsapp-auth/` (gitignored) as a separate device.
+
+## Config
+
+Session location is controlled by `config.ts` via env vars:
+
+| Env var               | Default                                                    |
+| --------------------- | ---------------------------------------------------------- |
+| `WHATSAPP_AUTH_DIR`   | `~/Documents/agents/marty/data/whatsapp-auth`              |
+| `WHATSAPP_CLIENT_ID`  | `marty`                                                    |
+
 ## Notes
 
-- **One concurrent session.** `whatsapp-web.js` only allows one process attached to a session at a time. If you also run the clan-runtime Marty agent against the same WhatsApp account, stop it before running these scripts — they use a different `clientId` (`larinova-ops` vs `marty`) so they pair as separate linked devices, but quitting the other helps avoid races on the same device slot on your phone.
-- **JID format.** Direct messages are `<countrycode><number>@c.us` (no `+`, no spaces). Groups are `<long-id>@g.us`. `list` prints both.
-- **Do NOT commit** `data/` — it holds the live auth token. Already in `.gitignore`.
+- **JID format.** DMs are `<countrycode><number>@c.us` (no `+`, no spaces). Groups are `<long-id>@g.us`. `list` prints both.
+- **Do NOT commit** `data/` — it holds the live auth token. Already gitignored.
 - **Based on** `~/Documents/agents/clan-runtime/scripts/whatsapp-pair.ts` + `wa-multi-test.ts`.

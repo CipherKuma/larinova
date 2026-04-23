@@ -10,7 +10,7 @@
  *   npm run list -- --search=xaviour
  */
 
-import { resolve } from "path";
+import { AUTH_DIR, CLIENT_ID, PUPPETEER_OPTS } from "./config";
 
 type Args = Record<string, string | boolean>;
 const args: Args = {};
@@ -25,25 +25,18 @@ const groupsOnly = args.groups === true;
 const limit = Number(args.limit ?? 30);
 const search = (args.search as string | undefined)?.toLowerCase();
 
-const authDir = resolve(process.cwd(), "data", "whatsapp-auth");
-
 const wwebjs: any = await import("whatsapp-web.js");
 const { Client, LocalAuth } = wwebjs.default ?? wwebjs;
 
 const client = new Client({
-  authStrategy: new LocalAuth({ clientId: "larinova-ops", dataPath: authDir }),
-  puppeteer: {
-    headless: true,
-    args: [
-      "--no-sandbox",
-      "--disable-setuid-sandbox",
-      "--disable-dev-shm-usage",
-    ],
-  },
+  authStrategy: new LocalAuth({ clientId: CLIENT_ID, dataPath: AUTH_DIR }),
+  puppeteer: PUPPETEER_OPTS,
 });
 
 client.on("qr", () => {
-  console.error("Session invalid. Run `npm run pair` first.");
+  console.error(
+    `Session invalid at ${AUTH_DIR} (clientId=${CLIENT_ID}). Either the Marty session was cleared, or Marty/another process is holding it. Run npm run pair to re-pair.`,
+  );
   process.exit(1);
 });
 

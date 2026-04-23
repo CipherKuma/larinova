@@ -1,26 +1,29 @@
 #!/usr/bin/env npx tsx
 /**
- * WhatsApp QR pairing for larinova-ops.
+ * WhatsApp QR pairing — only needed as a fallback.
  *
- * Usage:
- *   cd larinova-ops/whatsapp
- *   npm install        (first run only)
+ * By default `send.ts` / `list.ts` reuse Marty's already-paired session at
+ * ~/Documents/agents/marty/data/whatsapp-auth/ (see config.ts). Run this
+ * script only if that session is lost/unpaired, OR if you want to create
+ * an isolated larinova-ops session. To isolate, run with:
+ *
+ *   WHATSAPP_AUTH_DIR=./data/whatsapp-auth \
+ *   WHATSAPP_CLIENT_ID=larinova-ops \
  *   npm run pair
  *
  * On your phone: WhatsApp → Settings → Linked Devices → Link a Device → scan QR.
- * Session persists to ./data/whatsapp-auth/. Do not commit that directory.
  */
 
 import { mkdirSync } from "fs";
-import { resolve } from "path";
+import { AUTH_DIR, CLIENT_ID, PUPPETEER_OPTS } from "./config";
 
-const authDir = resolve(process.cwd(), "data", "whatsapp-auth");
-mkdirSync(authDir, { recursive: true });
+mkdirSync(AUTH_DIR, { recursive: true });
 
 console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-console.log("  larinova-ops WhatsApp pairing");
+console.log("  WhatsApp pairing");
 console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-console.log(`  Auth dir: ${authDir}`);
+console.log(`  Auth dir:  ${AUTH_DIR}`);
+console.log(`  Client ID: ${CLIENT_ID}`);
 console.log("");
 
 const wwebjs: any = await import("whatsapp-web.js");
@@ -28,15 +31,8 @@ const { Client, LocalAuth } = wwebjs.default ?? wwebjs;
 const qrcode: any = await import("qrcode-terminal");
 
 const client = new Client({
-  authStrategy: new LocalAuth({ clientId: "larinova-ops", dataPath: authDir }),
-  puppeteer: {
-    headless: true,
-    args: [
-      "--no-sandbox",
-      "--disable-setuid-sandbox",
-      "--disable-dev-shm-usage",
-    ],
-  },
+  authStrategy: new LocalAuth({ clientId: CLIENT_ID, dataPath: AUTH_DIR }),
+  puppeteer: PUPPETEER_OPTS,
 });
 
 let qrShown = 0;
