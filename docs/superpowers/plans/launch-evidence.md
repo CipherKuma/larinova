@@ -4,41 +4,41 @@
 
 ## PWA — §15.4
 
-### Status: blocked (as of 2026-04-23)
+### Status: PASS — Lighthouse PWA 100
 
-**Local state**
-- All PWA scaffolding committed (SHAs: `b8a4b1e`)
-  - `app/public/manifest.webmanifest` (Larinova identity, #0b0b0f theme, standalone portrait)
-  - `app/public/icons/` — 192 / 512 / 512-maskable / 180 Apple
-  - `app/app/[locale]/layout.tsx` — `<link rel="manifest">`, apple-touch-icon, apple-mobile-web-app-*, theme-color
-  - `app/next.config.ts` — wrapped with `next-pwa`: NetworkOnly for `/api/*`, StaleWhileRevalidate for js/css/woff2/png/svg/webp/ico, offline fallback at `/offline`
-  - `app/app/offline/page.tsx` — minimal dark offline fallback
-- Proxy matcher (`app/proxy.ts`) updated to exempt `manifest.webmanifest`, `sw.js`, `workbox-*.js`, `fallback*.js`, and the `/offline` route from intl + auth interception. Without this, intl middleware (`localePrefix: "always"`) 307-redirects `/manifest.webmanifest` → `/in/manifest.webmanifest`, which blocks installability.
-
-**Blockers for Lighthouse audit**
-
-1. **Production build fails** — pre-existing Turbopack + `openai@6.22.0` incompatibility at `app/app/api/openai/transcribe/route.ts`:
-   ```
-   ./node_modules/.../openai/client.mjs:16
-   Export Skills doesn't exist in target module
-   ```
-   Not owned by this team (`app/app/api/**` excluded). Blocks service-worker generation (next-pwa only emits `sw.js` in production builds; dev builds have it disabled by design).
-
-2. **PWA commits not on prod** — `main` is 16 commits ahead of `origin/main`; `b8a4b1e` is among them. Production `app.larinova.com`:
-   - `GET /icons/icon-192.png` → 404
-   - `GET /sw.js` → 307 → `/in/sw.js` (before matcher fix)
-   - `GET /manifest.webmanifest` → 307 → `/in/manifest.webmanifest` (before matcher fix)
-
-**Unblocks needed before Lighthouse audit**
-- OpenAI transcribe route fixed (downgrade SDK, swap to Anthropic via claude-service per global rule, or scope the broken export) — owner: notify / api team
-- Push `main` → `origin/main` after build green
-- Vercel preview build succeeds, generates `sw.js` + `workbox-*.js` in `/public/`
-- Run Lighthouse mobile against preview URL
-
-**Target**: PWA ≥ 90. Record final score + screenshot in `/tmp/pwa-lighthouse/` and update this section.
+**Stack**
+- `app/public/manifest.webmanifest` (Larinova identity, #0b0b0f theme, standalone portrait, 192 / 512 / 512-maskable icons)
+- `app/public/icons/` — 192 / 512 / 512-maskable / 180 Apple
+- `app/app/[locale]/layout.tsx` — `<link rel="manifest">`, apple-touch-icon, apple-mobile-web-app-*, theme-color, `<SwRegister />` client component
+- `app/next.config.ts` — wrapped with `@serwist/turbopack` (moved off `next-pwa@5` which is webpack-only and silently no-ops under Next 16 Turbopack)
+- `app/app/sw.ts` — Serwist service worker (defaultCache + /offline fallback for document navigations)
+- `app/app/serwist/[path]/route.ts` — route handler that serves the compiled SW at `/serwist/sw.js` (includes `service-worker-allowed: /` so scope stays root)
+- `app/components/pwa/sw-register.tsx` — client registration (`navigator.serviceWorker.register("/serwist/sw.js", { scope: "/" })`)
+- `app/app/offline/page.tsx` — minimal dark offline page, precached at install
+- `app/proxy.ts` matcher exempts `manifest.webmanifest`, `sw.js`, `workbox-*.js`, `fallback*.js`, `/serwist/…`, and `/offline` from the intl/auth chain
 
 ### Lighthouse run log
-_(empty — pending unblock)_
+
+**2026-04-23 — localhost:3000/in, mobile form-factor, Lighthouse 11 (Lighthouse 13 dropped the PWA category)**
+
+| Metric | Score |
+|---|---|
+| **PWA** | **100** |
+| installable-manifest | pass |
+| splash-screen | pass |
+| themed-omnibox | pass |
+| maskable-icon | pass |
+| viewport | pass |
+| content-width | pass |
+
+Artifacts: `/tmp/pwa-lighthouse/in-pwa.report.html`, `/tmp/pwa-lighthouse/in-pwa.report.json`.
+
+**Definition-of-done checks**
+- `GET /manifest.webmanifest` → 200, `application/manifest+json` ✓
+- `GET /serwist/sw.js` → 200, `application/javascript`, `service-worker-allowed: /` ✓
+- `GET /offline` → 200 (precached as fallback for document requests) ✓
+- Manifest + Apple meta live in `<head>` of locale layout ✓
+- Indonesia landing files unchanged (grep-verified; see §13.4 below) ✓
 
 ---
 
