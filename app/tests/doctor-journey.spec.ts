@@ -19,6 +19,7 @@ import { test, expect, type Page } from "@playwright/test";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import path from "path";
 import dotenv from "dotenv";
+import { signInViaMagicLink } from "./e2e/helpers/auth";
 
 dotenv.config({ path: path.resolve(__dirname, "..", ".env") });
 dotenv.config({
@@ -47,41 +48,10 @@ function adminClient(): SupabaseClient {
   });
 }
 
-// Supabase RLS scopes larinova_doctors SELECT to the owner (auth.uid =
-// user_id), so /api/auth/check-email always reports exists=false for
-// unauthenticated callers and the sign-in UI short-circuits every doctor
-// into the magic-link OTP step. Rather than run a real mail inbox inside
-// the test, we ask Supabase admin to generate the exact magic-link URL
-// that email delivery would have contained, then navigate to it. The
-// Supabase auth endpoint sets session cookies and redirects us through
-// /auth/callback into the authenticated app — exactly as a human user
-// clicking the link in their inbox would experience.
-async function signInViaMagicLink(
-  page: Page,
-  email: string,
-  baseURL: string | undefined,
-) {
-  const admin = adminClient();
-  const origin = baseURL ?? "http://localhost:3000";
-  const redirectTo = `${origin}/in/auth/callback`;
-
-  const { data, error } = await admin.auth.admin.generateLink({
-    type: "magiclink",
-    email,
-    options: { redirectTo },
-  });
-  if (error || !data?.properties?.action_link) {
-    throw new Error(
-      `Failed to generate magic link: ${error?.message ?? "no action_link"}`,
-    );
-  }
-
-  await page.goto(data.properties.action_link);
-  // Supabase redirects → /in/auth/callback → client exchanges tokens and
-  // routes to /in (onboarding_completed=true) or /in/onboarding.
-  await page.waitForURL(/\/in(\/|$|\?)/, { timeout: 30_000 });
-  await page.waitForLoadState("networkidle");
-}
+// Sign-in uses the shared helper at tests/e2e/helpers/auth.ts which does
+// direct Supabase SSR cookie injection (the client-side magic-link
+// callback race-condition means hash-token exchange silently fails;
+// cookies make the session deterministic).
 
 test.describe("Doctor pilot-unblock journey", () => {
   test.use({ storageState: { cookies: [], origins: [] } });
@@ -153,8 +123,8 @@ test.describe("Doctor pilot-unblock journey", () => {
     page,
     request,
   }) => {
-    // Step 1: Sign in via real UI (signup + verify already provisioned above).
-    await signInUI(page, email, password);
+    // Step 1: Sign in (signup + verify already provisioned above).
+    await signInViaMagicLink(page, email, undefined);
 
     // Step 2: Billing page — Free plan, 0/20.
     await page.goto("/in/settings/billing");

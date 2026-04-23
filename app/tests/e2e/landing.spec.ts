@@ -65,13 +65,27 @@ test.describe("landing", () => {
       await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
     }
 
-    await expect(page.getByText(/free/i).first()).toBeVisible();
+    // Both tier headings are in the DOM regardless of tab.
     await expect(
-      page.getByText(/₹\s?1,?500|1500\s?\/\s?month|per month/i).first(),
+      page.getByRole("heading", { name: /^free$/i, level: 3 }),
     ).toBeVisible({ timeout: 15_000 });
     await expect(
-      page.getByText(/₹\s?15,?000|15000\s?\/\s?year|per year/i).first(),
+      page.getByRole("heading", { name: /^pro$/i, level: 3 }),
     ).toBeVisible();
+
+    // Monthly is the default tab — Pro should show ₹1,500.
+    await expect(page.getByText(/₹\s?1[,.]?500/).first()).toBeVisible({
+      timeout: 15_000,
+    });
+
+    // Flip to Annual and assert the yearly price.
+    const annualTab = page.getByRole("tab", { name: /annual/i });
+    if (await annualTab.count()) {
+      await annualTab.click();
+      await expect(page.getByText(/₹\s?15[,.]?000/).first()).toBeVisible({
+        timeout: 10_000,
+      });
+    }
   });
 
   test("pricing CTA links to signup with upgrade intent", async ({ page }) => {

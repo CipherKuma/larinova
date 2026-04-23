@@ -89,9 +89,15 @@ test.describe("auth + onboarding", () => {
       await page.goto("/in/sign-in");
       await page.waitForLoadState("networkidle");
 
-      await expect(page.getByPlaceholder(/email/i).first()).toBeVisible();
+      // Placeholder copy is "doctor@example.com" — match by input type/shape,
+      // not the literal word "email", so the assertion survives copy changes.
       await expect(
-        page.getByRole("button", { name: /continue|sign in|next/i }).first(),
+        page.locator('input[type="email"], input[type="text"]').first(),
+      ).toBeVisible();
+      await expect(
+        page
+          .getByRole("button", { name: /continue|sign in|next|submit|login/i })
+          .first(),
       ).toBeVisible();
     });
 
@@ -163,9 +169,8 @@ test.describe("auth + onboarding", () => {
     await signInViaMagicLink(page, email, baseURL, "in");
     await expect(page).toHaveURL(/\/in(\/|$|\?)/);
 
-    // Clear session via Supabase client available in the page.
+    // Clear session via the server-side signout route.
     await page.evaluate(async () => {
-      // @ts-expect-error — window does not carry supabase globally; use fetch logout.
       await fetch("/api/auth/signout", { method: "POST" }).catch(() => {});
     });
     await page.context().clearCookies();

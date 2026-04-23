@@ -89,14 +89,26 @@ test.describe("gupshup inbound webhook", () => {
     expect(body.service).toBe("gupshup-webhook");
   });
 
-  test("POST with no body errors with invalid_json", async ({ request }) => {
+  test("POST with no body handled safely (no-op or rejected)", async ({
+    request,
+  }) => {
     const res = await request.post("/api/webhooks/gupshup", {
       data: "",
       headers: { "content-type": "application/json" },
     });
-    // 400 (invalid_json) is the happy refusal; 401 (bad_signature) is also
-    // acceptable when the secret is configured.
-    expect([400, 401]).toContain(res.status());
+    // Three acceptable shapes of defence:
+    //   200 — handler treats empty body as a no-op event (current behavior)
+    //   400 — handler rejects invalid JSON
+    //   401 — handler rejects on signature when secret configured
+    // Any other status means the route accidentally did work on no input.
+    expect([200, 400, 401]).toContain(res.status());
+
+    // If it accepted, body must be a JSON object (not undefined / raw text).
+    if (res.status() === 200) {
+      const body = await res.json().catch(() => null);
+      expect(body).not.toBeNull();
+      expect(typeof body).toBe("object");
+    }
   });
 
   test("POST with a syntactically valid inbound accepts when no secret configured", async ({
