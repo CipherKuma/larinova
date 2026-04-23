@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { upgradeIfWhitelisted } from "@/lib/subscription";
-import { sendAlphaWelcomeEmail } from "@/lib/resend/email";
+import { notify } from "@/lib/notify";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
@@ -37,10 +37,13 @@ async function runWhitelistUpgrade() {
     if (!doctor) return;
 
     await upgradeIfWhitelisted(user.email, doctor.id, async () => {
-      return await sendAlphaWelcomeEmail({
-        to: doctor.email,
-        fullName: doctor.full_name,
-      });
+      const result = await notify(
+        "email",
+        "welcome_alpha",
+        { doctorName: doctor.full_name },
+        { email: doctor.email, doctorId: doctor.id, name: doctor.full_name },
+      );
+      return result.status === "sent" || result.status === "simulated";
     });
   } catch (err) {
     console.error("whitelist upgrade failed:", err);
