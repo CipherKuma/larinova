@@ -11,6 +11,7 @@ whatsapp/.wwebjs_cache/
 # Gmail MCP OAuth tokens
 .gmail-credentials.json
 .gmail-token.json
+.gmail-token-*.json
 
 # macOS
 .DS_Store

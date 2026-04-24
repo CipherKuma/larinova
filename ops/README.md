@@ -14,14 +14,35 @@ cd whatsapp && npm install && npm run pair
 cd docs && ./build.sh
 ```
 
-## Gmail MCP setup
+## Gmail MCP setup (two accounts)
 
-Edit `.mcp.json` — the `_gmail_disabled` key is a placeholder. To activate:
+We run **two local Gmail MCP instances in parallel** — one for `gabrielantony56@gmail.com`, one for `gabriel@larinova.com`. Same OAuth client, separate token caches. Both are available simultaneously in any Claude Code session started inside `ops/`.
 
-1. Create OAuth credentials at https://console.cloud.google.com → enable Gmail API → OAuth consent screen (testing mode) → add `gabrielantony56@gmail.com` as a test user
-2. Download the OAuth client JSON → save as `./.gmail-credentials.json` (gitignored)
-3. In `.mcp.json`, rename `_gmail_disabled` → `gmail`
-4. Restart Claude Code **with CWD inside `ops/`**. First tool call opens a browser for consent; token caches to `./.gmail-token.json`.
+### One-time Google Cloud setup
+
+1. Go to https://console.cloud.google.com → create or select a project (e.g. "larinova-ops").
+2. **Enable the Gmail API**: APIs & Services → Library → search "Gmail API" → Enable.
+3. **OAuth consent screen**: External, Testing mode. Add **both** emails as test users:
+   - `gabrielantony56@gmail.com`
+   - `gabriel@larinova.com`
+   Scopes: add `https://www.googleapis.com/auth/gmail.modify` (read + draft + label; no raw send).
+4. **Create credentials**: APIs & Services → Credentials → Create Credentials → OAuth client ID → **Desktop app**. Download the JSON.
+5. Save the downloaded JSON as `./.gmail-credentials.json` in this folder (gitignored).
+
+### Activate the two MCPs
+
+1. In `.mcp.json`, rename:
+   - `_gmail_personal_disabled` → `gmail_personal`
+   - `_gmail_larinova_disabled` → `gmail_larinova`
+2. Restart Claude Code **with CWD inside `ops/`**.
+3. First tool call against `gmail_personal` opens a browser → sign in as `gabrielantony56@gmail.com` → consent → token caches to `.gmail-token-personal.json`.
+4. First tool call against `gmail_larinova` opens a browser → sign in as `gabriel@larinova.com` → consent → token caches to `.gmail-token-larinova.json`.
+
+Refresh tokens persist — no more "expired mid-task" surprises.
+
+### Workspace note
+
+`gabriel@larinova.com` is a Google Workspace account. Since you're the Workspace admin, the OAuth consent flow works the same. If Workspace has "App Access Control" restrictions, you may need to trust the OAuth client ID in admin.google.com → Security → API controls → App access control.
 
 ## How MCP isolation works
 

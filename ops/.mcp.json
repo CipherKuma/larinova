@@ -1,12 +1,21 @@
 {
   "mcpServers": {
-    "_gmail_disabled": {
-      "_comment": "Uncomment and rename to 'gmail' after running Gmail OAuth setup. See README.md.",
+    "_gmail_personal_disabled": {
+      "_comment": "gabrielantony56@gmail.com — rename key to 'gmail_personal' after Gmail OAuth setup. See GMAIL_SETUP.md.",
       "command": "npx",
       "args": ["-y", "@gongrzhe/server-gmail-autoauth-mcp"],
       "env": {
         "GMAIL_OAUTH_PATH": "/Users/gabrielantonyxaviour/Documents/products/larinova/ops/.gmail-credentials.json",
-        "GMAIL_CREDENTIALS_PATH": "/Users/gabrielantonyxaviour/Documents/products/larinova/ops/.gmail-token.json"
+        "GMAIL_CREDENTIALS_PATH": "/Users/gabrielantonyxaviour/Documents/products/larinova/ops/.gmail-token-personal.json"
+      }
+    },
+    "_gmail_larinova_disabled": {
+      "_comment": "gabriel@larinova.com — rename key to 'gmail_larinova' after Gmail OAuth setup. See GMAIL_SETUP.md.",
+      "command": "npx",
+      "args": ["-y", "@gongrzhe/server-gmail-autoauth-mcp"],
+      "env": {
+        "GMAIL_OAUTH_PATH": "/Users/gabrielantonyxaviour/Documents/products/larinova/ops/.gmail-credentials.json",
+        "GMAIL_CREDENTIALS_PATH": "/Users/gabrielantonyxaviour/Documents/products/larinova/ops/.gmail-token-larinova.json"
       }
     }
   }

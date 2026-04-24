@@ -7,7 +7,9 @@
   "scripts": {
     "pair": "tsx pair.ts",
     "send": "tsx send.ts",
-    "list": "tsx list.ts"
+    "list": "tsx list.ts",
+    "read": "tsx read.ts",
+    "recent": "tsx recent.ts"
   },
   "dependencies": {
     "qrcode-terminal": "^0.12.0",
