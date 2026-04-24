@@ -7,22 +7,12 @@ import { routing } from "./src/i18n/routing";
 const intlMiddleware = createIntlMiddleware(routing);
 
 export async function proxy(request: NextRequest) {
-  // Root path — geo redirect to /in or /id
+  // Root path "/" passes through to app/page.tsx which renders sign-in /
+  // sign-up links directly at 200. This lets Razorpay's payment-gateway
+  // verifier (and SEO crawlers) fetch the submitted URL without following
+  // a locale redirect. Localised authenticated app lives at /in/* and /id/*.
   if (request.nextUrl.pathname === "/") {
-    const country =
-      request.headers.get("x-vercel-ip-country") ||
-      request.headers.get("cf-ipcountry") ||
-      null;
-    const targetLocale = country === "ID" ? "id" : "in";
-    const redirectUrl = request.nextUrl.clone();
-    redirectUrl.pathname = `/${targetLocale}`;
-    const response = NextResponse.redirect(redirectUrl, 307);
-    response.cookies.set("larinova_locale", targetLocale, {
-      maxAge: 60 * 60 * 24 * 365,
-      path: "/",
-      sameSite: "lax",
-    });
-    return response;
+    return NextResponse.next();
   }
 
   // Handle next-intl routing first
