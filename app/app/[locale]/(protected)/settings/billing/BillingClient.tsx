@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 import { Check, CreditCard, Zap } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { AIFeature, PricingRegion } from "@/types/billing";
@@ -22,6 +23,8 @@ export default function BillingClient() {
   const t = useTranslations("billing");
   const [loading, setLoading] = useState(true);
   const [region, setRegion] = useState<PricingRegion>("default");
+  const params = useParams();
+  const locale = (params?.locale as string) ?? "in";
 
   const prices = PLAN_PRICES[region];
 
@@ -37,11 +40,23 @@ export default function BillingClient() {
   }, []);
 
   const fetchRegion = async () => {
+    // Prefer the URL locale as source of truth — doctors in the /id app see
+    // IDR pricing, doctors in /in see INR. Falls back to geo only when the
+    // locale doesn't resolve (should never happen for authed routes).
+    if (locale === "in") {
+      setRegion("IN");
+      return;
+    }
+    if (locale === "id") {
+      setRegion("ID");
+      return;
+    }
     try {
       const res = await fetch("/api/geo");
       if (res.ok) {
         const { country } = await res.json();
         if (country === "IN") setRegion("IN");
+        else if (country === "ID") setRegion("ID");
       }
     } catch {}
   };

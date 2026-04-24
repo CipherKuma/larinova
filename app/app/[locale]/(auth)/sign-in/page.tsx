@@ -45,6 +45,15 @@ export default function SignInPage() {
     }
   }, [resendTimer]);
 
+  // Auto-verify once 6 digits are present (from typing the last one OR
+  // pasting all 6). Avoids an extra click after paste.
+  useEffect(() => {
+    if (step === "verify-email-otp" && otp.join("").length === 6 && !loading) {
+      handleVerifyEmailOtp();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [otp, step]);
+
   // After successful login, check profile and route accordingly
   const handlePostLogin = async () => {
     const {
@@ -170,6 +179,8 @@ export default function SignInPage() {
     for (let i = 0; i < pasted.length; i++) next[i] = pasted[i];
     setOtp(next);
     otpRefs.current[Math.min(pasted.length, 5)]?.focus();
+    // handleVerifyEmailOtp will auto-fire via the useEffect below once all
+    // 6 digits are present, no explicit call needed here.
   };
 
   const handleVerifyEmailOtp = async () => {

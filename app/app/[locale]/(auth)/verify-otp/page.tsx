@@ -37,6 +37,14 @@ export default function VerifyOtpPage() {
     inputRefs.current[0]?.focus();
   }, []);
 
+  // Auto-verify once 6 digits are present (from paste or last keystroke).
+  useEffect(() => {
+    if (otp.join("").length === 6 && !loading) {
+      handleVerify();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [otp]);
+
   const handleChange = (index: number, value: string) => {
     if (!/^\d*$/.test(value)) return;
 

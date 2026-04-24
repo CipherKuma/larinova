@@ -1,0 +1,461 @@
+{
+  "sweptAt": "2026-04-24T07:45:59.584Z",
+  "accounts": {
+    "personal": {
+      "slotIndex": 0,
+      "email": "gabrielantony56@gmail.com",
+      "threads": [
+        {
+          "bucket": "04-mca-approvals",
+          "subject": "Application approved",
+          "sender": "noreply@mca.gov.in",
+          "date": "Wed, Apr 22, 2026, 4:15 PM",
+          "threadId": "19db4cb28f85e9e5",
+          "attachmentCount": 1,
+          "attachmentNames": [
+            "SPICE + Part B_DIN Approval Letter_AC3085730.pdf"
+          ],
+          "savedPaths": [
+            "/Users/gabrielantonyxaviour/Documents/products/larinova/ops/company-docs/04-mca-approvals/Application approved__SPICE + Part B_DIN Approval Letter_AC3085730.pdf"
+          ]
+        },
+        {
+          "bucket": "04-mca-approvals",
+          "subject": "OTP for Login on MCA portal",
+          "sender": "noreply@mca.gov.in",
+          "date": "Mon, Apr 20, 2026, 2:42 PM",
+          "threadId": "19da915ddc066d72",
+          "attachmentCount": 0,
+          "attachmentNames": [],
+          "savedPaths": []
+        },
+        {
+          "bucket": "04-mca-approvals",
+          "subject": "Verification of email id for registration on MCA portal",
+          "sender": "noreply@mca.gov.in",
+          "date": "Mon, Apr 20, 2026, 9:39 AM",
+          "threadId": "19da913e3671bcc4",
+          "attachmentCount": 0,
+          "attachmentNames": [],
+          "savedPaths": []
+        },
+        {
+          "bucket": "04-mca-approvals",
+          "subject": "Login from new device",
+          "sender": "noreply@mca.gov.in",
+          "date": "Mon, Apr 20, 2026, 2:42 PM",
+          "threadId": "19da915de48f0a55",
+          "attachmentCount": 0,
+          "attachmentNames": [],
+          "savedPaths": []
+        },
+        {
+          "bucket": "04-mca-approvals",
+          "subject": "Verification of email id for registration on MCA portal",
+          "sender": "noreply@mca.gov.in",
+          "date": "Sat, Apr 18, 2026, 5:23 PM",
+          "threadId": "19da06eedb703ca3",
+          "attachmentCount": 0,
+          "attachmentNames": [],
+          "savedPaths": []
+        },
+        {
+          "bucket": "04-mca-approvals",
+          "subject": "Username Created",
+          "sender": "noreply@mca.gov.in",
+          "date": "Mon, Apr 20, 2026, 9:40 AM",
+          "threadId": "19da915626dc4b1f",
+          "attachmentCount": 0,
+          "attachmentNames": [],
+          "savedPaths": []
+        },
+        {
+          "bucket": "04-mca-approvals",
+          "subject": "OTP for Login on MCA portal",
+          "sender": "noreply@mca.gov.in",
+          "date": "Tue, Apr 14, 2026, 4:36 PM",
+          "threadId": "19d8b9639409e346",
+          "attachmentCount": 0,
+          "attachmentNames": [],
+          "savedPaths": []
+        },
+        {
+          "bucket": "04-mca-approvals",
+          "subject": "Verification for KYC details of applicant",
+          "sender": "noreply@mca.gov.in",
+          "date": "Tue, Apr 14, 2026, 3:52 PM",
+          "threadId": "19d8b7c2203e2b28",
+          "attachmentCount": 0,
+          "attachmentNames": [],
+          "savedPaths": []
+        },
+        {
+          "bucket": "05-vendor-correspondence/bizfoc",
+          "subject": "BizFoc-Private Limited Compliance ||  || 1391ABZL2",
+          "sender": "janvi.arora@bizfoc.in",
+          "date": "Thu, Apr 23, 2026, 3:26 PM",
+          "threadId": "19db9c4fec65e5d7",
+          "attachmentCount": 0,
+          "attachmentNames": [],
+          "savedPaths": []
+        },
+        {
+          "bucket": "05-vendor-correspondence/bizfoc",
+          "subject": "Razorpay Rize | BizFoc Missing documents",
+          "sender": "shweta.jha@bizfoc.in",
+          "date": "Wed, Apr 22, 2026, 9:01 PM",
+          "threadId": "19d1e26e35bdea0b",
+          "attachmentCount": 3,
+          "attachmentNames": [
+            "INC 33 Post Approval.pdf",
+            "INC 34 Post Approval.pdf",
+            "MCA Final Approval Letter.pdf"
+          ],
+          "savedPaths": [
+            "/Users/gabrielantonyxaviour/Documents/products/larinova/ops/company-docs/05-vendor-correspondence/bizfoc/Razorpay Rize _ BizFoc Missing documents__INC 33 Post Approval.pdf",
+            "/Users/gabrielantonyxaviour/Documents/products/larinova/ops/company-docs/05-vendor-correspondence/bizfoc/Razorpay Rize _ BizFoc Missing documents__INC 34 Post Approval.pdf",
+            "/Users/gabrielantonyxaviour/Documents/products/larinova/ops/company-docs/05-vendor-correspondence/bizfoc/Razorpay Rize _ BizFoc Missing documents__MCA Final Approval Letter.pdf"
+          ]
+        },
+        {
+          "bucket": "05-vendor-correspondence/bizfoc",
+          "subject": "Application approved",
+          "sender": "noreply@mca.gov.in",
+          "date": "Wed, Apr 22, 2026, 4:15 PM",
+          "threadId": "19db4cb28f85e9e5",
+          "attachmentCount": 1,
+          "attachmentNames": [
+            "SPICE + Part B_DIN Approval Letter_AC3085730.pdf"
+          ],
+          "savedPaths": [
+            "/Users/gabrielantonyxaviour/Documents/products/larinova/ops/company-docs/05-vendor-correspondence/bizfoc/Application approved__SPICE + Part B_DIN Approval Letter_AC3085730.pdf"
+          ]
+        },
+        {
+          "bucket": "05-vendor-correspondence/bizfoc",
+          "subject": "Razorpay Rize | BizFoc-Name Submitted with MCA",
+          "sender": "shweta.jha@bizfoc.in",
+          "date": "Mon, Mar 23, 2026, 11:09 AM",
+          "threadId": "19d18e1d52b404cb",
+          "attachmentCount": 0,
+          "attachmentNames": [],
+          "savedPaths": []
+        },
+        {
+          "bucket": "05-vendor-correspondence/bizfoc",
+          "subject": "Razorpay Rize | BizFoc – Confirm Name Application",
+          "sender": "shweta.jha@bizfoc.in",
+          "date": "Sat, Mar 21, 2026, 2:33 AM",
+          "threadId": "19d0c10f00d9e446",
+          "attachmentCount": 0,
+          "attachmentNames": [],
+          "savedPaths": []
+        },
+        {
+          "bucket": "05-vendor-correspondence/bizfoc",
+          "subject": "Razorpay Rize | BizFoc-Confirmation of Your Proposed Business Name",
+          "sender": "shweta.jha@bizfoc.in",
+          "date": "Sun, Mar 22, 2026, 7:53 AM",
+          "threadId": "19d0f56b35c51e3c",
+          "attachmentCount": 0,
+          "attachmentNames": [],
+          "savedPaths": []
+        },
+        {
+          "bucket": "05-vendor-correspondence/bizfoc",
+          "subject": "Razorpay Rize | BizFoc – Your Company Name is Approved",
+          "sender": "shweta.jha@bizfoc.in",
+          "date": "Tue, Mar 24, 2026, 9:59 AM",
+          "threadId": "19d1e1b02aac1f27",
+          "attachmentCount": 1,
+          "attachmentNames": [
+            "MCA Name Approval.pdf"
+          ],
+          "savedPaths": [
+            "/Users/gabrielantonyxaviour/Documents/products/larinova/ops/company-docs/05-vendor-correspondence/bizfoc/Razorpay Rize _ BizFoc – Your Company Name is Approved__MCA Name Approval.pdf"
+          ]
+        },
+        {
+          "bucket": "05-vendor-correspondence/bizfoc",
+          "subject": "Proposed NIC Codes",
+          "sender": "shweta.jha@bizfoc.in",
+          "date": "Sat, Mar 21, 2026, 3:36 AM",
+          "threadId": "19d0c0d890b95c3a",
+          "attachmentCount": 0,
+          "attachmentNames": [],
+          "savedPaths": []
+        },
+        {
+          "bucket": "05-vendor-correspondence/bizfoc",
+          "subject": "Information Required for Incorporation || Order Id:1391ABZS1T1",
+          "sender": "shweta.jha@bizfoc.in",
+          "date": "Thu, Mar 19, 2026, 5:16 PM",
+          "threadId": "19d05eb0da3a69e5",
+          "attachmentCount": 0,
+          "attachmentNames": [],
+          "savedPaths": []
+        },
+        {
+          "bucket": "05-vendor-correspondence/bizfoc",
+          "subject": "Payment Received – Your Incorporation Order is Confirmed",
+          "sender": "khushi@bizfoc.in",
+          "date": "Thu, Mar 19, 2026, 9:43 AM",
+          "threadId": "19d044c7cc4e7ccf",
+          "attachmentCount": 0,
+          "attachmentNames": [],
+          "savedPaths": []
+        },
+        {
+          "bucket": "05-vendor-correspondence/bizfoc",
+          "subject": "Private Limited Registration in Tamil Nadu || Razorpay Rize",
+          "sender": "khushi@bizfoc.in",
+          "date": "Thu, Mar 19, 2026, 9:38 AM",
+          "threadId": "19d0448107c90b02",
+          "attachmentCount": 0,
+          "attachmentNames": [],
+          "savedPaths": []
+        },
+        {
+          "bucket": "05-vendor-correspondence/bizfoc",
+          "subject": "Private Limited Registration in Tamil Nadu || Razorpay Rize",
+          "sender": "khushi@bizfoc.in",
+          "date": "Wed, Mar 18, 2026, 5:45 PM",
+          "threadId": "19d00df1d4ccc81b",
+          "attachmentCount": 0,
+          "attachmentNames": [],
+          "savedPaths": []
+        },
+        {
+          "bucket": "05-vendor-correspondence/razorpay-rize",
+          "subject": "Razorpay Rize | BizFoc Missing documents",
+          "sender": "shweta.jha@bizfoc.in",
+          "date": "Wed, Apr 22, 2026, 9:01 PM",
+          "threadId": "19d1e26e35bdea0b",
+          "attachmentCount": 3,
+          "attachmentNames": [
+            "INC 33 Post Approval.pdf",
+            "INC 34 Post Approval.pdf",
+            "MCA Final Approval Letter.pdf"
+          ],
+          "savedPaths": [
+            "/Users/gabrielantonyxaviour/Documents/products/larinova/ops/company-docs/05-vendor-correspondence/razorpay-rize/Razorpay Rize _ BizFoc Missing documents__INC 33 Post Approval.pdf",
+            "/Users/gabrielantonyxaviour/Documents/products/larinova/ops/company-docs/05-vendor-correspondence/razorpay-rize/Razorpay Rize _ BizFoc Missing documents__INC 34 Post Approval.pdf",
+            "/Users/gabrielantonyxaviour/Documents/products/larinova/ops/company-docs/05-vendor-correspondence/razorpay-rize/Razorpay Rize _ BizFoc Missing documents__MCA Final Approval Letter.pdf"
+          ]
+        },
+        {
+          "bucket": "05-vendor-correspondence/razorpay-rize",
+          "subject": "Razorpay Rize | BizFoc – Your Company Name is Approved",
+          "sender": "shweta.jha@bizfoc.in",
+          "date": "Tue, Mar 24, 2026, 9:59 AM",
+          "threadId": "19d1e1b02aac1f27",
+          "attachmentCount": 1,
+          "attachmentNames": [
+            "MCA Name Approval.pdf"
+          ],
+          "savedPaths": [
+            "/Users/gabrielantonyxaviour/Documents/products/larinova/ops/company-docs/05-vendor-correspondence/razorpay-rize/Razorpay Rize _ BizFoc – Your Company Name is Approved__MCA Name Approval.pdf"
+          ]
+        },
+        {
+          "bucket": "05-vendor-correspondence/razorpay-rize",
+          "subject": "Private Limited Registration in Tamil Nadu || Razorpay Rize",
+          "sender": "khushi@bizfoc.in",
+          "date": "Wed, Mar 18, 2026, 5:45 PM",
+          "threadId": "19d00df1d4ccc81b",
+          "attachmentCount": 0,
+          "attachmentNames": [],
+          "savedPaths": []
+        },
+        {
+          "bucket": "05-vendor-correspondence/razorpay-rize",
+          "subject": "Private Limited Registration in Tamil Nadu || Razorpay Rize",
+          "sender": "khushi@bizfoc.in",
+          "date": "Thu, Mar 19, 2026, 9:38 AM",
+          "threadId": "19d0448107c90b02",
+          "attachmentCount": 0,
+          "attachmentNames": [],
+          "savedPaths": []
+        },
+        {
+          "bucket": "05-vendor-correspondence/razorpay-rize",
+          "subject": "Applying for YC Summer '26? Don't miss these sessions!",
+          "sender": "rize@razorpay.com",
+          "date": "Sat, Apr 11, 2026, 11:31 AM",
+          "threadId": "19d7b21bd03cb285",
+          "attachmentCount": 0,
+          "attachmentNames": [],
+          "savedPaths": []
+        },
+        {
+          "bucket": "05-vendor-correspondence/razorpay-rize",
+          "subject": "Razorpay Rize | BizFoc-Confirmation of Your Proposed Business Name",
+          "sender": "shweta.jha@bizfoc.in",
+          "date": "Sat, Mar 21, 2026, 1:10 PM",
+          "threadId": "19d0f56b35c51e3c",
+          "attachmentCount": 0,
+          "attachmentNames": [],
+          "savedPaths": []
+        },
+        {
+          "bucket": "05-vendor-correspondence/razorpay-rize",
+          "subject": "Razorpay Rize | BizFoc-Name Submitted with MCA",
+          "sender": "shweta.jha@bizfoc.in",
+          "date": "Mon, Mar 23, 2026, 11:09 AM",
+          "threadId": "19d18e1d52b404cb",
+          "attachmentCount": 0,
+          "attachmentNames": [],
+          "savedPaths": []
+        },
+        {
+          "bucket": "05-vendor-correspondence/razorpay-rize",
+          "subject": "Razorpay Rize Incorporation | Successful submission of documents!",
+          "sender": "rize@razorpay.com",
+          "date": "Fri, Mar 20, 2026, 2:03 PM",
+          "threadId": "19d0a6130c1c4d09",
+          "attachmentCount": 0,
+          "attachmentNames": [],
+          "savedPaths": []
+        },
+        {
+          "bucket": "05-vendor-correspondence/razorpay-rize",
+          "subject": "Razorpay Rize Incorporation | Payment Confirmation!",
+          "sender": "rize@razorpay.com",
+          "date": "Thu, Mar 19, 2026, 9:51 AM",
+          "threadId": "19d04538cb37f3bd",
+          "attachmentCount": 0,
+          "attachmentNames": [],
+          "savedPaths": []
+        },
+        {
+          "bucket": "05-vendor-correspondence/razorpay-rize",
+          "subject": "Payment Received – Your Incorporation Order is Confirmed",
+          "sender": "khushi@bizfoc.in",
+          "date": "Thu, Mar 19, 2026, 9:43 AM",
+          "threadId": "19d044c7cc4e7ccf",
+          "attachmentCount": 0,
+          "attachmentNames": [],
+          "savedPaths": []
+        },
+        {
+          "bucket": "05-vendor-correspondence/razorpay-rize",
+          "subject": "Information Required for Incorporation || Order Id:1391ABZS1T1",
+          "sender": "shweta.jha@bizfoc.in",
+          "date": "Thu, Mar 19, 2026, 5:16 PM",
+          "threadId": "19d05eb0da3a69e5",
+          "attachmentCount": 0,
+          "attachmentNames": [],
+          "savedPaths": []
+        },
+        {
+          "bucket": "05-vendor-correspondence/razorpay-rize",
+          "subject": "Y Combinator Prep: Join Rounak Adhikary (YC P26) for an insightful session!",
+          "sender": "rize@razorpay.com",
+          "date": "Sat, Apr 18, 2026, 10:03 AM",
+          "threadId": "19d9edd9f4a2113c",
+          "attachmentCount": 0,
+          "attachmentNames": [],
+          "savedPaths": []
+        },
+        {
+          "bucket": "05-vendor-correspondence/razorpay-rize",
+          "subject": "Razorpay Rize | BizFoc – Confirm Name Application",
+          "sender": "shweta.jha@bizfoc.in",
+          "date": "Fri, Mar 20, 2026, 9:55 PM",
+          "threadId": "19d0c10f00d9e446",
+          "attachmentCount": 0,
+          "attachmentNames": [],
+          "savedPaths": []
+        },
+        {
+          "bucket": "05-vendor-correspondence/razorpay-rize",
+          "subject": "Proposed NIC Codes",
+          "sender": "shweta.jha@bizfoc.in",
+          "date": "Fri, Mar 20, 2026, 9:51 PM",
+          "threadId": "19d0c0d890b95c3a",
+          "attachmentCount": 0,
+          "attachmentNames": [],
+          "savedPaths": []
+        },
+        {
+          "bucket": "05-vendor-correspondence/razorpay-rize",
+          "subject": "Payment successful for Razorpay RIZE",
+          "sender": "no-reply@razorpay.com",
+          "date": "Thu, Mar 19, 2026, 9:40 AM",
+          "threadId": "19d04499beded6b5",
+          "attachmentCount": 0,
+          "attachmentNames": [],
+          "savedPaths": []
+        },
+        {
+          "bucket": "05-vendor-correspondence/razorpay-rize",
+          "subject": "Requesting payment of INR 5769.00 (via Razorpay)",
+          "sender": "no-reply@razorpay.com",
+          "date": "Wed, Mar 18, 2026, 5:44 PM",
+          "threadId": "19d00de2f0f4e227",
+          "attachmentCount": 0,
+          "attachmentNames": [],
+          "savedPaths": []
+        },
+        {
+          "bucket": "05-vendor-correspondence/razorpay-rize",
+          "subject": "Payment update on your Federal One credit card",
+          "sender": "no-reply@getonecard.app",
+          "date": "Thu, Mar 19, 2026, 9:40 AM",
+          "threadId": "19d043ba2186b555",
+          "attachmentCount": 0,
+          "attachmentNames": [],
+          "savedPaths": []
+        }
+      ],
+      "downloaded": 10,
+      "errors": []
+    },
+    "larinova": {
+      "slotIndex": 1,
+      "email": "gabriel@larinova.com",
+      "threads": [
+        {
+          "bucket": "04-mca-approvals",
+          "subject": "Application approved",
+          "sender": "noreply@mca.gov.in",
+          "date": "Wed, 22 Apr 2026, 16:15",
+          "threadId": "19db4cb3553a7d24",
+          "attachmentCount": 1,
+          "attachmentNames": [
+            "SPICE + Part B_Approval Letter_AC3085730.pdf"
+          ],
+          "savedPaths": [
+            "/Users/gabrielantonyxaviour/Documents/products/larinova/ops/company-docs/04-mca-approvals/Application approved__SPICE + Part B_Approval Letter_AC3085730.pdf"
+          ]
+        },
+        {
+          "bucket": "04-mca-approvals",
+          "subject": "Verification for KYC details of applicant",
+          "sender": "noreply@mca.gov.in",
+          "date": "Tue, 14 Apr 2026, 15:01",
+          "threadId": "19d8b5506fc830e4",
+          "attachmentCount": 0,
+          "attachmentNames": [],
+          "savedPaths": []
+        },
+        {
+          "bucket": "05-vendor-correspondence/bizfoc",
+          "subject": "Application approved",
+          "sender": "noreply@mca.gov.in",
+          "date": "Wed, 22 Apr 2026, 16:15",
+          "threadId": "19db4cb3553a7d24",
+          "attachmentCount": 1,
+          "attachmentNames": [
+            "SPICE + Part B_Approval Letter_AC3085730.pdf"
+          ],
+          "savedPaths": [
+            "/Users/gabrielantonyxaviour/Documents/products/larinova/ops/company-docs/05-vendor-correspondence/bizfoc/Application approved__SPICE + Part B_Approval Letter_AC3085730.pdf"
+          ]
+        }
+      ],
+      "downloaded": 2,
+      "errors": []
+    }
+  }
+}
