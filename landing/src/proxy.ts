@@ -57,40 +57,22 @@ export function proxy(request: NextRequest) {
     return NextResponse.redirect(url, { status: 301 });
   }
 
-  // Pass through all non-root paths with the x-pathname header
-  if (pathname !== "/") {
-    return NextResponse.next({
-      request: { headers: requestHeaders },
-    });
-  }
-
-  // ── Root path "/" ──────────────────────────────────────────
-  // Check if the user already has a locale preference cookie
-  const cookieLocale = request.cookies.get(LOCALE_COOKIE)?.value;
-  if (cookieLocale === "in" || cookieLocale === "id") {
-    const url = request.nextUrl.clone();
-    url.pathname = `/${cookieLocale}`;
-    const response = NextResponse.redirect(url, { status: 307 });
-    // Re-pass x-pathname on redirect too
-    response.headers.set("x-pathname", `/${cookieLocale}`);
-    return response;
-  }
-
-  // Detect locale from geo/browser signals
-  const locale = detectLocale(request);
-
-  const url = request.nextUrl.clone();
-  url.pathname = `/${locale}`;
-
-  const response = NextResponse.redirect(url, { status: 307 });
-  response.cookies.set(LOCALE_COOKIE, locale, {
-    maxAge: COOKIE_MAX_AGE,
-    path: "/",
-    sameSite: "lax",
+  // Root path "/" — pass through to src/app/page.tsx which renders a real
+  // 200 OK homepage (brand, locale CTAs, sign-in link). Previously did a
+  // 307 redirect to /in or /id here, but that broke Razorpay's payment-
+  // gateway verifier (and similar crawlers/bots) that expect a 200 at the
+  // root URL without following redirects.
+  //
+  // Real humans still get locale-aware experience: the root page shows
+  // explicit India / Indonesia buttons. Locale cookie + geo detection are
+  // still used for the /blog, /book, and other non-locale paths below.
+  return NextResponse.next({
+    request: { headers: requestHeaders },
   });
-
-  return response;
 }
+
+// Keep the detectLocale helper exported shape intact for future use.
+export { detectLocale as _detectLocaleForFutureUse };
 
 export const config = {
   matcher: [
