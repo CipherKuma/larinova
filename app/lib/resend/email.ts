@@ -359,21 +359,21 @@ function escHtml(str: string | null | undefined): string {
     .replace(/'/g, "&#39;");
 }
 
-// ─── Alpha Welcome (whitelisted pro doctor, first login) ──────────────────
+// ─── Alpha Welcome (invite-code redemption) ──────────────────────────────
 
 export async function sendAlphaWelcomeEmail({
   to,
-  fullName,
+  periodEnd,
 }: {
   to: string;
-  fullName: string;
+  periodEnd: string;
 }): Promise<boolean> {
   try {
     const { error } = await resend.emails.send({
       from: FROM,
       to,
       subject: "Welcome to Larinova, alpha doctor",
-      html: generateAlphaWelcomeHtml({ fullName }),
+      html: generateAlphaWelcomeHtml({ periodEnd }),
     });
     if (error) {
       console.error("Alpha welcome email error:", error);
@@ -386,8 +386,14 @@ export async function sendAlphaWelcomeEmail({
   }
 }
 
-function generateAlphaWelcomeHtml({ fullName }: { fullName: string }): string {
-  const name = escHtml(fullName) || "there";
+function generateAlphaWelcomeHtml({
+  periodEnd,
+}: {
+  periodEnd: string;
+}): string {
+  const formattedDate = periodEnd
+    ? new Date(periodEnd).toLocaleDateString("en-IN", { dateStyle: "long" })
+    : "";
   return `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">${baseStyles}</head>
 <body>
 <div class="wrapper">
@@ -396,9 +402,9 @@ function generateAlphaWelcomeHtml({ fullName }: { fullName: string }): string {
     <p>AI Medical Scribe — Alpha Welcome</p>
   </div>
   <div class="body">
-    <div class="greeting">Hi <strong>${name}</strong>,</div>
+    <div class="greeting">Hi there,</div>
     <div class="section">
-      <div class="section-body">You're one of our very first alpha doctors. Thank you for shaping Larinova.\n\nYour account has been upgraded to Pro — unlimited consults, all features unlocked.\n\nWe're listening. Reply to this email any time with feedback, bugs, or feature wishes.\n\n— Gabriel, founder</div>
+      <div class="section-body">You're one of our very first alpha doctors. Thank you for shaping Larinova.\n\nYour account has 30 days of Pro — unlimited consults, all features unlocked.\n\nAfter ${escHtml(formattedDate)} your account drops to the Free tier (20 consultations/month). You can subscribe via your billing page anytime.\n\nWe're listening. Reply to this email with feedback, bugs, or feature wishes.\n\n— Gabriel, founder</div>
     </div>
   </div>
   <div class="footer"><strong>Larinova — AI Medical Scribe</strong><br>hello@larinova.com &nbsp;·&nbsp; larinova.com</div>
