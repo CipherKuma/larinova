@@ -4,8 +4,7 @@ export type SubscriptionStatus =
   | "active"
   | "canceled"
   | "past_due"
-  | "trialing"
-  | "whitelisted";
+  | "trialing";
 export type AIFeature = "summary" | "medical_codes" | "helena_chat";
 
 export interface Subscription {
@@ -36,7 +35,7 @@ export const FREE_TIER_LIMITS: Record<AIFeature, number> = {
 
 export const FREE_TIER_CONSULTATION_LIMIT = 20;
 
-export type PricingRegion = "IN" | "ID" | "default";
+export type PricingRegion = "IN" | "default";
 
 export const PLAN_PRICES: Record<
   PricingRegion,
@@ -52,16 +51,6 @@ export const PLAN_PRICES: Record<
     symbol: "₹",
     month: { amount: 150000, label: "₹1,500/month" },
     year: { amount: 1500000, label: "₹15,000/year", savings: "₹3,000" },
-  },
-  ID: {
-    currency: "IDR",
-    symbol: "Rp",
-    month: { amount: 29900000, label: "Rp 299,000/month" },
-    year: {
-      amount: 299000000,
-      label: "Rp 2,990,000/year",
-      savings: "Rp 598,000",
-    },
   },
   default: {
     currency: "USD",
