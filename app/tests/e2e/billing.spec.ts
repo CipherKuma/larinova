@@ -79,7 +79,7 @@ test.describe("billing — free plan renders free-plan UI", () => {
   });
 });
 
-test.describe("billing — whitelisted doctor gets Alpha Pro", () => {
+test.describe("billing — Pro subscription expiry falls back to Free", () => {
   test.use({ storageState: { cookies: [], origins: [] } });
   let handle: DoctorHandle | null = null;
 
@@ -93,20 +93,22 @@ test.describe("billing — whitelisted doctor gets Alpha Pro", () => {
     await cleanupDoctor(admin, handle);
   });
 
-  test("whitelisted subscription row yields Alpha Pro UI", async ({
+  test("expired Pro subscription shows Free tier UI", async ({
     page,
     baseURL,
   }) => {
     const admin = adminClient();
-    handle = await provisionDoctor(admin, uniqueEmail("alpha"), {
-      fullName: "Alpha Doctor",
+    handle = await provisionDoctor(admin, uniqueEmail("expired"), {
+      fullName: "Expired Pro Doctor",
     });
 
+    const yesterday = new Date(Date.now() - 86_400_000).toISOString();
     const { error } = await admin.from("larinova_subscriptions").upsert(
       {
         doctor_id: handle.doctorId,
         plan: "pro",
-        status: "whitelisted",
+        status: "active",
+        current_period_end: yesterday,
       },
       { onConflict: "doctor_id" },
     );
@@ -121,9 +123,10 @@ test.describe("billing — whitelisted doctor gets Alpha Pro", () => {
     await signInViaMagicLink(page, handle.email, baseURL, "in");
     await page.goto("/in/settings/billing");
     await page.waitForLoadState("networkidle");
-    await expect(page.getByText(/alpha pro|alpha doctor/i).first()).toBeVisible(
-      { timeout: 10_000 },
-    );
+    await expect(page.getByText(/Free Plan/i).first()).toBeVisible({
+      timeout: 10_000,
+    });
+    await expect(page.getByText(/^0\s*\/\s*20\b/).first()).toBeVisible();
   });
 });
 
