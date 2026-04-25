@@ -135,8 +135,10 @@ export async function proxy(request: NextRequest) {
       return NextResponse.redirect(redirectUrl);
     }
 
-    // If onboarding is not completed, redirect to onboarding
-    if (!doctorData.onboarding_completed) {
+    // If onboarding is not completed, redirect to onboarding — but never
+    // pull the user OFF /redeem; they need to redeem first (the gate above
+    // already routes unredeemed users here).
+    if (!doctorData.onboarding_completed && !pathname.includes("/redeem")) {
       redirectUrl.pathname = `/${locale}/onboarding`;
       return NextResponse.redirect(redirectUrl);
     }
