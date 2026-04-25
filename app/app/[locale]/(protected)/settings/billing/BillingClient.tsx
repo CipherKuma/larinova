@@ -47,16 +47,11 @@ export default function BillingClient() {
       setRegion("IN");
       return;
     }
-    if (locale === "id") {
-      setRegion("ID");
-      return;
-    }
     try {
       const res = await fetch("/api/geo");
       if (res.ok) {
         const { country } = await res.json();
         if (country === "IN") setRegion("IN");
-        else if (country === "ID") setRegion("ID");
       }
     } catch {}
   };
