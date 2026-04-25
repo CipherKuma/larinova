@@ -1,4 +1,18 @@
 {
+  "redeem": {
+    "title": "Masukkan kode undangan Anda",
+    "subtitle": "Larinova bersifat undangan selama alpha. Tempel kode yang kami kirimkan untuk membuka 30 hari Pro.",
+    "label": "Kode undangan",
+    "placeholder": "LARINOVA-XXXXX",
+    "submit": "Tukarkan kode",
+    "submitting": "Memproses…",
+    "errorInvalid": "Kode ini tidak valid atau sudah digunakan.",
+    "errorMalformed": "Format kode tidak benar. Periksa email yang kami kirim dan coba lagi.",
+    "errorUnauthenticated": "Sesi Anda berakhir. Silakan masuk kembali.",
+    "errorUnknown": "Terjadi kesalahan. Silakan coba lagi.",
+    "successTitle": "Berhasil masuk.",
+    "successBody": "30 hari Pro dimulai sekarang."
+  },
   "common": {
     "loading": "Memuat...",
     "optional": "opsional",

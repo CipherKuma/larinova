@@ -1,4 +1,18 @@
 {
+  "redeem": {
+    "title": "Enter your invite code",
+    "subtitle": "Larinova is invite-only during alpha. Paste the code we sent you to unlock 30 days of Pro.",
+    "label": "Invite code",
+    "placeholder": "LARINOVA-XXXXX",
+    "submit": "Redeem code",
+    "submitting": "Redeeming…",
+    "errorInvalid": "That code is invalid or has already been used.",
+    "errorMalformed": "Code looks malformed. Check the email we sent and try again.",
+    "errorUnauthenticated": "Your session expired. Please sign in again.",
+    "errorUnknown": "Something went wrong. Please try again.",
+    "successTitle": "You're in.",
+    "successBody": "30 days of Pro starts now."
+  },
   "common": {
     "loading": "Loading...",
     "optional": "optional",
