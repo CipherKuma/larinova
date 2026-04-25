@@ -113,7 +113,6 @@ export type CreateSubscriptionResult =
   | { kind: "unauthorized" }
   | { kind: "not_configured" }
   | { kind: "already_subscribed" }
-  | { kind: "whitelisted" }
   | { kind: "error"; code: string };
 
 export async function interpretCreateSubscription(
@@ -122,10 +121,6 @@ export async function interpretCreateSubscription(
   if (res.status === 401) return { kind: "unauthorized" };
   if (res.status === 503) return { kind: "not_configured" };
   if (res.status === 409) {
-    const body = await res.json().catch(() => ({}));
-    if (body?.error === "whitelisted_no_checkout") {
-      return { kind: "whitelisted" };
-    }
     return { kind: "already_subscribed" };
   }
   if (!res.ok) {
@@ -178,9 +173,6 @@ export function RazorpayCheckoutButton({
         case "already_subscribed":
           toast.info("You're already subscribed to Pro.");
           router.push(successRedirect);
-          return;
-        case "whitelisted":
-          toast.success("You're on the alpha Pro plan — no checkout needed.");
           return;
         case "error":
           toast.error(

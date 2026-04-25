@@ -31,13 +31,6 @@ describe("interpretCreateSubscription", () => {
     expect(r.kind).toBe("already_subscribed");
   });
 
-  it("maps 409 whitelisted_no_checkout → whitelisted", async () => {
-    const r = await interpretCreateSubscription(
-      mkResponse(409, { error: "whitelisted_no_checkout" }),
-    );
-    expect(r.kind).toBe("whitelisted");
-  });
-
   it("maps 500 → error with code", async () => {
     const r = await interpretCreateSubscription(
       mkResponse(500, { error: "razorpay_subscription_failed" }),
