@@ -1,10 +1,9 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { checkAIUsage, recordAIUsage } from "@/lib/subscription";
+import { chatSync } from "@/lib/ai/sarvam";
 
-const CLAUDE_SERVICE_URL =
-  process.env.CLAUDE_SERVICE_URL || "https://claude.fierypools.fun";
-const CLAUDE_API_KEY = process.env.CLAUDE_SERVICE_API_KEY || "";
+export const maxDuration = 60;
 
 export async function POST(
   req: Request,
@@ -126,68 +125,22 @@ export async function POST(
 
     const prompt = `${patientLines}\nDoctor: ${consultation?.doctor?.full_name || "Unknown"} (${(consultation?.doctor as any)?.specialization || "General"})\nDuration: ~${durationMinutes} min\n\nConversation:\n"""\n${conversationText}\n"""\n\nGenerate the summary now.`;
 
-    // Call Claude service
-    const claudeResponse = await fetch(`${CLAUDE_SERVICE_URL}/chat`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-API-Key": CLAUDE_API_KEY,
-      },
-      body: JSON.stringify({
-        systemPrompt,
-        prompt,
-        model: "sonnet",
-        maxTurns: 1,
-        workingDirectory: "/tmp",
-      }),
-    });
-
-    if (!claudeResponse.ok) {
+    let summary = "";
+    try {
+      const result = await chatSync({ systemPrompt, prompt, maxTokens: 2500 });
+      summary = result.text;
+    } catch (e) {
+      console.error("[summary] sarvam error:", e);
       return NextResponse.json(
         { error: "Failed to generate summary" },
-        { status: 500 },
+        { status: 502 },
       );
-    }
-
-    // Parse response from Claude
-    const responseText = await claudeResponse.text();
-    const lines = responseText.split("\n").filter((line) => line.trim());
-
-    let summary = "";
-    for (const line of lines) {
-      try {
-        const event = JSON.parse(line);
-
-        if (event.type === "claude_event") {
-          // Handle assistant message with content array (non-streaming format)
-          if (event.data?.type === "assistant") {
-            const content = event.data.message?.content;
-            if (content && Array.isArray(content)) {
-              for (const block of content) {
-                if (block.type === "text") {
-                  summary += block.text;
-                }
-              }
-            }
-          }
-          // Also handle streaming text_delta format (fallback)
-          if (
-            event.data?.type === "content_block_delta" &&
-            event.data.delta?.type === "text_delta"
-          ) {
-            summary += event.data.delta.text;
-          }
-        }
-      } catch {
-        // Skip invalid JSON lines
-        continue;
-      }
     }
 
     if (!summary.trim()) {
       return NextResponse.json(
-        { error: "Failed to extract summary from Claude response" },
-        { status: 500 },
+        { error: "Empty summary from inference" },
+        { status: 502 },
       );
     }
 

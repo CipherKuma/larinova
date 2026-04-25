@@ -1,5 +1,5 @@
 import { createAdminClient } from "@/lib/supabase/admin";
-import { chatSync, extractJson } from "@/lib/ai/claude";
+import { chatSync, extractJson } from "@/lib/ai/sarvam";
 import { notify } from "@/lib/notify";
 import { runAgentStep } from "./helpers";
 

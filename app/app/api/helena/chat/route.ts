@@ -7,7 +7,7 @@ import {
 } from "@/types/helena";
 import { checkAIUsage, recordAIUsage } from "@/lib/subscription";
 import { buildHelenaSystemPrompt } from "@/lib/helena/prompts";
-import { sarvamChat, type SarvamMessage } from "@/lib/helena/sarvam";
+import { chatSyncMessages, type SarvamMessage } from "@/lib/ai/sarvam";
 import type { Locale } from "@/src/i18n/routing";
 
 // Vercel function timeout. Sarvam typically responds in 1-6s, but allow
@@ -242,7 +242,7 @@ export async function POST(req: Request) {
     let assistantResponse: string;
     const sarvamStart = Date.now();
     try {
-      const result = await sarvamChat({
+      const result = await chatSyncMessages({
         messages: chatMessages,
         model: "sarvam-m",
         maxTokens: 2000,

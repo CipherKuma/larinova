@@ -1,9 +1,8 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { chatSync } from "@/lib/ai/sarvam";
 
-const CLAUDE_SERVICE_URL =
-  process.env.CLAUDE_SERVICE_URL || "https://claude.fierypools.fun";
-const CLAUDE_API_KEY = process.env.CLAUDE_SERVICE_API_KEY || "";
+export const maxDuration = 60;
 
 interface DiarizedSegment {
   speaker: "doctor" | "patient";
@@ -61,83 +60,24 @@ export async function POST(
 
     const prompt = `Transcribed Conversation:\n"""\n${conversationWithTimestamps}\n"""`;
 
-    // Call Claude service
-    let claudeResponse;
-    try {
-      claudeResponse = await fetch(`${CLAUDE_SERVICE_URL}/chat`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-API-Key": CLAUDE_API_KEY,
-        },
-        body: JSON.stringify({
-          systemPrompt,
-          prompt,
-          model: "sonnet",
-          maxTurns: 1,
-          workingDirectory: "/tmp",
-        }),
-      });
-    } catch (fetchError: any) {
-      return NextResponse.json(
-        {
-          error: `Claude service unavailable: ${fetchError.message}. Make sure the Claude service is running.`,
-        },
-        { status: 503 },
-      );
-    }
-
-    if (!claudeResponse.ok) {
-      const errorText = await claudeResponse.text();
-      return NextResponse.json(
-        {
-          error: `Claude service error (${claudeResponse.status}): ${errorText}`,
-        },
-        { status: 500 },
-      );
-    }
-
-    // Parse response from Claude
-    const responseText = await claudeResponse.text();
-    const lines = responseText.split("\n").filter((line) => line.trim());
-
     let diarizedText = "";
-    for (const line of lines) {
-      try {
-        const event = JSON.parse(line);
-
-        if (event.type === "claude_event") {
-          // Handle assistant message with content array (non-streaming format)
-          if (event.data?.type === "assistant") {
-            const content = event.data.message?.content;
-            if (content && Array.isArray(content)) {
-              for (const block of content) {
-                if (block.type === "text") {
-                  diarizedText += block.text;
-                }
-              }
-            }
-          }
-          // Also handle streaming text_delta format (fallback)
-          if (
-            event.data?.type === "content_block_delta" &&
-            event.data.delta?.type === "text_delta"
-          ) {
-            diarizedText += event.data.delta.text;
-          }
-        }
-      } catch {
-        // Skip invalid JSON lines
-        continue;
-      }
+    try {
+      const result = await chatSync({ systemPrompt, prompt, maxTokens: 4000 });
+      diarizedText = result.text;
+    } catch (e) {
+      console.error("[diarize] sarvam error:", e);
+      return NextResponse.json(
+        {
+          error: `Inference service error: ${(e as Error).message}`,
+        },
+        { status: 502 },
+      );
     }
 
     if (!diarizedText.trim()) {
       return NextResponse.json(
-        {
-          error: "Failed to extract diarized conversation from Claude response",
-        },
-        { status: 500 },
+        { error: "Empty response from inference" },
+        { status: 502 },
       );
     }
 

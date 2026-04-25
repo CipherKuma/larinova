@@ -1,10 +1,9 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { checkAIUsage, recordAIUsage } from "@/lib/subscription";
+import { chatSync, extractJson } from "@/lib/ai/sarvam";
 
-const CLAUDE_SERVICE_URL =
-  process.env.CLAUDE_SERVICE_URL || "https://claude.fierypools.fun";
-const CLAUDE_API_KEY = process.env.CLAUDE_SERVICE_API_KEY || "";
+export const maxDuration = 30;
 
 interface CodeItem {
   code: string;
@@ -86,82 +85,28 @@ export async function POST(
 
     const prompt = `Extract medical codes from this SOAP note:\n\n${finalSoapNote}`;
 
-    // Call Claude service
-    const claudeResponse = await fetch(`${CLAUDE_SERVICE_URL}/chat`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-API-Key": CLAUDE_API_KEY,
-      },
-      body: JSON.stringify({
-        systemPrompt,
-        prompt,
-        model: "haiku",
-        maxTurns: 1,
-        workingDirectory: "/tmp",
-      }),
-    });
-
-    if (!claudeResponse.ok) {
+    let codesText = "";
+    try {
+      const result = await chatSync({ systemPrompt, prompt, maxTokens: 1500 });
+      codesText = result.text;
+    } catch (e) {
+      console.error("[medical-codes] sarvam error:", e);
       return NextResponse.json(
         { error: "Failed to extract medical codes" },
-        { status: 500 },
+        { status: 502 },
       );
-    }
-
-    // Parse response from Claude
-    const responseText = await claudeResponse.text();
-    const lines = responseText.split("\n").filter((line) => line.trim());
-
-    let codesText = "";
-    for (const line of lines) {
-      try {
-        const event = JSON.parse(line);
-
-        if (event.type === "claude_event") {
-          // Handle assistant message with content array (non-streaming format)
-          if (event.data?.type === "assistant") {
-            const content = event.data.message?.content;
-            if (content && Array.isArray(content)) {
-              for (const block of content) {
-                if (block.type === "text") {
-                  codesText += block.text;
-                }
-              }
-            }
-          }
-          // Also handle streaming text_delta format (fallback)
-          if (
-            event.data?.type === "content_block_delta" &&
-            event.data.delta?.type === "text_delta"
-          ) {
-            codesText += event.data.delta.text;
-          }
-        }
-      } catch {
-        // Skip invalid JSON lines
-        continue;
-      }
     }
 
     if (!codesText.trim()) {
       return NextResponse.json(
-        { error: "Failed to extract medical codes from Claude response" },
-        { status: 500 },
+        { error: "Empty response from inference" },
+        { status: 502 },
       );
     }
 
-    // Parse the JSON response from Claude
     let medicalCodes: MedicalCodesResponse;
     try {
-      // Extract outermost JSON object from the response
-      const firstBrace = codesText.indexOf("{");
-      const lastBrace = codesText.lastIndexOf("}");
-      if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
-        medicalCodes = JSON.parse(codesText.slice(firstBrace, lastBrace + 1));
-      } else {
-        medicalCodes = JSON.parse(codesText);
-      }
+      medicalCodes = extractJson<MedicalCodesResponse>(codesText);
     } catch {
       return NextResponse.json(
         { error: "Failed to parse medical codes from response" },

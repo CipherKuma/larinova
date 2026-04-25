@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
+import { chatSync, extractJson } from "@/lib/ai/sarvam";
 
-const CLAUDE_SERVICE_URL =
-  process.env.CLAUDE_SERVICE_URL || "https://claude.fierypools.fun";
-const CLAUDE_API_KEY = process.env.CLAUDE_SERVICE_API_KEY || "";
+export const maxDuration = 30;
 
 interface PrescriptionMedicine {
   name: string;
@@ -63,86 +62,35 @@ ${soapNote ? JSON.stringify(soapNote) : "Not available"}
 Consultation Transcript:
 ${transcript || "Not available"}`;
 
-    const claudeResponse = await fetch(`${CLAUDE_SERVICE_URL}/chat`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-API-Key": CLAUDE_API_KEY,
-      },
-      body: JSON.stringify({
-        prompt,
-        model: "sonnet",
-        maxTurns: 1,
-        workingDirectory: "/tmp",
-      }),
-    });
-
-    if (!claudeResponse.ok) {
-      console.error("[PRESCRIPTION-DEMO] Claude error:", claudeResponse.status);
+    let aiText = "";
+    try {
+      const result = await chatSync({ prompt, maxTokens: 1500 });
+      aiText = result.text;
+    } catch (e) {
+      console.error("[PRESCRIPTION-DEMO] sarvam error:", e);
       return NextResponse.json(
         { error: "AI service unavailable" },
         { status: 502 },
       );
     }
 
-    // Parse SSE response from Claude Service
-    const responseText = await claudeResponse.text();
-    const lines = responseText.split("\n").filter((line) => line.trim());
-    let aiText = "";
-
-    for (const line of lines) {
-      try {
-        const event = JSON.parse(line);
-        if (event.type === "claude_event") {
-          if (event.data?.type === "assistant") {
-            const content = event.data.message?.content;
-            if (content && Array.isArray(content)) {
-              for (const block of content) {
-                if (block.type === "text") aiText += block.text;
-              }
-            }
-          }
-          if (
-            event.data?.type === "content_block_delta" &&
-            event.data.delta?.type === "text_delta"
-          ) {
-            aiText += event.data.delta.text;
-          }
-        }
-      } catch {
-        continue;
-      }
-    }
-
     if (!aiText.trim()) {
       console.error("[PRESCRIPTION-DEMO] Empty AI response");
-      return NextResponse.json({ error: "Empty AI response" }, { status: 500 });
+      return NextResponse.json({ error: "Empty AI response" }, { status: 502 });
     }
 
-    // Parse JSON from AI response
     let prescription: PrescriptionData;
     try {
-      let cleaned = aiText.trim();
-      if (cleaned.startsWith("```")) {
-        cleaned = cleaned
-          .replace(/^```(?:json)?\s*\n?/, "")
-          .replace(/\n?```\s*$/, "");
-      }
-      prescription = JSON.parse(cleaned);
+      prescription = extractJson<PrescriptionData>(aiText);
     } catch {
-      // Try extracting JSON object from the response
-      const jsonMatch = aiText.match(/\{[\s\S]*\}/);
-      if (!jsonMatch) {
-        console.error(
-          "[PRESCRIPTION-DEMO] Failed to parse:",
-          aiText.substring(0, 200),
-        );
-        return NextResponse.json(
-          { error: "Failed to parse prescription data" },
-          { status: 500 },
-        );
-      }
-      prescription = JSON.parse(jsonMatch[0]);
+      console.error(
+        "[PRESCRIPTION-DEMO] Failed to parse:",
+        aiText.substring(0, 200),
+      );
+      return NextResponse.json(
+        { error: "Failed to parse prescription data" },
+        { status: 500 },
+      );
     }
 
     return NextResponse.json({ prescription });

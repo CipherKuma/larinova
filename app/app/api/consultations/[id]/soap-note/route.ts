@@ -1,45 +1,10 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { buildSoapSystemPrompt } from "@/lib/soap/prompts";
+import { chatSync } from "@/lib/ai/sarvam";
 import type { Locale } from "@/src/i18n/routing";
 
-const CLAUDE_SERVICE_URL =
-  process.env.CLAUDE_SERVICE_URL || "https://claude.fierypools.fun";
-const CLAUDE_API_KEY = process.env.CLAUDE_SERVICE_API_KEY || "";
-
-function extractTextFromSseResponse(responseText: string): string {
-  const lines = responseText.split("\n").filter((line) => line.trim());
-  let text = "";
-
-  for (const line of lines) {
-    try {
-      const event = JSON.parse(line);
-
-      if (event.type === "claude_event") {
-        // Non-streaming: full assistant message
-        if (event.data?.type === "assistant") {
-          const content = event.data.message?.content;
-          if (content && Array.isArray(content)) {
-            for (const block of content) {
-              if (block.type === "text") text += block.text;
-            }
-          }
-        }
-        // Streaming: text delta
-        if (
-          event.data?.type === "content_block_delta" &&
-          event.data.delta?.type === "text_delta"
-        ) {
-          text += event.data.delta.text;
-        }
-      }
-    } catch {
-      // skip non-JSON lines
-    }
-  }
-
-  return text;
-}
+export const maxDuration = 60;
 
 // POST — generate a SOAP note from consultation transcripts
 export async function POST(
@@ -135,36 +100,26 @@ export async function POST(
       ? `${patientContext}\n\nTranscribed Conversation:\n"""\n${conversationText}\n"""`
       : `Transcribed Conversation:\n"""\n${conversationText}\n"""`;
 
-    // Call Claude Service
-    const claudeResponse = await fetch(`${CLAUDE_SERVICE_URL}/chat`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-API-Key": CLAUDE_API_KEY,
-      },
-      body: JSON.stringify({
+    let soapNote = "";
+    try {
+      const result = await chatSync({
         systemPrompt,
         prompt,
-        model: "sonnet",
-        maxTurns: 1,
-        workingDirectory: "/tmp",
-      }),
-    });
-
-    if (!claudeResponse.ok) {
+        maxTokens: 3000,
+      });
+      soapNote = result.text;
+    } catch (e) {
+      console.error("[soap-note] sarvam error:", e);
       return NextResponse.json(
         { error: "Failed to generate SOAP note" },
-        { status: 500 },
+        { status: 502 },
       );
     }
 
-    const responseText = await claudeResponse.text();
-    const soapNote = extractTextFromSseResponse(responseText);
-
     if (!soapNote.trim()) {
       return NextResponse.json(
-        { error: "Failed to extract SOAP note from Claude response" },
-        { status: 500 },
+        { error: "Empty SOAP note from inference" },
+        { status: 502 },
       );
     }
 
