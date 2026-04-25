@@ -6,7 +6,8 @@
 //   - Free tier: exhausting the 20-consult cap triggers 402 + billing UI
 //     reflects the exhausted count (the deep version is doctor-journey.spec.ts;
 //     we only assert the state readback here)
-//   - Whitelisted (alpha) doctor: subscription row upsert renders Alpha Pro
+//   - Pro subscription expiry: a Pro row whose current_period_end is in the
+//     past falls back to Free tier UI on the billing page
 //   - Razorpay checkout gating: when neither real keys nor SIMULATE_RAZORPAY
 //     are set, POST /api/razorpay/create-subscription returns 503 with
 //     `razorpay_not_configured` — captured as a BLOCKER.
