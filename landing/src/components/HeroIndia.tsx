@@ -216,7 +216,7 @@ export function HeroIndia({ locale }: HeroIndiaProps) {
             </div>
           </div>
           <p className="mt-4 text-center font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground/70">
-            See it on your phone in 10 seconds
+            {hero.phoneCaption}
           </p>
         </div>
       </div>
