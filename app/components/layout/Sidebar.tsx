@@ -13,6 +13,7 @@ import {
   Zap,
   UserCircle,
   Calendar,
+  HelpCircle,
 } from "lucide-react";
 import { sharedAsset } from "@/lib/locale-asset";
 import { createClient } from "@/lib/supabase/client";
@@ -220,6 +221,13 @@ export function Sidebar() {
           icon={<Calendar className="w-5 h-5 flex-shrink-0" />}
           label={t("navigation.calendar")}
           active={isActive("/calendar") || pathname.includes("/calendar")}
+          open={open}
+        />
+        <SidebarNavLink
+          href="/issues"
+          icon={<HelpCircle className="w-5 h-5 flex-shrink-0" />}
+          label="Issues"
+          active={isActive("/issues") || pathname.includes("/issues")}
           open={open}
         />
         {locale !== "id" && (
