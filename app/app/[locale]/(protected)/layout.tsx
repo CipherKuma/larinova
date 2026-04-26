@@ -1,7 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Sidebar } from "@/components/layout/Sidebar";
-import { TopNavbar } from "@/components/layout/TopNavbar";
 import { ClientProviders } from "./ClientProviders";
 
 export const dynamic = "force-dynamic";
@@ -37,7 +36,6 @@ export default async function DashboardLayout({
       <div className="flex h-screen">
         <Sidebar />
         <div className="flex-1 flex flex-col overflow-hidden">
-          <TopNavbar />
           <main className="flex-1 overflow-y-auto">
             <div className="p-1.5 md:p-2 lg:p-3 xl:p-4 2xl:p-5 h-full">
               {children}

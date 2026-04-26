@@ -20,6 +20,7 @@ import { useEffect, useState } from "react";
 import { useSidebar } from "./SidebarContext";
 import { useLocale, useTranslations } from "next-intl";
 import { motion, AnimatePresence } from "motion/react";
+import { RegionSwitcher } from "./RegionSwitcher";
 
 interface Doctor {
   full_name: string;
@@ -236,6 +237,9 @@ export function Sidebar() {
 
       {/* Bottom Section */}
       <div className="p-3 space-y-1 border-t border-border/50">
+        {/* Region switcher */}
+        <RegionSwitcher open={open} />
+
         {/* Logout */}
         <button
           onClick={handleLogout}

@@ -25,7 +25,7 @@ import {
   generateSoftwareApplicationJsonLd,
 } from "@/lib/structured-data";
 import { SITE_URL, SITE_NAME } from "@/lib/metadata";
-import { type Locale } from "@/data/locale-content";
+import { type Locale, content as localeContent } from "@/data/locale-content";
 
 interface PageProps {
   params: Promise<{ locale: string }>;
@@ -133,19 +133,19 @@ export default async function LocaleLandingPage({ params }: PageProps) {
 
   const l = locale as Locale;
   const faqs = l === "id" ? FAQS_ID : FAQS;
-  const isIndiaOpd = l === "in";
+  const isOpd = !!localeContent[l].opd;
 
   return (
     <SmoothScroll>
       <Nav locale={l} />
       <main>
-        {isIndiaOpd ? <HeroIndia locale={l} /> : <Hero locale={l} />}
+        {isOpd ? <HeroIndia locale={l} /> : <Hero locale={l} />}
         <Problem locale={l} />
-        {!isIndiaOpd && <HowItWorks locale={l} />}
-        {isIndiaOpd ? <FeaturesIndia locale={l} /> : <Features locale={l} />}
+        {!isOpd && <HowItWorks locale={l} />}
+        {isOpd ? <FeaturesIndia locale={l} /> : <Features locale={l} />}
         <Trust locale={l} />
         <PoweredBySarvam locale={l} />
-        {isIndiaOpd ? <PricingIndia locale={l} /> : <Pricing locale={l} />}
+        {isOpd ? <PricingIndia locale={l} /> : <Pricing locale={l} />}
         <FAQ locale={l} />
         <Blog locale={l} />
         <FinalCTA locale={l} />

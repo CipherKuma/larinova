@@ -10,7 +10,7 @@ import { createClient } from "@/lib/supabase/client";
 import { sharedAsset } from "@/lib/locale-asset";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 
 export default function VerifyOtpPage() {
   const [otp, setOtp] = useState<string[]>(Array(6).fill(""));
@@ -23,7 +23,6 @@ export default function VerifyOtpPage() {
   const locale = params.locale as string;
   const phone = searchParams.get("phone") || "";
   const t = useTranslations();
-  const { toast } = useToast();
   const supabase = createClient();
 
   useEffect(() => {
@@ -91,28 +90,23 @@ export default function VerifyOtpPage() {
       });
 
       if (error) {
-        toast({
-          title: t("auth.invalidOtp"),
-          description: t("auth.invalidOtpDescription"),
-          variant: "destructive",
-        });
+        toast.error(t("auth.invalidOtp"), {
+        description: t("auth.invalidOtpDescription"),
+      });
         setOtp(Array(6).fill(""));
         inputRefs.current[0]?.focus();
         setLoading(false);
         return;
       }
 
-      toast({
-        title: t("auth.welcomeBackToast"),
+      toast.success(t("auth.welcomeBackToast"), {
         description: t("auth.signInSuccessful"),
       });
 
       router.push("/onboarding");
     } catch {
-      toast({
-        title: t("auth.unexpectedError"),
+      toast.error(t("auth.unexpectedError"), {
         description: t("auth.unexpectedErrorOccurred"),
-        variant: "destructive",
       });
       setLoading(false);
     }
@@ -127,24 +121,19 @@ export default function VerifyOtpPage() {
       });
 
       if (error) {
-        toast({
-          title: t("auth.unexpectedError"),
-          description: error.message,
-          variant: "destructive",
-        });
+        toast.error(t("auth.unexpectedError"), {
+        description: error.message,
+      });
         return;
       }
 
       setResendTimer(60);
-      toast({
-        title: t("auth.otpSent"),
+      toast.success(t("auth.otpSent"), {
         description: t("auth.otpSentDescription"),
       });
     } catch {
-      toast({
-        title: t("auth.unexpectedError"),
+      toast.error(t("auth.unexpectedError"), {
         description: t("auth.unexpectedErrorOccurred"),
-        variant: "destructive",
       });
     }
   };

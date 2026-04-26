@@ -21,7 +21,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 
 // Note: Zod error messages will be overridden by FormMessage component translations
 const signUpSchema = z.object({
@@ -44,7 +44,6 @@ export default function SignUpPage() {
   const params = useParams();
   const locale = params.locale as string;
   const t = useTranslations();
-  const { toast } = useToast();
   const supabase = createClient();
 
   const form = useForm<SignUpFormValues>({
@@ -98,11 +97,9 @@ export default function SignUpPage() {
             "[SIGNUP-UI] User already exists, redirecting to sign-in",
           );
 
-          toast({
-            title: t("auth.accountAlreadyExists"),
-            description: t("auth.accountExistsSignIn"),
-            variant: "destructive",
-          });
+          toast.error(t("auth.accountAlreadyExists"), {
+        description: t("auth.accountExistsSignIn"),
+      });
 
           setLoading(false);
 
@@ -115,11 +112,9 @@ export default function SignUpPage() {
         }
 
         // Other errors - show toast
-        toast({
-          title: t("auth.signUpFailed"),
-          description: result.error || t("auth.unableToCreateAccount"),
-          variant: "destructive",
-        });
+        toast.error(t("auth.signUpFailed"), {
+        description: result.error || t("auth.unableToCreateAccount"),
+      });
 
         setLoading(false);
         return;
@@ -151,11 +146,9 @@ export default function SignUpPage() {
         ) {
           console.log("[SIGNUP-UI] Email verification required");
 
-          toast({
-            title: t("auth.accountCreatedVerifyEmail"),
-            description: t("auth.checkInboxToVerify"),
-            variant: "default",
-          });
+          toast.success(t("auth.accountCreatedVerifyEmail"), {
+        description: t("auth.checkInboxToVerify"),
+      });
 
           setLoading(false);
           // Don't redirect - let them see the message
@@ -167,10 +160,9 @@ export default function SignUpPage() {
           "[SIGNUP-UI] Other sign-in error, redirecting to sign-in page",
         );
 
-        toast({
-          title: t("auth.accountCreated"),
-          description: t("auth.accountCreatedSignIn"),
-        });
+        toast.success(t("auth.accountCreated"), {
+        description: t("auth.accountCreatedSignIn"),
+      });
 
         setLoading(false);
         router.push("/sign-in");
@@ -181,8 +173,7 @@ export default function SignUpPage() {
         "[SIGNUP-UI] Auto sign-in successful, redirecting to home page",
       );
 
-      toast({
-        title: t("auth.welcomeSignUp"),
+      toast.success(t("auth.welcomeSignUp"), {
         description: t("auth.accountCreatedSuccessfully"),
       });
 
@@ -195,10 +186,8 @@ export default function SignUpPage() {
         message: error instanceof Error ? error.message : "Unknown error",
       });
 
-      toast({
-        title: t("auth.unexpectedError"),
+      toast.error(t("auth.unexpectedError"), {
         description: t("auth.unexpectedErrorOccurred"),
-        variant: "destructive",
       });
 
       setLoading(false);

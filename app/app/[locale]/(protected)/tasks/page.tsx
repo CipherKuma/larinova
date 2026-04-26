@@ -41,7 +41,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { DatePicker } from "@/components/ui/date-picker";
 import { createClient } from "@/lib/supabase/client";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 
 interface Patient {
   id: string;
@@ -103,7 +103,6 @@ export default function TasksPage() {
   const params = useParams();
   const locale = params.locale as string;
   const t = useTranslations();
-  const { toast } = useToast();
 
   // Inline editing state
   const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
@@ -151,15 +150,13 @@ export default function TasksPage() {
       setTasks(data || []);
     } catch (error) {
       console.error("Error fetching tasks:", error);
-      toast({
-        title: t("tasks.error"),
+      toast.error(t("tasks.error"), {
         description: t("tasks.failedToLoadTasks"),
-        variant: "destructive",
       });
     } finally {
       setLoading(false);
     }
-  }, [t, toast]);
+  }, [t]);
 
   const fetchPatients = useCallback(async () => {
     try {
@@ -244,21 +241,21 @@ export default function TasksPage() {
 
       if (!response.ok) throw new Error("Failed to save task");
 
-      toast({
-        title: editingTaskId ? t("tasks.taskUpdated") : t("tasks.taskCreated"),
-        description: editingTaskId
-          ? t("tasks.taskUpdatedSuccess")
-          : t("tasks.taskCreatedSuccess"),
-      });
+      toast.success(
+        editingTaskId ? t("tasks.taskUpdated") : t("tasks.taskCreated"),
+        {
+          description: editingTaskId
+            ? t("tasks.taskUpdatedSuccess")
+            : t("tasks.taskCreatedSuccess"),
+        },
+      );
 
       cancelEditing();
       fetchTasks();
     } catch (error) {
       console.error("Error saving task:", error);
-      toast({
-        title: t("tasks.error"),
+      toast.error(t("tasks.error"), {
         description: t("tasks.failedToSaveTask"),
-        variant: "destructive",
       });
     } finally {
       setSaving(false);
@@ -279,8 +276,7 @@ export default function TasksPage() {
       });
       if (!response.ok) throw new Error("Failed to delete task");
 
-      toast({
-        title: t("tasks.taskDeleted"),
+      toast.success(t("tasks.taskDeleted"), {
         description: t("tasks.taskDeletedSuccess"),
       });
 
@@ -288,10 +284,8 @@ export default function TasksPage() {
       fetchTasks();
     } catch (error) {
       console.error("Error deleting task:", error);
-      toast({
-        title: t("tasks.error"),
+      toast.error(t("tasks.error"), {
         description: t("tasks.failedToDeleteTask"),
-        variant: "destructive",
       });
     } finally {
       setDeleting(false);
@@ -309,17 +303,14 @@ export default function TasksPage() {
       });
       if (!response.ok) throw new Error("Failed to update task status");
 
-      toast({
-        title: t("tasks.statusUpdated"),
+      toast.success(t("tasks.statusUpdated"), {
         description: t("tasks.statusUpdatedSuccess"),
       });
       fetchTasks();
     } catch (error) {
       console.error("Error updating task status:", error);
-      toast({
-        title: t("tasks.error"),
+      toast.error(t("tasks.error"), {
         description: t("tasks.failedToUpdateStatus"),
-        variant: "destructive",
       });
     }
   };

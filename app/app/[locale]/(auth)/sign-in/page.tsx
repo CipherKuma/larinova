@@ -9,7 +9,7 @@ import { createClient } from "@/lib/supabase/client";
 import { sharedAsset } from "@/lib/locale-asset";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 
 type Step =
@@ -33,7 +33,6 @@ export default function SignInPage() {
   const router = useRouter();
   const params = useParams();
   const locale = params.locale as string;
-  const { toast } = useToast();
   const t = useTranslations("auth");
   const tc = useTranslations("common");
   const supabase = createClient();
@@ -82,8 +81,7 @@ export default function SignInPage() {
     } else if (!doctor.onboarding_completed) {
       router.push("/onboarding");
     } else {
-      toast({
-        title: t("welcomeBackToast"),
+      toast.success(t("welcomeBackToast"), {
         description: t("takingToDashboard"),
       });
       router.push("/");
@@ -93,10 +91,8 @@ export default function SignInPage() {
   // Step 1: User enters email, we check if they exist
   const handleEmailContinue = async () => {
     if (!email || !email.includes("@")) {
-      toast({
-        title: t("invalidEmailTitle"),
+      toast.error(t("invalidEmailTitle"), {
         description: t("pleaseEnterValidEmail"),
-        variant: "destructive",
       });
       return;
     }
@@ -121,10 +117,8 @@ export default function SignInPage() {
         await sendMagicLink();
       }
     } catch {
-      toast({
-        title: t("unexpectedError"),
+      toast.error(t("unexpectedError"), {
         description: t("unexpectedErrorOccurred"),
-        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -141,10 +135,8 @@ export default function SignInPage() {
     });
 
     if (error) {
-      toast({
-        title: t("failedToSendLink"),
+      toast.error(t("failedToSendLink"), {
         description: error.message,
-        variant: "destructive",
       });
       return;
     }
@@ -196,10 +188,8 @@ export default function SignInPage() {
       });
 
       if (error) {
-        toast({
-          title: t("invalidCode"),
+        toast.error(t("invalidCode"), {
           description: t("invalidOtpDescription"),
-          variant: "destructive",
         });
         setOtp(Array(6).fill(""));
         otpRefs.current[0]?.focus();
@@ -209,10 +199,8 @@ export default function SignInPage() {
 
       await handlePostLogin();
     } catch {
-      toast({
-        title: t("verificationFailed"),
+      toast.error(t("verificationFailed"), {
         description: t("unexpectedErrorOccurred"),
-        variant: "destructive",
       });
       setLoading(false);
     }
@@ -231,16 +219,12 @@ export default function SignInPage() {
 
       if (error) {
         if (error.message?.toLowerCase().includes("invalid")) {
-          toast({
-            title: t("wrongPassword"),
+          toast.error(t("wrongPassword"), {
             description: t("invalidCredentials"),
-            variant: "destructive",
           });
         } else {
-          toast({
-            title: t("loginFailed"),
+          toast.error(t("loginFailed"), {
             description: error.message,
-            variant: "destructive",
           });
         }
         setLoading(false);
@@ -249,10 +233,8 @@ export default function SignInPage() {
 
       await handlePostLogin();
     } catch {
-      toast({
-        title: t("loginFailed"),
+      toast.error(t("loginFailed"), {
         description: t("unexpectedErrorOccurred"),
-        variant: "destructive",
       });
       setLoading(false);
     }
@@ -270,18 +252,14 @@ export default function SignInPage() {
       });
 
       if (error) {
-        toast({
-          title: t("loginFailed"),
+        toast.error(t("loginFailed"), {
           description: error.message,
-          variant: "destructive",
         });
         setLoading(false);
       }
     } catch {
-      toast({
-        title: t("loginFailed"),
+      toast.error(t("loginFailed"), {
         description: t("unexpectedErrorOccurred"),
-        variant: "destructive",
       });
       setLoading(false);
     }
@@ -290,10 +268,8 @@ export default function SignInPage() {
   // Phone OTP
   const handlePhoneSubmit = async () => {
     if (!/^[6-9]\d{9}$/.test(phone)) {
-      toast({
-        title: t("invalidEmailTitle"),
+      toast.error(t("invalidEmailTitle"), {
         description: t("pleaseEnterValidEmail"),
-        variant: "destructive",
       });
       return;
     }
@@ -305,25 +281,20 @@ export default function SignInPage() {
       });
 
       if (error) {
-        toast({
-          title: t("failedToSendOtp"),
+        toast.error(t("failedToSendOtp"), {
           description: error.message,
-          variant: "destructive",
         });
         setLoading(false);
         return;
       }
 
-      toast({
-        title: t("otpSent"),
+      toast.success(t("otpSent"), {
         description: t("checkPhoneForCode"),
       });
       router.push(`/verify-otp?phone=${phone}`);
     } catch {
-      toast({
-        title: t("failedToSendOtp"),
+      toast.error(t("failedToSendOtp"), {
         description: t("unexpectedErrorOccurred"),
-        variant: "destructive",
       });
       setLoading(false);
     }
@@ -432,12 +403,13 @@ export default function SignInPage() {
             {t("continueWithGoogle")}
           </Button>
 
-          {/* Phone */}
+          {/* Phone — disabled until SMS provider (MSG91) is live */}
           <Button
-            onClick={() => setStep("phone")}
+            disabled
             variant="outline"
             size="lg"
-            className="w-full h-12 text-sm font-medium"
+            className="w-full h-12 text-sm font-medium opacity-60 cursor-not-allowed"
+            title="Phone sign-in coming soon"
           >
             <svg
               className="w-5 h-5 mr-2"
@@ -450,7 +422,10 @@ export default function SignInPage() {
             >
               <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z" />
             </svg>
-            {t("continueWithPhone")}
+            <span>{t("continueWithPhone")}</span>
+            <span className="ml-2 rounded-full border border-border bg-background/40 px-2 py-0.5 text-[10px] uppercase tracking-wider text-muted-foreground">
+              Soon
+            </span>
           </Button>
         </div>
       )}

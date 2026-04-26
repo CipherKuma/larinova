@@ -1,7 +1,7 @@
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { Inter, Outfit, IBM_Plex_Mono, Cairo } from "next/font/google";
-import { Toaster } from "@/components/ui/toaster";
+import { Toaster } from "@/components/ui/sonner";
 import { notFound } from "next/navigation";
 import { routing } from "@/src/i18n/routing";
 import BetaTranslationBanner from "@/components/layout/BetaTranslationBanner";

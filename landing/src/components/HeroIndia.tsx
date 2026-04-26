@@ -15,6 +15,7 @@ export function HeroIndia({ locale }: HeroIndiaProps) {
   const headlineRef = useRef<HTMLHeadingElement>(null);
   const subRef = useRef<HTMLParagraphElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLDivElement>(null);
   const glowRef = useRef<HTMLDivElement>(null);
   const ringRef = useRef<HTMLDivElement>(null);
 
@@ -44,6 +45,18 @@ export function HeroIndia({ locale }: HeroIndiaProps) {
         ctaRef.current,
         { opacity: 0, y: 20 },
         { opacity: 1, y: 0, duration: 0.9, delay: 0.65, ease: "power3.out" },
+      );
+      gsap.fromTo(
+        videoRef.current,
+        { opacity: 0, y: 30, scale: 0.97 },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 1.0,
+          delay: 0.85,
+          ease: "power3.out",
+        },
       );
       if (glowRef.current) {
         gsap.to(glowRef.current, {
@@ -129,44 +142,82 @@ export function HeroIndia({ locale }: HeroIndiaProps) {
         }}
       />
 
-      <div className="relative z-10 mx-auto flex max-w-4xl flex-col items-center px-6 text-center">
-        <h1
-          ref={headlineRef}
-          className="font-display text-4xl font-bold leading-[1.05] tracking-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl"
-        >
-          {hero.headline.split(" ").map((word, i) => (
-            <span key={i} className="word inline-block" style={{ opacity: 0 }}>
-              {word}
-              {i < hero.headline.split(" ").length - 1 ? " " : ""}
-            </span>
-          ))}
-        </h1>
+      <div className="relative z-10 mx-auto flex w-full max-w-7xl flex-col items-center gap-12 px-6 md:flex-row md:items-center md:gap-16">
+        <div className="flex flex-1 flex-col items-center text-center md:items-start md:text-left">
+          <h1
+            ref={headlineRef}
+            className="font-display text-4xl font-bold leading-[1.05] tracking-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl"
+          >
+            {hero.headline.split(" ").map((word, i) => (
+              <span
+                key={i}
+                className="word inline-block"
+                style={{ opacity: 0 }}
+              >
+                {word}
+                {i < hero.headline.split(" ").length - 1 ? " " : ""}
+              </span>
+            ))}
+          </h1>
 
-        <p
-          ref={subRef}
-          className="mt-7 max-w-2xl text-lg leading-relaxed text-muted-foreground sm:text-xl"
-          style={{ opacity: 0 }}
-        >
-          {hero.sub}
-        </p>
+          <p
+            ref={subRef}
+            className="mt-7 max-w-xl text-lg leading-relaxed text-muted-foreground sm:text-xl"
+            style={{ opacity: 0 }}
+          >
+            {hero.sub}
+          </p>
 
+          <div
+            ref={ctaRef}
+            className="mt-10 flex flex-wrap items-center justify-center gap-3 md:justify-start"
+            style={{ opacity: 0 }}
+          >
+            <a
+              href={hero.ctaPrimaryHref}
+              className="rounded-full bg-primary px-8 py-3.5 text-sm font-semibold text-primary-foreground transition-all hover:brightness-110"
+            >
+              {hero.ctaPrimary}
+            </a>
+            <a
+              href={hero.ctaSecondaryHref}
+              className="rounded-full border border-border px-8 py-3.5 text-sm font-semibold text-foreground/80 transition-all hover:border-primary/50 hover:text-primary"
+            >
+              {hero.ctaSecondary}
+            </a>
+          </div>
+        </div>
+
+        {/* Right column: hero video slot — Higgsfield loop drops in here. */}
         <div
-          ref={ctaRef}
-          className="mt-10 flex flex-wrap items-center justify-center gap-3"
+          ref={videoRef}
+          className="flex flex-1 justify-center md:max-w-md md:justify-end"
           style={{ opacity: 0 }}
+          data-slot="hero-loop"
         >
-          <a
-            href={hero.ctaPrimaryHref}
-            className="rounded-full bg-primary px-8 py-3.5 text-sm font-semibold text-primary-foreground transition-all hover:brightness-110"
-          >
-            {hero.ctaPrimary}
-          </a>
-          <a
-            href={hero.ctaSecondaryHref}
-            className="rounded-full border border-border px-8 py-3.5 text-sm font-semibold text-foreground/80 transition-all hover:border-primary/50 hover:text-primary"
-          >
-            {hero.ctaSecondary}
-          </a>
+          <div className="relative mx-auto aspect-[9/19] w-[260px] overflow-hidden rounded-[2.4rem] border-[10px] border-foreground/90 bg-card shadow-[0_30px_80px_-20px_rgba(16,185,129,0.25)] sm:w-[300px]">
+            {/* Notch */}
+            <div className="absolute left-1/2 top-2 z-20 h-5 w-24 -translate-x-1/2 rounded-full bg-foreground/90" />
+            {/* Placeholder content — replaced by <video> on launch */}
+            <div className="relative flex h-full w-full flex-col items-center justify-center overflow-hidden bg-gradient-to-br from-background via-card to-background px-6 text-center">
+              <div className="absolute inset-0 opacity-30">
+                <div className="absolute left-1/2 top-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/30 blur-3xl" />
+              </div>
+              <div className="relative z-10 space-y-2">
+                <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-primary">
+                  hero loop
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  Product video
+                  <br />
+                  coming soon
+                </div>
+              </div>
+            </div>
+          </div>
+          <p className="mt-4 text-center font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground/70">
+            See it on your phone in 10 seconds
+          </p>
         </div>
       </div>
     </section>

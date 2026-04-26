@@ -8,14 +8,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
+import { motion } from "motion/react";
 
 const REGIONS = [
   { code: "in", label: "India", flag: "🇮🇳" },
   { code: "id", label: "Indonesia", flag: "🇮🇩" },
 ] as const;
 
-export function RegionSwitcher() {
+export function RegionSwitcher({ open = true }: { open?: boolean }) {
   const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
@@ -25,13 +25,10 @@ export function RegionSwitcher() {
   async function switchTo(code: "in" | "id") {
     if (code === locale) return;
 
-    // Rewrite path /in/foo → /id/foo
     const newPath = pathname.replace(/^\/(in|id)(?=\/|$)/, `/${code}`);
 
-    // Set cookie
     document.cookie = `larinova_locale=${code}; path=/; max-age=${60 * 60 * 24 * 365}; samesite=lax`;
 
-    // Persist to DB if authenticated (fire-and-forget)
     fetch("/api/user/locale", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -45,12 +42,32 @@ export function RegionSwitcher() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="sm" className="gap-2">
-          <span>{current.flag}</span>
-          <span>{current.label}</span>
-        </Button>
+        <button
+          className={`flex items-center gap-3 w-full
+            px-3 py-3
+            rounded-xl
+            text-sm font-medium text-muted-foreground
+            hover:text-foreground
+            transition-colors duration-200
+            ${!open ? "justify-center" : ""}`}
+          title={!open ? current.label : ""}
+        >
+          <span className="text-base leading-none flex-shrink-0">
+            {current.flag}
+          </span>
+          <motion.span
+            animate={{
+              display: open ? "inline-block" : "none",
+              opacity: open ? 1 : 0,
+            }}
+            transition={{ duration: 0.2 }}
+            className="whitespace-pre"
+          >
+            {current.label}
+          </motion.span>
+        </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent align="start" side="top">
         {REGIONS.map((r) => (
           <DropdownMenuItem
             key={r.code}

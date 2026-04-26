@@ -22,6 +22,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { DocumentType, DOCUMENT_TYPES, HelenaDocument } from "@/types/helena";
 
 interface DocumentWithDetails extends HelenaDocument {
@@ -47,6 +55,8 @@ export default function DocumentDetailPage() {
   const [editedTitle, setEditedTitle] = useState("");
   const [editedContent, setEditedContent] = useState("");
   const [saving, setSaving] = useState(false);
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const printableRef = useRef<HTMLDivElement>(null);
 
   const router = useRouter();
@@ -125,9 +135,12 @@ export default function DocumentDetailPage() {
     }
   };
 
-  const handleDelete = async () => {
-    if (!confirm(td("deleteConfirm"))) return;
+  const handleDelete = () => {
+    setConfirmDeleteOpen(true);
+  };
 
+  const confirmDelete = async () => {
+    setDeleting(true);
     try {
       const response = await fetch(`/api/documents/${documentId}`, {
         method: "DELETE",
@@ -138,6 +151,9 @@ export default function DocumentDetailPage() {
       }
     } catch (error) {
       console.error("Failed to delete document:", error);
+    } finally {
+      setDeleting(false);
+      setConfirmDeleteOpen(false);
     }
   };
 
@@ -532,6 +548,36 @@ export default function DocumentDetailPage() {
           </div>
         </div>
       </div>
+
+      <Dialog
+        open={confirmDeleteOpen}
+        onOpenChange={(open) => {
+          if (!open && !deleting) setConfirmDeleteOpen(false);
+        }}
+      >
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>{t("common.delete")}</DialogTitle>
+            <DialogDescription>{td("deleteConfirm")}</DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setConfirmDeleteOpen(false)}
+              disabled={deleting}
+            >
+              {t("common.cancel")}
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={confirmDelete}
+              disabled={deleting}
+            >
+              {deleting ? "..." : t("common.delete")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

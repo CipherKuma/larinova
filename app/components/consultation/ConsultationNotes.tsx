@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Save, CheckCircle } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { toast } from "sonner";
 
 interface ConsultationNotesProps {
   consultationId: string;
@@ -57,7 +58,7 @@ export function ConsultationNotes({ consultationId }: ConsultationNotesProps) {
       setHasUnsavedChanges(false);
     } catch (error) {
       console.error("Error saving notes:", error);
-      alert("Failed to save notes. Please try again.");
+      toast.error("Failed to save notes. Please try again.");
     } finally {
       setIsSaving(false);
     }

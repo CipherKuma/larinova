@@ -24,6 +24,12 @@ export interface FeatureContent {
 export interface TrustItem {
   title: string;
   desc: string;
+  num?: string;
+  label?: string;
+  verb?: string;
+  noun?: string;
+  accent?: string;
+  visual?: "no-sale" | "india-servers" | "encryption" | "doctor-final";
 }
 
 export interface StatContent {
@@ -237,8 +243,8 @@ export const content: Record<Locale, LandingContent> = {
   in: {
     opd: {
       hero: {
-        headline: "Larinova — the OPD assistant for Indian doctors.",
-        sub: "See more patients. Type less. Send prescriptions on WhatsApp.",
+        headline: "The most advanced OPD assistant for Indian doctors.",
+        sub: "See more patients. Type less. Send prescriptions and follow-ups by email — SMS and WhatsApp coming soon.",
         ctaPrimary: "Start free",
         ctaPrimaryHref: "https://app.larinova.com/in/signup",
         ctaSecondary: "See how it works",
@@ -254,7 +260,7 @@ export const content: Record<Locale, LandingContent> = {
             label: "BOOK",
             verb: "Your booking page,",
             noun: "live in 60 seconds.",
-            desc: "Share a single link. Patients pick a slot, fill contact details, and get confirmations over WhatsApp, SMS, and email — automatically.",
+            desc: "Share a single link. Patients pick a slot, fill contact details, and get email confirmations automatically. SMS and WhatsApp confirmations coming soon.",
             accent: "#10b981",
           },
           {
@@ -286,7 +292,7 @@ export const content: Record<Locale, LandingContent> = {
             label: "FOLLOW-UP",
             verb: "Follow-ups,",
             noun: "on autopilot.",
-            desc: "Day 1, 3, 7 — a wellness agent checks in over WhatsApp. It probes, classifies, and flags you only when something actually needs attention.",
+            desc: "Day 1, 3, 7 — a wellness agent checks in by email today (WhatsApp and SMS coming soon). It probes, classifies, and flags you only when something actually needs attention.",
             accent: "#ef4444",
           },
         ],
@@ -308,7 +314,7 @@ export const content: Record<Locale, LandingContent> = {
           features: [
             "20 consultations per month",
             "All five OPD phases included",
-            "WhatsApp / SMS / Email follow-ups",
+            "Email follow-ups (SMS & WhatsApp coming soon)",
             "SOAP notes, ICD-10, prescriptions",
             "No credit card required",
           ],
@@ -487,20 +493,44 @@ export const content: Record<Locale, LandingContent> = {
       headline: "Your patients trust you. You can trust us.",
       items: [
         {
+          num: "01",
+          label: "PRIVACY",
+          verb: "Patient data,",
+          noun: "never for sale.",
           title: "Patient data never sold",
           desc: "Your consultation data belongs to you. We never sell, share, or use patient information for advertising or training third-party models.",
+          accent: "#10b981",
+          visual: "no-sale",
         },
         {
+          num: "02",
+          label: "RESIDENCY",
+          verb: "Your records",
+          noun: "stay in India.",
           title: "Indian servers only",
-          desc: "All data processing and storage happens on servers located in India. Your patient records never leave the country.",
+          desc: "All processing and storage happens on servers located in India. Patient records never leave the country, in line with the DPDP Act.",
+          accent: "#0ea5e9",
+          visual: "india-servers",
         },
         {
+          num: "03",
+          label: "ENCRYPTION",
+          verb: "End-to-end encryption,",
+          noun: "audit trails on everything.",
           title: "Enterprise-grade encryption",
-          desc: "End-to-end encryption, access controls, audit trails, and minimum necessary data handling - built to meet DPDP Act and international data protection standards.",
+          desc: "AES-256 at rest, TLS 1.3 in transit. Role-based access, immutable audit logs, minimum-necessary data handling — built to clear hospital procurement.",
+          accent: "#a855f7",
+          visual: "encryption",
         },
         {
+          num: "04",
+          label: "AUTHORITY",
+          verb: "AI assists.",
+          noun: "Doctor signs.",
           title: "Doctor has final say",
-          desc: "Every AI-generated note requires your review and approval. Larinova assists - it never makes clinical decisions autonomously.",
+          desc: "Every AI-generated note requires your review and signature before it leaves the consult. Larinova never makes clinical decisions autonomously.",
+          accent: "#f59e0b",
+          visual: "doctor-final",
         },
       ],
     },
@@ -652,6 +682,112 @@ export const content: Record<Locale, LandingContent> = {
   },
 
   id: {
+    opd: {
+      hero: {
+        headline: "Asisten poliklinik paling canggih untuk dokter Indonesia.",
+        sub: "Lebih banyak pasien. Lebih sedikit menulis. Kirim resep dan tindak lanjut lewat email — SMS dan WhatsApp segera hadir.",
+        ctaPrimary: "Mulai gratis",
+        ctaPrimaryHref: "https://app.larinova.com/id/signup",
+        ctaSecondary: "Lihat cara kerjanya",
+        ctaSecondaryHref: "#opd-journey",
+      },
+      features: {
+        sectionLabel: "Perjalanannya",
+        headlinePre: "Satu poliklinik.",
+        headlineAccent: "Lima momen yang tak perlu Anda pikirkan lagi.",
+        phases: [
+          {
+            num: "01",
+            label: "BOOKING",
+            verb: "Halaman booking Anda,",
+            noun: "siap dalam 60 detik.",
+            desc: "Bagikan satu tautan. Pasien memilih jadwal, mengisi data kontak, dan menerima konfirmasi otomatis lewat email. SMS dan WhatsApp segera hadir.",
+            accent: "#10b981",
+          },
+          {
+            num: "02",
+            label: "INTAKE",
+            verb: "Pasien mengisi formulir Anda.",
+            noun: "Bukan formulir kami.",
+            desc: "Rancang pertanyaan yang benar-benar Anda butuhkan. Pasien menjawab sebelum konsultasi, mengunggah hasil lab dan foto. AI menanyakan detail yang kurang sehingga Anda tidak perlu.",
+            accent: "#0ea5e9",
+          },
+          {
+            num: "03",
+            label: "PERSIAPAN",
+            verb: "Masuk konsultasi",
+            noun: "dengan persiapan penuh.",
+            desc: "AI pra-konsultasi membaca intake, riwayat, dan unggahan — lalu menyajikan Prep Brief 60 detik saat pasien tiba. Tanda bahaya disorot otomatis.",
+            accent: "#a855f7",
+          },
+          {
+            num: "04",
+            label: "KONSULTASI",
+            verb: "Anda bicara.",
+            noun: "Kami menulis.",
+            desc: "Tekan rekam. Bicara Bahasa Indonesia, Jawa, Sunda, Inggris, campuran — apa pun. Larinova menghasilkan catatan SOAP, kode ICD-10, dan resep yang siap ditandatangani sebelum Anda berdiri.",
+            accent: "#f59e0b",
+          },
+          {
+            num: "05",
+            label: "TINDAK LANJUT",
+            verb: "Tindak lanjut,",
+            noun: "berjalan sendiri.",
+            desc: "Hari 1, 3, 7 — agen wellness menanyakan kabar lewat email hari ini (WhatsApp dan SMS segera hadir). Mengklasifikasi, memberi peringatan hanya saat memang perlu perhatian Anda.",
+            accent: "#ef4444",
+          },
+        ],
+      },
+      pricing: {
+        sectionLabel: "Harga",
+        headlinePre: "Sederhana.",
+        headlineAccent: "Dibuat untuk poliklinik solo.",
+        monthlyLabel: "Bulanan",
+        yearlyLabel: "Tahunan",
+        savingsPill: "Hemat 17%",
+        free: {
+          name: "Gratis",
+          subtitle: "Semua fitur, sampai batas tertentu.",
+          priceMonthly: "Rp 0",
+          priceYearly: "Rp 0",
+          periodMonthly: "/bulan",
+          periodYearly: "/tahun",
+          features: [
+            "20 konsultasi per bulan",
+            "Kelima fase poliklinik",
+            "Tindak lanjut email (SMS & WhatsApp segera hadir)",
+            "Catatan SOAP, ICD-10, resep",
+            "Tanpa kartu kredit",
+          ],
+          cta: "Mulai gratis",
+          ctaHref: "https://app.larinova.com/id/signup",
+        },
+        pro: {
+          name: "Pro",
+          subtitle: "Untuk dokter dengan jadwal penuh.",
+          priceMonthly: "Rp 299.000",
+          priceYearly: "Rp 2.990.000",
+          periodMonthly: "/bulan",
+          periodYearly: "/tahun",
+          savingsBadge: "Hemat Rp 598.000",
+          features: [
+            "Konsultasi tak terbatas",
+            "AI pra-konsultasi prioritas",
+            "Template intake kustom",
+            "Formulir resep lengkap + ekspor PDF",
+            "Dukungan prioritas",
+          ],
+          cta: "Berlangganan Pro",
+          ctaHref: "https://app.larinova.com/id/signup?next=/settings/billing",
+          badge: "POPULER",
+        },
+        enterpriseLabel: "Rumah sakit & jaringan klinik",
+        enterpriseSub:
+          "Deployment multi-dokter, SSO, siklus penagihan kustom, opsi on-prem.",
+        enterpriseCta: "Hubungi kami",
+        enterpriseHref: "mailto:hello@larinova.com",
+      },
+    },
     nav: {
       links: ["Fitur", "Harga", "Blog"],
       cta: "Coba Gratis 1 Bulan",
@@ -805,20 +941,44 @@ export const content: Record<Locale, LandingContent> = {
       headline: "Pasien Anda mempercayai Anda. Anda bisa mempercayai kami.",
       items: [
         {
+          num: "01",
+          label: "PRIVASI",
+          verb: "Data pasien,",
+          noun: "tidak pernah dijual.",
           title: "Data pasien tidak pernah dijual",
-          desc: "Data konsultasi Anda sepenuhnya milik Anda. Kami tidak pernah menjual, berbagi, atau menggunakan informasi pasien untuk iklan atau melatih model pihak ketiga.",
+          desc: "Data konsultasi Anda milik Anda. Kami tidak pernah menjual, berbagi, atau menggunakan informasi pasien untuk iklan atau pelatihan model pihak ketiga.",
+          accent: "#10b981",
+          visual: "no-sale",
         },
         {
-          title: "Infrastruktur aman & terenkripsi",
-          desc: "Semua data dienkripsi saat transit dan saat disimpan. Akses dibatasi secara ketat dan tidak ada data pasien yang tersimpan tanpa enkripsi.",
+          num: "02",
+          label: "RESIDENSI",
+          verb: "Catatan Anda",
+          noun: "tetap di Indonesia.",
+          title: "Server Indonesia saja",
+          desc: "Semua pemrosesan dan penyimpanan terjadi di server di Indonesia. Catatan pasien tidak pernah meninggalkan negara, sesuai UU PDP.",
+          accent: "#0ea5e9",
+          visual: "india-servers",
         },
         {
-          title: "Sesuai UU PDP & standar global",
-          desc: "Kontrol akses, jejak audit, dan penanganan data minimal - dibangun sesuai UU Perlindungan Data Pribadi dan standar perlindungan data internasional.",
+          num: "03",
+          label: "ENKRIPSI",
+          verb: "Enkripsi end-to-end,",
+          noun: "audit trail untuk semua.",
+          title: "Enkripsi tingkat enterprise",
+          desc: "AES-256 saat disimpan, TLS 1.3 saat transit. Kontrol akses berbasis peran, log audit immutable, penanganan data minimal — siap untuk procurement rumah sakit.",
+          accent: "#a855f7",
+          visual: "encryption",
         },
         {
+          num: "04",
+          label: "OTORITAS",
+          verb: "AI membantu.",
+          noun: "Dokter menandatangani.",
           title: "Dokter memiliki keputusan akhir",
-          desc: "Setiap catatan yang dihasilkan AI memerlukan tinjauan dan persetujuan Anda. Larinova membantu - tidak pernah membuat keputusan klinis secara otonom.",
+          desc: "Setiap catatan AI memerlukan tinjauan dan tanda tangan Anda sebelum keluar dari konsultasi. Larinova tidak pernah membuat keputusan klinis secara otonom.",
+          accent: "#f59e0b",
+          visual: "doctor-final",
         },
       ],
     },

@@ -15,6 +15,14 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
   DocumentType,
   DOCUMENT_TYPES,
   DocumentWithPatient,
@@ -36,11 +44,14 @@ export default function DocumentsPage() {
   const [selectedDocument, setSelectedDocument] =
     useState<DocumentWithPatient | null>(null);
   const [downloading, setDownloading] = useState(false);
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
   const printableRef = useRef<HTMLDivElement>(null);
 
   const params = useParams();
   const locale = params.locale as string;
   const td = useTranslations("documents");
+  const tc = useTranslations("common");
 
   useEffect(() => {
     loadDocuments();
@@ -113,22 +124,27 @@ export default function DocumentsPage() {
     }
   };
 
-  const handleDeleteDocument = async (
-    documentId: string,
-    e?: React.MouseEvent,
-  ) => {
+  const handleDeleteDocument = (documentId: string, e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
-    if (!confirm(td("deleteConfirm"))) return;
+    setDeleteTargetId(documentId);
+  };
+
+  const confirmDeleteDocument = async () => {
+    if (!deleteTargetId) return;
+    setDeleting(true);
     try {
-      const response = await fetch(`/api/documents/${documentId}`, {
+      const response = await fetch(`/api/documents/${deleteTargetId}`, {
         method: "DELETE",
       });
       if (response.ok) {
-        if (selectedDocument?.id === documentId) setSelectedDocument(null);
+        if (selectedDocument?.id === deleteTargetId) setSelectedDocument(null);
         loadDocuments();
       }
     } catch (error) {
       console.error("Failed to delete document:", error);
+    } finally {
+      setDeleting(false);
+      setDeleteTargetId(null);
     }
   };
 
@@ -356,6 +372,36 @@ export default function DocumentsPage() {
           </div>
         </div>
       )}
+
+      <Dialog
+        open={deleteTargetId !== null}
+        onOpenChange={(open) => {
+          if (!open && !deleting) setDeleteTargetId(null);
+        }}
+      >
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>{tc("delete")}</DialogTitle>
+            <DialogDescription>{td("deleteConfirm")}</DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setDeleteTargetId(null)}
+              disabled={deleting}
+            >
+              {tc("cancel")}
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={confirmDeleteDocument}
+              disabled={deleting}
+            >
+              {deleting ? "..." : tc("delete")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

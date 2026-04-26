@@ -49,6 +49,9 @@ export function PhaseVisualFollowUp() {
             for Dr. Priya Iyer
           </div>
         </div>
+        <span className="rounded-full border border-white/20 bg-white/5 px-2 py-0.5 font-mono text-[9px] uppercase tracking-wider text-white/70">
+          WhatsApp · soon
+        </span>
         <svg
           className="h-4 w-4 text-white/60"
           viewBox="0 0 24 24"
