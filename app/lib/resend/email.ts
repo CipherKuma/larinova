@@ -361,19 +361,29 @@ function escHtml(str: string | null | undefined): string {
 
 // ─── Alpha Welcome (invite-code redemption) ──────────────────────────────
 
+function firstNameFrom(fullName: string | null | undefined): string {
+  if (!fullName) return "Doctor";
+  const parts = fullName
+    .trim()
+    .replace(/^Dr\.?\s+/i, "")
+    .split(/\s+/);
+  return parts[0] || "Doctor";
+}
+
 export async function sendAlphaWelcomeEmail({
   to,
-  periodEnd,
+  fullName,
 }: {
   to: string;
-  periodEnd: string;
+  fullName?: string | null;
 }): Promise<boolean> {
+  const first = firstNameFrom(fullName);
   try {
     const { error } = await resend.emails.send({
       from: FROM,
       to,
-      subject: "Welcome to Larinova, alpha doctor",
-      html: generateAlphaWelcomeHtml({ periodEnd }),
+      subject: `Welcome to Larinova, Dr. ${first}`,
+      html: generateAlphaWelcomeHtml({ firstName: first }),
     });
     if (error) {
       console.error("Alpha welcome email error:", error);
@@ -387,27 +397,98 @@ export async function sendAlphaWelcomeEmail({
 }
 
 function generateAlphaWelcomeHtml({
-  periodEnd,
+  firstName,
 }: {
-  periodEnd: string;
+  firstName: string;
 }): string {
-  const formattedDate = periodEnd
-    ? new Date(periodEnd).toLocaleDateString("en-IN", { dateStyle: "long" })
-    : "";
-  return `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">${baseStyles}</head>
+  const name = escHtml(firstName);
+  const dashboardUrl = "https://app.larinova.com";
+  return `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Arial, sans-serif;
+      line-height: 1.6; color: #1a1a1a; background: #f4f4f2;
+    }
+    .wrapper { max-width: 600px; margin: 40px auto; background: #fff; border-radius: 14px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,.06); }
+    .hero { background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%); padding: 48px 40px 40px; text-align: center; position: relative; }
+    .hero .brand { color: #fff; font-size: 13px; font-weight: 600; letter-spacing: 5px; text-transform: uppercase; opacity: 0.85; margin-bottom: 32px; }
+    .hero .badge { display: inline-block; padding: 6px 14px; border-radius: 999px; background: rgba(255,255,255,0.08); color: #d4d4d4; font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; border: 1px solid rgba(255,255,255,0.12); }
+    .hero h1 { color: #fff; font-size: 30px; font-weight: 600; line-height: 1.25; margin-top: 24px; letter-spacing: -0.5px; }
+    .body { padding: 40px; }
+    .lede { font-size: 16px; color: #2a2a2a; line-height: 1.7; margin-bottom: 32px; }
+    .lede strong { color: #0a0a0a; font-weight: 600; }
+    .panel { background: #fafaf9; border: 1px solid #ececea; border-radius: 10px; padding: 24px 28px; margin: 0 0 32px; }
+    .panel .label { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #8a8a86; margin-bottom: 6px; }
+    .panel .headline { font-size: 17px; font-weight: 600; color: #0a0a0a; margin-bottom: 12px; letter-spacing: -0.2px; }
+    .panel .desc { font-size: 14px; color: #4a4a48; line-height: 1.65; }
+    .next-list { margin: 0 0 32px; padding: 0; list-style: none; }
+    .next-list li { padding: 14px 0; border-bottom: 1px solid #f0efed; display: flex; gap: 14px; align-items: flex-start; }
+    .next-list li:last-child { border-bottom: none; }
+    .next-list .num { flex: 0 0 24px; height: 24px; border-radius: 50%; background: #0a0a0a; color: #fff; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; margin-top: 1px; }
+    .next-list .text { flex: 1; font-size: 14px; color: #2a2a2a; line-height: 1.55; }
+    .next-list .text strong { color: #0a0a0a; font-weight: 600; }
+    .cta-row { text-align: center; margin: 32px 0 28px; }
+    .cta { display: inline-block; padding: 14px 32px; background: #0a0a0a; color: #fff !important; text-decoration: none; border-radius: 8px; font-size: 14px; font-weight: 600; letter-spacing: 0.2px; }
+    .signoff { padding: 28px 0 0; border-top: 1px solid #f0efed; }
+    .signoff p { font-size: 14px; color: #2a2a2a; line-height: 1.7; margin-bottom: 12px; }
+    .signoff p strong { color: #0a0a0a; }
+    .signoff .sig { font-size: 14px; color: #0a0a0a; font-weight: 600; margin-top: 16px; }
+    .signoff .sig-sub { font-size: 12px; color: #8a8a86; font-weight: 500; margin-top: 2px; }
+    .footer { padding: 24px 40px; background: #fafaf9; border-top: 1px solid #ececea; text-align: center; font-size: 12px; color: #8a8a86; }
+    .footer a { color: #4a4a48; text-decoration: none; }
+    @media (max-width: 600px) {
+      .hero { padding: 36px 24px 28px; }
+      .hero h1 { font-size: 24px; }
+      .body { padding: 28px 24px; }
+      .panel { padding: 20px; }
+      .footer { padding: 20px 24px; }
+    }
+  </style>
+  </head>
 <body>
 <div class="wrapper">
-  <div class="header">
-    <h1>Larinova</h1>
-    <p>AI Medical Scribe — Alpha Welcome</p>
+  <div class="hero">
+    <div class="brand">LARINOVA</div>
+    <div class="badge">Alpha Access</div>
+    <h1>Welcome aboard, Dr. ${name}.</h1>
   </div>
   <div class="body">
-    <div class="greeting">Hi there,</div>
-    <div class="section">
-      <div class="section-body">You're one of our very first alpha doctors. Thank you for shaping Larinova.\n\nYour account has 30 days of Pro — unlimited consults, all features unlocked.\n\nAfter ${escHtml(formattedDate)} your account drops to the Free tier (20 consultations/month). You can subscribe via your billing page anytime.\n\nWe're listening. Reply to this email with feedback, bugs, or feature wishes.\n\n— Gabriel, founder</div>
+    <p class="lede">You're among the very first doctors shaping Larinova. Genuinely — thank you. We built this so you can spend your consult with the patient, not your screen.</p>
+
+    <div class="panel">
+      <div class="label">Your Alpha Access</div>
+      <div class="headline">30 days of Pro, on us.</div>
+      <div class="desc">Unlimited consultations. Every feature unlocked — multilingual recording, instant SOAP notes, ICD-10 coding, prescriptions, and Helena, your AI assistant.</div>
+    </div>
+
+    <ol class="next-list">
+      <li>
+        <div class="num">1</div>
+        <div class="text"><strong>Record your first consultation.</strong> Tap record, speak naturally in your patient's language, and watch the structured notes appear.</div>
+      </li>
+      <li>
+        <div class="num">2</div>
+        <div class="text"><strong>Generate the prescription &amp; SOAP note.</strong> One tap — fully editable, ready to print or share over WhatsApp.</div>
+      </li>
+      <li>
+        <div class="num">3</div>
+        <div class="text"><strong>Tell us what's missing.</strong> Reply to this email any time. Bugs, ideas, frustrations — they all go straight to us.</div>
+      </li>
+    </ol>
+
+    <div class="cta-row">
+      <a class="cta" href="${dashboardUrl}">Open Larinova</a>
+    </div>
+
+    <div class="signoff">
+      <p>Larinova exists because clinicians like you are willing to try something new. We don't take that lightly.</p>
+      <p>If anything feels off — even a small thing — please tell us. The next 30 days are yours to shape.</p>
+      <div class="sig">— Gabriel</div>
+      <div class="sig-sub">Founder, Larinova</div>
     </div>
   </div>
-  <div class="footer"><strong>Larinova — AI Medical Scribe</strong><br>hello@larinova.com &nbsp;·&nbsp; larinova.com</div>
+  <div class="footer"><strong>Larinova</strong> — AI medical scribe<br><a href="mailto:hello@larinova.com">hello@larinova.com</a> &nbsp;·&nbsp; <a href="https://larinova.com">larinova.com</a></div>
 </div>
 </body></html>`;
 }

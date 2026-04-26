@@ -32,10 +32,16 @@ export async function POST(req: Request) {
   }
 
   if (!result.already_redeemed && user.email) {
+    const { data: doctor } = await supabase
+      .from("larinova_doctors")
+      .select("full_name")
+      .eq("user_id", user.id)
+      .single();
+
     try {
       await sendAlphaWelcomeEmail({
         to: user.email,
-        periodEnd: result.period_end,
+        fullName: doctor?.full_name ?? null,
       });
     } catch (e) {
       console.error("[invite/redeem] email send failed:", e);
