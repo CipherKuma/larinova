@@ -21,14 +21,12 @@ export default function AuthCallbackPage() {
       const url = new URL(window.location.href);
       const code = url.searchParams.get("code");
       if (code) {
-        const { error: exchangeError } =
-          await supabase.auth.exchangeCodeForSession(code);
-        if (exchangeError) {
-          router.push(
-            `/${locale}/sign-in?error=${encodeURIComponent(exchangeError.message)}`,
-          );
-          return;
-        }
+        // For OAuth callbacks the code MUST be exchanged client-side. For
+        // magic-link / OTP flows the session is already set by Supabase's
+        // verify endpoint via Set-Cookie, and the code_verifier may not be
+        // in this client's storage — we swallow that error and let getUser
+        // confirm the session below.
+        await supabase.auth.exchangeCodeForSession(code).catch(() => {});
       }
 
       const {
