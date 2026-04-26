@@ -430,6 +430,11 @@ function generateAlphaWelcomeHtml({
     .next-list .text strong { color: #0a0a0a; font-weight: 600; }
     .cta-row { text-align: center; margin: 32px 0 28px; }
     .cta { display: inline-block; padding: 14px 32px; background: #0a0a0a; color: #fff !important; text-decoration: none; border-radius: 8px; font-size: 14px; font-weight: 600; letter-spacing: 0.2px; }
+    .video-tile { display: block; text-decoration: none; color: inherit; margin: 0 0 32px; position: relative; }
+    .video-tile img { border-radius: 10px; }
+    .video-play-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+    .video-play-button { width: 64px; height: 64px; border-radius: 50%; background: rgba(10,10,10,0.92); color: #fff; font-size: 22px; line-height: 64px; text-align: center; box-shadow: 0 6px 24px rgba(0,0,0,0.35); padding-left: 4px; }
+    .video-caption { text-align: center; font-size: 12px; color: #8a8a86; margin-top: 10px; letter-spacing: 0.3px; }
     .signoff { padding: 28px 0 0; border-top: 1px solid #f0efed; }
     .signoff p { font-size: 14px; color: #2a2a2a; line-height: 1.7; margin-bottom: 12px; }
     .signoff p strong { color: #0a0a0a; }
@@ -480,6 +485,20 @@ function generateAlphaWelcomeHtml({
     <div class="cta-row">
       <a class="cta" href="${dashboardUrl}">Open Larinova</a>
     </div>
+
+    <a href="https://www.youtube.com/watch?v=XA01CrBcoq0" class="video-tile">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td style="position: relative; padding: 0; line-height: 0;">
+            <img src="https://img.youtube.com/vi/XA01CrBcoq0/maxresdefault.jpg" alt="A quick hello from Gabriel" width="100%" style="display: block; width: 100%; max-width: 100%; height: auto; border-radius: 10px;" />
+            <div class="video-play-overlay">
+              <div class="video-play-button">▶</div>
+            </div>
+          </td>
+        </tr>
+      </table>
+      <div class="video-caption">A quick hello from Gabriel · 40 sec</div>
+    </a>
 
     <div class="signoff">
       <p>Larinova exists because clinicians like you are willing to try something new. We don't take that lightly.</p>
