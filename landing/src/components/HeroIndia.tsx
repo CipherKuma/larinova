@@ -146,7 +146,7 @@ export function HeroIndia({ locale }: HeroIndiaProps) {
         <div className="flex flex-1 flex-col items-center text-center md:items-start md:text-left">
           <h1
             ref={headlineRef}
-            className="font-display text-4xl font-bold leading-[1.05] tracking-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl"
+            className="font-display text-3xl font-bold leading-[1.05] tracking-tight text-foreground sm:text-4xl md:text-5xl lg:text-[3.4rem]"
           >
             {hero.headline.split(" ").map((word, i) => (
               <span
@@ -162,7 +162,7 @@ export function HeroIndia({ locale }: HeroIndiaProps) {
 
           <p
             ref={subRef}
-            className="mt-7 max-w-xl text-lg leading-relaxed text-muted-foreground sm:text-xl"
+            className="mt-5 max-w-md text-base leading-relaxed text-muted-foreground sm:text-lg"
             style={{ opacity: 0 }}
           >
             {hero.sub}
@@ -191,11 +191,11 @@ export function HeroIndia({ locale }: HeroIndiaProps) {
         {/* Right column: hero video slot — Higgsfield loop drops in here. */}
         <div
           ref={videoRef}
-          className="flex flex-1 justify-center md:max-w-md md:justify-end"
+          className="flex flex-1 flex-col items-center md:items-end md:justify-end"
           style={{ opacity: 0 }}
           data-slot="hero-loop"
         >
-          <div className="relative mx-auto aspect-[9/19] w-[260px] overflow-hidden rounded-[2.4rem] border-[10px] border-foreground/90 bg-card shadow-[0_30px_80px_-20px_rgba(16,185,129,0.25)] sm:w-[300px]">
+          <div className="relative aspect-[9/19] w-[280px] overflow-hidden rounded-[2.4rem] border-[10px] border-foreground/90 bg-card shadow-[0_30px_80px_-20px_rgba(16,185,129,0.25)] sm:w-[320px] md:w-[360px]">
             {/* Notch */}
             <div className="absolute left-1/2 top-2 z-20 h-5 w-24 -translate-x-1/2 rounded-full bg-foreground/90" />
             {/* Placeholder content — replaced by <video> on launch */}

@@ -47,7 +47,10 @@ export function Problem({ locale }: ProblemProps) {
   );
 
   return (
-    <section ref={sectionRef} className="relative py-32 overflow-hidden">
+    <section
+      ref={sectionRef}
+      className="relative py-32 overflow-hidden bg-background"
+    >
       <Image
         src="/images/paperwork.jpg"
         alt=""

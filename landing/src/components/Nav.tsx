@@ -101,7 +101,7 @@ export function Nav({ locale }: NavProps) {
           </div>
 
           <a
-            href="https://app.larinova.com"
+            href={`/${locale}/discovery-survey`}
             className="hidden rounded-full bg-primary px-5 py-2 text-sm font-semibold text-primary-foreground transition-all hover:brightness-110 sm:block"
           >
             {c.cta}
@@ -157,7 +157,7 @@ export function Nav({ locale }: NavProps) {
             </div>
 
             <a
-              href="https://app.larinova.com"
+              href={`/${locale}/discovery-survey`}
               onClick={() => setOpen(false)}
               className="mt-2 block rounded-full bg-primary px-5 py-3 text-center text-sm font-semibold text-primary-foreground"
             >

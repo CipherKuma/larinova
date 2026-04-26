@@ -107,11 +107,7 @@ export function FeaturesIndia({ locale }: FeaturesIndiaProps) {
   const { features } = opd;
 
   return (
-    <section
-      ref={sectionRef}
-      id="opd-journey"
-      className="relative bg-background"
-    >
+    <section ref={sectionRef} id="opd-journey" className="relative">
       {/* Section intro */}
       <div className="relative mx-auto max-w-5xl px-6 pt-28 pb-20 text-center">
         <span className="mb-5 inline-block font-mono text-xs uppercase tracking-widest text-primary">

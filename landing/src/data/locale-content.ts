@@ -245,8 +245,8 @@ export const content: Record<Locale, LandingContent> = {
       hero: {
         headline: "The most advanced OPD assistant for Indian doctors.",
         sub: "See more patients. Type less. Send prescriptions and follow-ups by email — SMS and WhatsApp coming soon.",
-        ctaPrimary: "Start free",
-        ctaPrimaryHref: "https://app.larinova.com/in/signup",
+        ctaPrimary: "Request access",
+        ctaPrimaryHref: "/in/discovery-survey",
         ctaSecondary: "See how it works",
         ctaSecondaryHref: "#opd-journey",
       },
@@ -318,8 +318,8 @@ export const content: Record<Locale, LandingContent> = {
             "SOAP notes, ICD-10, prescriptions",
             "No credit card required",
           ],
-          cta: "Start free",
-          ctaHref: "https://app.larinova.com/in/signup",
+          cta: "Request access",
+          ctaHref: "/in/discovery-survey",
         },
         pro: {
           name: "Pro",
@@ -336,8 +336,8 @@ export const content: Record<Locale, LandingContent> = {
             "Full Rx formulary + PDF export",
             "Priority support",
           ],
-          cta: "Subscribe to Pro",
-          ctaHref: "https://app.larinova.com/in/signup?next=/settings/billing",
+          cta: "Request access",
+          ctaHref: "/in/discovery-survey",
           badge: "POPULAR",
         },
         enterpriseLabel: "Hospitals & clinic chains",
@@ -349,7 +349,7 @@ export const content: Record<Locale, LandingContent> = {
     },
     nav: {
       links: ["Features", "Pricing", "Blog"],
-      cta: "Try Free for 1 Month",
+      cta: "Request access",
     },
     hero: {
       languages: ["தமிழ்", "हिन्दी", "తెలుగు"],
@@ -357,7 +357,7 @@ export const content: Record<Locale, LandingContent> = {
       languageTriggerWord: "Tamil.",
       subtitle:
         "AI medical scribe that listens to your consultations in Tamil, Hindi, or English - and generates structured clinical notes in real-time.",
-      ctaPrimary: "Try Free for 1 Month",
+      ctaPrimary: "Request access",
       ctaSecondary: "See How It Works",
       featureTags: [
         "Tamil · Hindi · English",
@@ -579,7 +579,7 @@ export const content: Record<Locale, LandingContent> = {
           "SOAP notes + prescriptions",
           "No credit card required",
         ],
-        cta: "Start 1 Month Free",
+        cta: "Request access",
       },
       pro: {
         name: "Pro",
@@ -596,7 +596,7 @@ export const content: Record<Locale, LandingContent> = {
           "Export to any EHR",
           "Priority support",
         ],
-        cta: "Get Started - ₹999/month",
+        cta: "Request access",
       },
     },
     demo: {
@@ -646,8 +646,8 @@ export const content: Record<Locale, LandingContent> = {
     finalCta: {
       headline: "Ready to reclaim your time?",
       body: "Join doctors across Tamil Nadu who are spending less time on paperwork and more time with patients.",
-      cta: "Start 1 Month Free",
-      note: "No credit card required · 1 month free · All features included",
+      cta: "Request access",
+      note: "Fill a 2-minute survey · We email you an access code",
     },
     footer: {
       description:
@@ -669,7 +669,7 @@ export const content: Record<Locale, LandingContent> = {
       },
       copyright: "All rights reserved.",
     },
-    mobileCta: "Try Free for 1 Month — All Features",
+    mobileCta: "Request access — Fill survey, get a code",
     blog: {
       sectionLabel: "Blog",
       headline: "Latest from Larinova",
@@ -686,8 +686,8 @@ export const content: Record<Locale, LandingContent> = {
       hero: {
         headline: "Asisten poliklinik paling canggih untuk dokter Indonesia.",
         sub: "Lebih banyak pasien. Lebih sedikit menulis. Kirim resep dan tindak lanjut lewat email — SMS dan WhatsApp segera hadir.",
-        ctaPrimary: "Mulai gratis",
-        ctaPrimaryHref: "https://app.larinova.com/id/signup",
+        ctaPrimary: "Minta akses",
+        ctaPrimaryHref: "/id/discovery-survey",
         ctaSecondary: "Lihat cara kerjanya",
         ctaSecondaryHref: "#opd-journey",
       },
@@ -759,8 +759,8 @@ export const content: Record<Locale, LandingContent> = {
             "Catatan SOAP, ICD-10, resep",
             "Tanpa kartu kredit",
           ],
-          cta: "Mulai gratis",
-          ctaHref: "https://app.larinova.com/id/signup",
+          cta: "Minta akses",
+          ctaHref: "/id/discovery-survey",
         },
         pro: {
           name: "Pro",
@@ -777,8 +777,8 @@ export const content: Record<Locale, LandingContent> = {
             "Formulir resep lengkap + ekspor PDF",
             "Dukungan prioritas",
           ],
-          cta: "Berlangganan Pro",
-          ctaHref: "https://app.larinova.com/id/signup?next=/settings/billing",
+          cta: "Minta akses",
+          ctaHref: "/id/discovery-survey",
           badge: "POPULER",
         },
         enterpriseLabel: "Rumah sakit & jaringan klinik",
@@ -790,7 +790,7 @@ export const content: Record<Locale, LandingContent> = {
     },
     nav: {
       links: ["Fitur", "Harga", "Blog"],
-      cta: "Coba Gratis 1 Bulan",
+      cta: "Minta akses",
     },
     hero: {
       languages: ["Indonesia", "Jawa", "Sunda"],
@@ -798,7 +798,7 @@ export const content: Record<Locale, LandingContent> = {
       languageTriggerWord: "Indonesia.",
       subtitle:
         "AI medical scribe yang mendengarkan konsultasi Anda dalam Bahasa Indonesia, Jawa, atau Inggris - dan menghasilkan catatan klinis terstruktur secara real-time.",
-      ctaPrimary: "Coba Gratis 1 Bulan",
+      ctaPrimary: "Minta akses",
       ctaSecondary: "Lihat Cara Kerjanya",
       featureTags: [
         "Indonesia · Jawa · Inggris",
@@ -1015,7 +1015,7 @@ export const content: Record<Locale, LandingContent> = {
           "Catatan SOAP + resep",
           "Tidak perlu kartu kredit",
         ],
-        cta: "Mulai Gratis 1 Bulan",
+        cta: "Minta akses",
       },
       pro: {
         name: "Pro",
@@ -1031,7 +1031,7 @@ export const content: Record<Locale, LandingContent> = {
           "Ekspor ke EHR manapun",
           "Dukungan prioritas",
         ],
-        cta: "Daftar Early Access",
+        cta: "Minta akses",
       },
     },
     demo: {
@@ -1081,8 +1081,8 @@ export const content: Record<Locale, LandingContent> = {
     finalCta: {
       headline: "Siap menghemat waktu Anda?",
       body: "Bergabung dengan dokter di seluruh Indonesia yang menghabiskan lebih sedikit waktu untuk administrasi dan lebih banyak waktu bersama pasien.",
-      cta: "Mulai Gratis 1 Bulan",
-      note: "Tidak perlu kartu kredit · Gratis 1 bulan · Semua fitur termasuk",
+      cta: "Minta akses",
+      note: "Isi survei 2 menit · Kami kirim kode akses lewat email",
     },
     footer: {
       description:
@@ -1104,7 +1104,7 @@ export const content: Record<Locale, LandingContent> = {
       },
       copyright: "Hak cipta dilindungi.",
     },
-    mobileCta: "Coba Gratis 1 Bulan — Semua Fitur",
+    mobileCta: "Minta akses — Isi survei, dapatkan kode",
     blog: {
       sectionLabel: "Blog",
       headline: "Terbaru dari Larinova",

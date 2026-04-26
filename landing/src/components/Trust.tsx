@@ -93,7 +93,7 @@ export function Trust({ locale }: TrustProps) {
   );
 
   return (
-    <section ref={sectionRef} id="trust" className="relative bg-background">
+    <section ref={sectionRef} id="trust" className="relative">
       <div className="relative mx-auto max-w-6xl px-6 pt-20 pb-2 text-center">
         <span className="mb-4 inline-block font-mono text-xs uppercase tracking-widest text-primary">
           {c.sectionLabel}

@@ -11,7 +11,7 @@ export function FinalCTA({ locale }: FinalCTAProps) {
   const c = localeContent[locale].finalCta;
 
   return (
-    <section className="relative overflow-hidden py-32">
+    <section className="relative overflow-hidden py-32 bg-background">
       <Image
         src="/images/doctor-smiling.jpg"
         alt=""
@@ -33,7 +33,7 @@ export function FinalCTA({ locale }: FinalCTAProps) {
           {c.body}
         </p>
         <a
-          href="https://app.larinova.com"
+          href={`/${locale}/discovery-survey`}
           className="inline-block rounded-full bg-primary px-10 py-4 text-base font-semibold text-primary-foreground transition-all hover:brightness-110"
         >
           {c.cta}

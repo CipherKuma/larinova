@@ -38,7 +38,7 @@ export function PoweredBySarvam({ locale }: PoweredBySarvamProps) {
   );
 
   return (
-    <section ref={sectionRef} className="relative py-32">
+    <section ref={sectionRef} className="relative py-32 bg-background">
       <div
         className="pointer-events-none absolute inset-0"
         style={{

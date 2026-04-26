@@ -24,7 +24,7 @@ export function MobileCTA({ locale }: MobileCTAProps) {
       }`}
     >
       <a
-        href="https://app.larinova.com"
+        href={`/${locale}/discovery-survey`}
         className="block w-full rounded-full bg-primary py-3 text-center text-sm font-semibold text-primary-foreground"
       >
         {cta}
