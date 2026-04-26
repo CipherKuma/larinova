@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import { routing } from "@/src/i18n/routing";
 import BetaTranslationBanner from "@/components/layout/BetaTranslationBanner";
 import { SwRegister } from "@/components/pwa/sw-register";
+import { AnalyticsProvider } from "@/components/AnalyticsProvider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -73,6 +74,7 @@ export default async function LocaleLayout({
       <body className={inter.className}>
         <NextIntlClientProvider messages={messages}>
           <BetaTranslationBanner />
+          <AnalyticsProvider />
           {children}
           <Toaster />
           <SwRegister />
