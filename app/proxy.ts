@@ -100,19 +100,28 @@ export async function proxy(request: NextRequest) {
     "/auth/callback",
   ].includes(pathWithoutLocale);
 
-  // Admin gate: gate /admin and /api/admin to the allowlist. Use 404
-  // (not 403) so non-admins never even confirm the path exists.
-  // Placed BEFORE the onboarding redirect so admins without a doctor
-  // row can still reach /admin.
+  // Admin gate: gate /admin and /api/admin to the allowlist.
+  //   - Unauthenticated visitors → redirect to sign-in (so the legit
+  //     admin can actually log in when they navigate here).
+  //   - Authenticated non-admin → 404 (hide the admin path's existence).
+  //   - Authenticated admin → pass through, skipping the onboarding gate.
   const isAdminPath =
     pathname.includes("/admin") || pathname.startsWith("/api/admin");
   if (isAdminPath) {
     const { isAdminEmail } = await import("@/lib/admin");
-    if (!user || !isAdminEmail(user.email)) {
+    if (!user) {
+      // For API routes: 401 instead of redirect (the client expects JSON).
+      if (pathname.startsWith("/api/admin")) {
+        return new NextResponse(null, { status: 401 });
+      }
+      const redirectUrl = request.nextUrl.clone();
+      redirectUrl.pathname = `/${locale}/sign-in`;
+      redirectUrl.searchParams.set("next", pathname);
+      return NextResponse.redirect(redirectUrl);
+    }
+    if (!isAdminEmail(user.email)) {
       return new NextResponse(null, { status: 404 });
     }
-    // Admin is authenticated and allowed — short-circuit out of the
-    // onboarding gate that would otherwise punt them to /onboarding.
     return supabaseResponse;
   }
 
