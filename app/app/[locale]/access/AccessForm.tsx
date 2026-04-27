@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -12,9 +12,16 @@ type ApiError = "invalid_or_used_code" | "invalid_input" | "unknown";
 
 export function AccessForm({ locale }: { locale: string }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [code, setCode] = useState("");
   const [error, setError] = useState<ApiError | null>(null);
   const [submitting, setSubmitting] = useState(false);
+
+  // Pre-fill from ?invite=CODE if present (one-tap from the invite email).
+  useEffect(() => {
+    const fromUrl = searchParams?.get("invite")?.trim();
+    if (fromUrl) setCode(fromUrl.toUpperCase());
+  }, [searchParams]);
 
   function errorMessage(e: ApiError): string {
     switch (e) {

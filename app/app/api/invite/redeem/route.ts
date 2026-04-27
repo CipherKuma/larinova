@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { redeemInviteCode } from "@/lib/invite";
-import { sendAlphaWelcomeEmail } from "@/lib/resend/email";
 import { trackMilestone } from "@/lib/analytics/server";
 
 const Body = z.object({
@@ -32,24 +31,10 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: result.error }, { status });
   }
 
-  if (!result.already_redeemed && user.email) {
-    const { data: doctor } = await supabase
-      .from("larinova_doctors")
-      .select("full_name")
-      .eq("user_id", user.id)
-      .single();
-
-    try {
-      await sendAlphaWelcomeEmail({
-        to: user.email,
-        fullName: doctor?.full_name ?? null,
-        code: parsed.code.toUpperCase(),
-      });
-    } catch (e) {
-      console.error("[invite/redeem] email send failed:", e);
-      // RPC is the source of truth; redemption stands.
-    }
-  }
+  // The welcome-with-invite-code email is sent at admin invite-time
+  // (POST /api/admin/codes/invite). The doctor has already received it
+  // before reaching this redemption step, so we DON'T re-send here —
+  // avoids duplicate-email noise.
 
   if (!result.already_redeemed) {
     trackMilestone("invite_redeemed", {

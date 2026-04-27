@@ -424,17 +424,19 @@ function firstNameFrom(fullName: string | null | undefined): string {
 export async function sendAlphaWelcomeEmail({
   to,
   fullName,
+  code,
 }: {
   to: string;
   fullName?: string | null;
+  code: string;
 }): Promise<boolean> {
   const first = firstNameFrom(fullName);
   try {
     const { error } = await resend.emails.send({
       from: FROM,
       to,
-      subject: `Welcome to Larinova, Dr. ${first}`,
-      html: generateAlphaWelcomeHtml({ firstName: first }),
+      subject: `Dr. ${first}, your Larinova alpha access is here`,
+      html: generateAlphaWelcomeHtml({ firstName: first, code }),
     });
     if (error) {
       console.error("Alpha welcome email error:", error);
@@ -449,10 +451,14 @@ export async function sendAlphaWelcomeEmail({
 
 function generateAlphaWelcomeHtml({
   firstName,
+  code,
 }: {
   firstName: string;
+  code: string;
 }): string {
   const name = escHtml(firstName);
+  const codeSafe = escHtml(code.toUpperCase());
+  const accessUrl = `https://app.larinova.com/in/access?invite=${encodeURIComponent(code)}`;
   const dashboardUrl = "https://app.larinova.com";
   const videoUrl = "https://www.youtube.com/watch?v=XA01CrBcoq0";
   const videoThumb = "https://app.larinova.com/email/welcome-video-thumb.png";
@@ -534,8 +540,19 @@ function generateAlphaWelcomeHtml({
           <td class="dm-body" style="padding:36px 40px 32px;">
 
             <p class="dm-text" style="margin:0 0 28px; font-size:16px; color:#2a2a2a; line-height:1.7;">
-              You're among the very first doctors shaping Larinova. Genuinely — thank you. We built this so you can spend your consult with the patient, not your screen.
+              I added you personally to the alpha. Genuinely — thank you for trying this. We built Larinova so you can spend your consult with the patient, not your screen.
             </p>
+
+            <!-- invite code box (the headline ask) -->
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 24px;">
+              <tr>
+                <td align="center" class="dm-codebox" style="background:linear-gradient(135deg,#0a1224 0%,#10b079 100%); border-radius:14px; padding:28px 24px; text-align:center;">
+                  <div style="color:#9bdac5; font-size:10px; font-weight:700; letter-spacing:3px; text-transform:uppercase; margin-bottom:10px;">Your invite code</div>
+                  <div style="color:#ffffff; font-family:'SFMono-Regular',Menlo,Monaco,Consolas,'Courier New',monospace; font-size:24px; font-weight:700; letter-spacing:3px; padding:8px 0;">${codeSafe}</div>
+                  <div style="color:#9bdac5; font-size:12px; margin-top:8px;">Tap below — code pre-fills automatically.</div>
+                </td>
+              </tr>
+            </table>
 
             <!-- alpha access panel -->
             <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="dm-panel" style="background:#f0fdf6; border:1px solid #c7f0db; border-radius:10px; margin:0 0 32px;">
@@ -558,7 +575,7 @@ function generateAlphaWelcomeHtml({
                         <div style="width:28px; height:28px; line-height:28px; border-radius:50%; background:#10b079; color:#ffffff; font-size:12px; font-weight:700; text-align:center;">1</div>
                       </td>
                       <td valign="top" class="dm-list-text" style="font-size:14px; color:#2a2a2a; line-height:1.6;">
-                        <strong class="dm-list-text-strong" style="color:#0a1224; font-weight:600;">Record your first consultation.</strong> Tap record, speak naturally in your patient's language, and watch the structured notes appear.
+                        <strong class="dm-list-text-strong" style="color:#0a1224; font-weight:600;">Set up your account in 30 seconds.</strong> Tap "Get Started" above — your code pre-fills, you sign up, and you're in.
                       </td>
                     </tr>
                   </table>
@@ -572,7 +589,7 @@ function generateAlphaWelcomeHtml({
                         <div style="width:28px; height:28px; line-height:28px; border-radius:50%; background:#10b079; color:#ffffff; font-size:12px; font-weight:700; text-align:center;">2</div>
                       </td>
                       <td valign="top" class="dm-list-text" style="font-size:14px; color:#2a2a2a; line-height:1.6;">
-                        <strong class="dm-list-text-strong" style="color:#0a1224; font-weight:600;">Generate the prescription &amp; SOAP note.</strong> One tap — fully editable, ready to print or share over WhatsApp.
+                        <strong class="dm-list-text-strong" style="color:#0a1224; font-weight:600;">Record your first real consultation.</strong> Speak naturally in your patient's language. Larinova writes the SOAP note, the prescription, and the codes by the time they walk out.
                       </td>
                     </tr>
                   </table>
@@ -598,7 +615,7 @@ function generateAlphaWelcomeHtml({
             <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 36px;">
               <tr>
                 <td align="center">
-                  <a href="${dashboardUrl}" style="display:inline-block; padding:14px 36px; background:#10b079; color:#ffffff; text-decoration:none; border-radius:8px; font-size:14px; font-weight:600; letter-spacing:0.2px; box-shadow:0 4px 12px rgba(16,176,121,0.3);">Open Larinova</a>
+                  <a href="${accessUrl}" style="display:inline-block; padding:14px 36px; background:#10b079; color:#ffffff; text-decoration:none; border-radius:8px; font-size:14px; font-weight:600; letter-spacing:0.2px; box-shadow:0 4px 12px rgba(16,176,121,0.3);">Get Started</a>
                 </td>
               </tr>
             </table>
