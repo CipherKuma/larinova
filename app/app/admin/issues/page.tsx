@@ -21,12 +21,7 @@ function doctorOf(i: AdminIssueRow) {
   return Array.isArray(d) ? d[0] : d;
 }
 
-export default async function AdminIssuesPage({
-  params,
-}: {
-  params: Promise<{ locale: string }>;
-}) {
-  const { locale } = await params;
+export default async function AdminIssuesPage() {
   const sb = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!,
@@ -65,7 +60,7 @@ export default async function AdminIssuesPage({
                   <td className="px-4 py-2">
                     <Link
                       className="hover:underline"
-                      href={`/${locale}/admin/issues/${i.id}`}
+                      href={`/admin/issues/${i.id}`}
                     >
                       {i.title}
                     </Link>

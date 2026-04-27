@@ -41,12 +41,7 @@ async function fetchDoctors() {
   }));
 }
 
-export default async function DoctorsPage({
-  params,
-}: {
-  params: Promise<{ locale: string }>;
-}) {
-  const { locale } = await params;
+export default async function DoctorsPage() {
   const doctors = await fetchDoctors();
 
   return (
@@ -75,7 +70,7 @@ export default async function DoctorsPage({
                 <td className="px-4 py-2">
                   <Link
                     className="hover:underline"
-                    href={`/${locale}/admin/doctors/${d.id}`}
+                    href={`/admin/doctors/${d.id}`}
                   >
                     {d.full_name}
                   </Link>

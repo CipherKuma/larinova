@@ -126,22 +126,35 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(redirectUrl);
   }
 
-  // Admin gate: gate /admin and /api/admin to the allowlist.
-  //   - Unauthenticated visitors → redirect to sign-in (so the legit
-  //     admin can actually log in when they navigate here).
-  //   - Authenticated non-admin → 404 (hide the admin path's existence).
-  //   - Authenticated admin → pass through, skipping the onboarding gate.
+  // Admin gate: /admin (root, no locale) and /api/admin/* are isolated
+  // from the doctor flow entirely — separate sign-in, no invite-code
+  // gate, no onboarding gate, no locale prefix.
+  //   - /admin/sign-in + /api/admin/check-email → public (anyone can
+  //     hit them; the actual admin email check happens server-side)
+  //   - /admin/* + /api/admin/* (other) → require an authed admin user
+  //   - Unauthed → redirect to /admin/sign-in (NOT the doctor sign-in)
+  //   - Authed non-admin → 404 (hide existence)
+  //   - Authed admin → pass through immediately, skipping every other
+  //     gate (invite, onboarding, locale)
   const isAdminPath =
-    pathname.includes("/admin") || pathname.startsWith("/api/admin");
+    pathname === "/admin" ||
+    pathname.startsWith("/admin/") ||
+    pathname.startsWith("/api/admin/");
   if (isAdminPath) {
     const { isAdminEmail } = await import("@/lib/admin");
+    const adminPublicPaths = ["/admin/sign-in", "/api/admin/check-email"];
+    const isAdminPublic = adminPublicPaths.some(
+      (p) => pathname === p || pathname.startsWith(p + "/"),
+    );
+    if (isAdminPublic) {
+      return supabaseResponse;
+    }
     if (!user) {
-      // For API routes: 401 instead of redirect (the client expects JSON).
-      if (pathname.startsWith("/api/admin")) {
+      if (pathname.startsWith("/api/admin/")) {
         return new NextResponse(null, { status: 401 });
       }
       const redirectUrl = request.nextUrl.clone();
-      redirectUrl.pathname = `/${locale}/sign-in`;
+      redirectUrl.pathname = "/admin/sign-in";
       redirectUrl.searchParams.set("next", pathname);
       return NextResponse.redirect(redirectUrl);
     }

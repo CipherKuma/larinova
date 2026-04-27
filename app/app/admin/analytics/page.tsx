@@ -91,12 +91,7 @@ async function fetchData() {
   return { series, top, sessions };
 }
 
-export default async function AnalyticsPage({
-  params,
-}: {
-  params: Promise<{ locale: string }>;
-}) {
-  const { locale } = await params;
+export default async function AnalyticsPage() {
   const { series, top, sessions } = await fetchData();
   return (
     <div className="space-y-8">
@@ -197,7 +192,7 @@ export default async function AnalyticsPage({
                 >
                   <td className="px-4 py-2 font-mono">
                     <Link
-                      href={`/${locale}/admin/analytics/sessions/${s.session_id}`}
+                      href={`/admin/analytics/sessions/${s.session_id}`}
                       className="hover:underline"
                     >
                       {s.session_id.slice(0, 12)}…

@@ -11,7 +11,7 @@ const NAV = [
   { href: "/admin/issues", label: "Issues" },
 ];
 
-export function AdminSidebar({ locale }: { locale: string }) {
+export function AdminSidebar() {
   const pathname = usePathname();
   return (
     <aside className="w-56 shrink-0 border-r border-border h-dvh sticky top-0 p-4 bg-background">
@@ -20,14 +20,13 @@ export function AdminSidebar({ locale }: { locale: string }) {
       </div>
       <nav className="flex flex-col gap-1">
         {NAV.map((item) => {
-          const localized = `/${locale}${item.href}`;
           const isActive =
-            pathname === localized ||
-            (item.href !== "/admin" && pathname.startsWith(localized));
+            pathname === item.href ||
+            (item.href !== "/admin" && pathname.startsWith(item.href));
           return (
             <Link
               key={item.href}
-              href={localized}
+              href={item.href}
               className={
                 "px-3 py-2 rounded-md text-sm transition " +
                 (isActive
