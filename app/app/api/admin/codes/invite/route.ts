@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { createClient } from "@/lib/supabase/server";
+import { createClient as createServiceClient } from "@supabase/supabase-js";
 import { requireAdmin } from "@/lib/admin/auth";
 import { sendAlphaWelcomeEmail } from "@/lib/resend/email";
 
@@ -31,7 +31,15 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "invalid_input" }, { status: 400 });
   }
 
-  const supabase = await createClient();
+  // Service-role client — RLS on larinova_invite_codes blocks inserts
+  // via the user JWT. Admin gate above (requireAdmin) is the actual
+  // authorization check; this client is only used for the privileged
+  // insert that follows.
+  const supabase = createServiceClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    { auth: { persistSession: false } },
+  );
   const note = `Dr. ${body.firstName} ${body.lastName} <${body.email}>`;
 
   // Insert a unique code, retry on collision
