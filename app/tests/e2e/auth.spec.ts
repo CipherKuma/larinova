@@ -11,7 +11,7 @@
 // The chromium project's storageState is bypassed for each case that needs
 // to exercise a fresh browser by setting `storageState: { cookies: [], origins: [] }`.
 
-import { test, expect } from "@playwright/test";
+import { test, expect, type Page } from "@playwright/test";
 import {
   adminClient,
   cleanupDoctor,
@@ -40,11 +40,28 @@ test.describe("auth + onboarding", () => {
   test.describe("public pages", () => {
     test.use({ storageState: { cookies: [], origins: [] } });
 
-    test("sign-up renders form with required fields", async ({ page }) => {
+    async function addInviteCookie(page: Page, baseURL: string | undefined) {
+      await page.context().addCookies([
+        {
+          name: "larinova_invite_token",
+          value: "LARINOVA-TEST",
+          url: new URL("/", baseURL ?? "http://127.0.0.1:3000").toString(),
+          httpOnly: true,
+          sameSite: "Lax",
+        },
+      ]);
+    }
+
+    test("sign-up renders form with required fields after invite gate", async ({
+      page,
+      baseURL,
+    }) => {
+      await addInviteCookie(page, baseURL);
       await page.goto("/in/sign-up");
       await page.waitForLoadState("networkidle");
 
-      await expect(page.getByPlaceholder(/full name/i)).toBeVisible();
+      await expect(page.getByPlaceholder(/first name/i)).toBeVisible();
+      await expect(page.getByPlaceholder(/last name/i)).toBeVisible();
       await expect(page.getByPlaceholder(/email/i).first()).toBeVisible();
       await expect(page.getByPlaceholder(/password/i).first()).toBeVisible();
       await expect(
@@ -54,11 +71,14 @@ test.describe("auth + onboarding", () => {
 
     test("sign-up blocks submission when password is too short", async ({
       page,
+      baseURL,
     }) => {
+      await addInviteCookie(page, baseURL);
       await page.goto("/in/sign-up");
       await page.waitForLoadState("networkidle");
 
-      await page.getByPlaceholder(/full name/i).fill("Test Doctor");
+      await page.getByPlaceholder(/first name/i).fill("Test");
+      await page.getByPlaceholder(/last name/i).fill("Doctor");
       await page.getByPlaceholder(/email/i).first().fill("test@example.com");
       await page
         .getByPlaceholder(/password/i)
@@ -70,11 +90,16 @@ test.describe("auth + onboarding", () => {
       await expect(page).toHaveURL(/\/in\/sign-up/);
     });
 
-    test("sign-up blocks submission on invalid email", async ({ page }) => {
+    test("sign-up blocks submission on invalid email", async ({
+      page,
+      baseURL,
+    }) => {
+      await addInviteCookie(page, baseURL);
       await page.goto("/in/sign-up");
       await page.waitForLoadState("networkidle");
 
-      await page.getByPlaceholder(/full name/i).fill("Test Doctor");
+      await page.getByPlaceholder(/first name/i).fill("Test");
+      await page.getByPlaceholder(/last name/i).fill("Doctor");
       await page.getByPlaceholder(/email/i).first().fill("not-an-email");
       await page
         .getByPlaceholder(/password/i)
@@ -85,7 +110,11 @@ test.describe("auth + onboarding", () => {
       await expect(page).toHaveURL(/\/in\/sign-up/);
     });
 
-    test("sign-in page renders email step", async ({ page }) => {
+    test("sign-in page renders email step after invite gate", async ({
+      page,
+      baseURL,
+    }) => {
+      await addInviteCookie(page, baseURL);
       await page.goto("/in/sign-in");
       await page.waitForLoadState("networkidle");
 
@@ -101,7 +130,21 @@ test.describe("auth + onboarding", () => {
       ).toBeVisible();
     });
 
-    test("unauthenticated access to a protected route redirects to sign-in", async ({
+    test("invite access page terminates instead of redirect-looping", async ({
+      page,
+    }) => {
+      await page.goto("/in/access");
+      await page.waitForLoadState("networkidle");
+
+      await expect(page).toHaveURL(/\/in\/access$/);
+      await expect(
+        page.getByRole("heading", {
+          name: /open your invite email|use your invite link or code/i,
+        }),
+      ).toBeVisible();
+    });
+
+    test("unauthenticated access to a protected route redirects to access gate", async ({
       page,
     }) => {
       const response = await page.goto("/in/patients");
@@ -109,12 +152,14 @@ test.describe("auth + onboarding", () => {
       // Middleware may respond 200 after a client-side redirect, or 307.
       // Assert the landing URL rather than the raw status.
       expect(response).not.toBeNull();
-      await expect(page).toHaveURL(/\/in\/(sign-in|auth|sign-up)/);
+      await expect(page).toHaveURL(/\/in\/access/);
     });
 
-    test("unauthenticated /api/dashboard returns 401", async ({ request }) => {
+    test("unauthenticated /api/dashboard does not expose data", async ({
+      request,
+    }) => {
       const res = await request.get("/api/dashboard");
-      expect([401, 403]).toContain(res.status());
+      expect([401, 403, 404]).toContain(res.status());
     });
   });
 
@@ -178,6 +223,6 @@ test.describe("auth + onboarding", () => {
     const res = await page.goto("/in/patients");
     await page.waitForLoadState("networkidle");
     expect(res).not.toBeNull();
-    await expect(page).toHaveURL(/\/in\/(sign-in|auth|sign-up)/);
+    await expect(page).toHaveURL(/\/in\/access/);
   });
 });

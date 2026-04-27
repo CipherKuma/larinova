@@ -43,6 +43,12 @@ export function uniqueEmail(tag: string): string {
   return `${QA_EMAIL_PREFIX}-${tag}-${suffix}@larinova.test`;
 }
 
+function splitFullName(fullName: string): { firstName: string; lastName: string } {
+  const clean = fullName.trim().replace(/\s+/g, " ");
+  const [firstName = "QA", ...rest] = clean.split(" ");
+  return { firstName, lastName: rest.join(" ") || "Doctor" };
+}
+
 export interface DoctorHandle {
   userId: string;
   doctorId: string;
@@ -92,10 +98,12 @@ export async function provisionDoctor(
     return { userId, doctorId: existingDoctor.id, email };
   }
 
+  const name = splitFullName(opts.fullName ?? "QA Test Doctor");
   const insertPayload: Record<string, unknown> = {
     user_id: userId,
     email,
-    full_name: opts.fullName ?? "QA Test Doctor",
+    first_name: name.firstName,
+    last_name: name.lastName,
     specialization: opts.specialization ?? "General Medicine",
     locale: opts.locale ?? "in",
     onboarding_completed: opts.onboardingCompleted ?? true,
