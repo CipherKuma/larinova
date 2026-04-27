@@ -115,7 +115,7 @@ export async function POST(request: Request) {
         email,
         first_name: computedFirst,
         last_name: computedLast,
-        full_name: fullName, // trigger keeps this in sync going forward
+        // full_name is a GENERATED column derived from first/last
         specialization: "Not Specified",
         locale: "in",
         onboarding_completed: false,

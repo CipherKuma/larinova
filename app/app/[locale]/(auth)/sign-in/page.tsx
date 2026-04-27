@@ -67,9 +67,10 @@ export default function SignInPage() {
       .single();
 
     if (!doctor) {
+      // full_name is a GENERATED column (first_name + last_name); don't
+      // supply it. StepName captures the name during onboarding.
       await supabase.from("larinova_doctors").insert({
         user_id: user.id,
-        full_name: user.user_metadata?.full_name ?? null,
         email: user.email!,
         locale: locale === "id" ? "id" : "in",
         onboarding_completed: false,

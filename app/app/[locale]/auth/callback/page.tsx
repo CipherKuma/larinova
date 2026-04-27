@@ -47,12 +47,11 @@ export default function AuthCallbackPage() {
         .single();
 
       if (!doctor) {
-        // New user — create minimal doctor profile (name will be captured
-        // in onboarding step 1, so don't fabricate one from the email
-        // prefix). full_name is intentionally NULL.
+        // New user — create minimal doctor profile. Name is captured in
+        // onboarding step 1 (StepName writes first_name + last_name);
+        // full_name is a GENERATED column so we don't supply it here.
         await supabase.from("larinova_doctors").insert({
           user_id: user.id,
-          full_name: user.user_metadata?.full_name ?? null,
           email: user.email!,
           locale: locale === "id" ? "id" : "in",
           onboarding_completed: false,

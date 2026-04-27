@@ -109,12 +109,12 @@ export default function OnboardingPage() {
         .select("id");
 
       if (updateError || !updated?.length) {
-        // No rows matched — record doesn't exist, insert it
+        // No rows matched — record doesn't exist, insert it. full_name
+        // is GENERATED from first_name + last_name (saved by StepName).
         const { error: insertError } = await supabase
           .from("larinova_doctors")
           .insert({
             user_id: user.id,
-            full_name: user.user_metadata?.full_name ?? null,
             email: user.email!,
             ...updateData,
           });
