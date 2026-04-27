@@ -49,8 +49,8 @@ export const PLAN_PRICES: Record<
   IN: {
     currency: "INR",
     symbol: "₹",
-    month: { amount: 150000, label: "₹1,500/month" },
-    year: { amount: 1500000, label: "₹15,000/year", savings: "₹3,000" },
+    month: { amount: 99900, label: "₹999/month" },
+    year: { amount: 999000, label: "₹9,990/year", savings: "₹1,998" },
   },
   default: {
     currency: "USD",

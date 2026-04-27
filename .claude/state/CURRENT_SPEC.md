@@ -6,7 +6,7 @@ Ship the India OPD platform end-to-end: booking → intake → AI-prepared consu
 ## Decided
 - **Tiering:** Free = 20 consultations/month; Pro = unlimited. Whitelist array in `lib/subscription.ts` upgrades emails on login.
 - **Pilot:** 5 doctors whitelisted pro from day one; receive alpha welcome banner + email.
-- **Pricing:** IN ₹1,500/mo + ₹15,000/yr; ID IDR 299k/mo + IDR 2.99M/yr (display-only); default USD $20/$200.
+- **Pricing:** IN ₹999/mo + ₹9,990/yr (save ₹1,998); ID IDR 299k/mo + IDR 2.99M/yr (display-only); default USD $20/$200.
 - **Queue / orchestration:** Inngest (event-driven, durable, TypeScript-first). `pg_cron` only for trivial periodic jobs.
 - **Agents:** three new — Pre-consult Intake AI, Post-consult Dispatcher, Wellness Follow-up (conversational, 1d/3d/7d).
 - **Notifications stack — v1 truth:** Resend (email) is shipping. MSG91 (SMS) and Meta WhatsApp Business Cloud API direct (WhatsApp) are deferred to v1.1. **Gupshup BSP rejected** — going direct to Meta avoids markup, lock-in, and a vendor dependency. Deferral is paperwork-bound (Meta Business Verification, ~1–2 weeks), not engineering-bound.

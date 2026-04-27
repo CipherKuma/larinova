@@ -324,11 +324,11 @@ export const content: Record<Locale, LandingContent> = {
         pro: {
           name: "Pro",
           subtitle: "For doctors with a full day.",
-          priceMonthly: "₹1,500",
-          priceYearly: "₹15,000",
+          priceMonthly: "₹999",
+          priceYearly: "₹9,990",
           periodMonthly: "/month",
           periodYearly: "/year",
-          savingsBadge: "Save ₹3,000",
+          savingsBadge: "Save ₹1,998",
           features: [
             "Unlimited consultations",
             "Priority pre-consult AI",

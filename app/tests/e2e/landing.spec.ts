@@ -5,7 +5,7 @@
 // with `LANDING_URL=http://localhost:3001` to run against a local landing
 // dev server.
 //
-// Pricing assertions (`₹1,500` / `₹15,000`) and CTA targets
+// Pricing assertions (`₹999` / `₹9,990`) and CTA targets
 // (`app.larinova.com/in/signup`) are the contract surface — if those change,
 // the test must change with them.
 
@@ -73,8 +73,8 @@ test.describe("landing", () => {
       page.getByRole("heading", { name: /^pro$/i, level: 3 }),
     ).toBeVisible();
 
-    // Monthly is the default tab — Pro should show ₹1,500.
-    await expect(page.getByText(/₹\s?1[,.]?500/).first()).toBeVisible({
+    // Monthly is the default tab — Pro should show ₹999.
+    await expect(page.getByText(/₹\s?999/).first()).toBeVisible({
       timeout: 15_000,
     });
 
@@ -82,7 +82,7 @@ test.describe("landing", () => {
     const annualTab = page.getByRole("tab", { name: /annual/i });
     if (await annualTab.count()) {
       await annualTab.click();
-      await expect(page.getByText(/₹\s?15[,.]?000/).first()).toBeVisible({
+      await expect(page.getByText(/₹\s?9[,.]?990/).first()).toBeVisible({
         timeout: 10_000,
       });
     }
