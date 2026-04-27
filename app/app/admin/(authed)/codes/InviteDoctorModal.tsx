@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
 
-type Result = { code: string; sentTo: string; emailDelivered: boolean } | null;
+type Result = { sentTo: string; emailDelivered: boolean } | null;
 
 export function InviteDoctorModal() {
   const router = useRouter();
@@ -52,7 +52,7 @@ export function InviteDoctorModal() {
         toast.success(`Invite sent to ${body.sentTo}`);
       } else {
         toast.warning(
-          `Code created (${body.code}) but email delivery may have failed. Check Resend logs.`,
+          `Invite created but email delivery may have failed. Check Resend logs.`,
         );
       }
     } catch (err) {
@@ -81,12 +81,9 @@ export function InviteDoctorModal() {
         {result ? (
           <div className="space-y-3">
             <p className="text-sm text-muted-foreground">
-              Invite sent to <strong>{result.sentTo}</strong>.
+              Invitation sent to <strong>{result.sentTo}</strong>. They&apos;ll
+              receive an email with a one-tap link to set up their account.
             </p>
-            <div className="bg-muted rounded p-3 text-xs">
-              <div className="text-muted-foreground mb-1">Code</div>
-              <div className="font-mono text-sm">{result.code}</div>
-            </div>
             {!result.emailDelivered && (
               <p className="text-sm text-amber-600">
                 Email may not have been delivered — check Resend logs and resend
@@ -137,7 +134,7 @@ export function InviteDoctorModal() {
                 !email.trim().includes("@")
               }
             >
-              {submitting ? "Sending…" : "Generate code & send invite"}
+              {submitting ? "Sending…" : "Send invite"}
             </Button>
           </form>
         )}

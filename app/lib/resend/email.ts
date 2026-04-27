@@ -457,8 +457,7 @@ function generateAlphaWelcomeHtml({
   code: string;
 }): string {
   const name = escHtml(firstName);
-  const codeSafe = escHtml(code.toUpperCase());
-  const accessUrl = `https://app.larinova.com/in/access?invite=${encodeURIComponent(code)}`;
+  const accessUrl = `https://app.larinova.com/api/invite/accept?code=${encodeURIComponent(code.toUpperCase())}&locale=in`;
   const dashboardUrl = "https://app.larinova.com";
   const videoUrl = "https://www.youtube.com/watch?v=XA01CrBcoq0";
   const videoThumb = "https://app.larinova.com/email/welcome-video-thumb.png";
@@ -546,17 +545,6 @@ function generateAlphaWelcomeHtml({
               9 PM, still typing up notes from a consult that ended at 3? That hour is what Larinova hands back to you. It's why I added you to the alpha personally — I want to learn what works (and what doesn't) directly from doctors like you.
             </p>
 
-            <!-- invite code box (the headline ask) -->
-            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 24px;">
-              <tr>
-                <td align="center" class="dm-codebox" style="background:linear-gradient(135deg,#0a1224 0%,#10b079 100%); border-radius:14px; padding:28px 24px; text-align:center;">
-                  <div style="color:#9bdac5; font-size:10px; font-weight:700; letter-spacing:3px; text-transform:uppercase; margin-bottom:10px;">Your invite code</div>
-                  <div style="color:#ffffff; font-family:'SFMono-Regular',Menlo,Monaco,Consolas,'Courier New',monospace; font-size:24px; font-weight:700; letter-spacing:3px; padding:8px 0;">${codeSafe}</div>
-                  <div style="color:#9bdac5; font-size:12px; margin-top:8px;">Tap below — code pre-fills automatically.</div>
-                </td>
-              </tr>
-            </table>
-
             <!-- alpha access panel -->
             <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="dm-panel" style="background:#f0fdf6; border:1px solid #c7f0db; border-radius:10px; margin:0 0 32px;">
               <tr>
@@ -578,7 +566,7 @@ function generateAlphaWelcomeHtml({
                         <div style="width:28px; height:28px; line-height:28px; border-radius:50%; background:#10b079; color:#ffffff; font-size:12px; font-weight:700; text-align:center;">1</div>
                       </td>
                       <td valign="top" class="dm-list-text" style="font-size:14px; color:#2a2a2a; line-height:1.6;">
-                        <strong class="dm-list-text-strong" style="color:#0a1224; font-weight:600;">Set up your account in 30 seconds.</strong> Tap "Get Started" above — your code pre-fills, you sign up, and you're in.
+                        <strong class="dm-list-text-strong" style="color:#0a1224; font-weight:600;">Set up your account in 30 seconds.</strong> Tap "Get Started" below — sign up with your email, and you're in.
                       </td>
                     </tr>
                   </table>

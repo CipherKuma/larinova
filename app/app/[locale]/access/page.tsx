@@ -1,21 +1,32 @@
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
-import { AccessForm } from "./AccessForm";
 
 export const dynamic = "force-dynamic";
 
 type Params = { locale: string };
+type Search = { invite?: string | string[] };
 
+/**
+ * Legacy entry point. New invite links go to /api/invite/accept and
+ * never reach this page. Surviving cases:
+ *   - Already-authed doctor → forward to onboarding/home.
+ *   - Cookie already set → forward to sign-up.
+ *   - ?invite=CODE on this URL (older emails) → forward to /api/invite/accept.
+ *   - Anything else → back to the landing. We don't render a code form;
+ *     the doctor experience is "tap the link in the email", not "type a code".
+ */
 export default async function AccessPage({
   params,
+  searchParams,
 }: {
   params: Promise<Params>;
+  searchParams: Promise<Search>;
 }) {
   const { locale } = await params;
+  const sp = await searchParams;
+  const inviteParam = Array.isArray(sp.invite) ? sp.invite[0] : sp.invite;
 
-  // If the user already has a valid session and a doctor profile, route them
-  // along instead of bouncing them to a code prompt they don't need.
   const supabase = await createClient();
   const {
     data: { user },
@@ -24,28 +35,23 @@ export default async function AccessPage({
   if (user) {
     const { data: doctor } = await supabase
       .from("larinova_doctors")
-      .select("onboarding_completed, invite_code_redeemed_at")
+      .select("onboarding_completed")
       .eq("user_id", user.id)
       .single();
-    if (doctor?.onboarding_completed) {
-      redirect(`/${locale}`);
-    }
-    if (doctor) {
-      redirect(`/${locale}/onboarding`);
-    }
+    if (doctor?.onboarding_completed) redirect(`/${locale}`);
+    if (doctor) redirect(`/${locale}/onboarding`);
   }
 
-  // If a valid invite cookie is already set, skip straight to sign-in
+  if (inviteParam) {
+    redirect(
+      `/api/invite/accept?code=${encodeURIComponent(inviteParam)}&locale=${locale}`,
+    );
+  }
+
   const cookieStore = await cookies();
   if (cookieStore.get("larinova_invite_token")?.value) {
-    redirect(`/${locale}/sign-in`);
+    redirect(`/${locale}/sign-up`);
   }
 
-  return (
-    <main className="min-h-dvh flex items-center justify-center bg-background p-6">
-      <div className="w-full max-w-md">
-        <AccessForm locale={locale} />
-      </div>
-    </main>
-  );
+  redirect(`/${locale}`);
 }
