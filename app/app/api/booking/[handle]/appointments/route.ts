@@ -183,6 +183,16 @@ export async function POST(
 
   const portalUrl = buildPortalUrl(appointment.id);
 
+  // Resolve the video call link. Doctors who set their own override
+  // (Zoom, Google Meet, Teams) get that. Otherwise we auto-generate a
+  // private Jitsi Meet room scoped to this appointment — no setup, no
+  // OAuth, and a fresh room per booking so old links don't collide.
+  const videoCallLink: string | null =
+    type === "video"
+      ? (doctor.video_call_link ??
+        `https://meet.jit.si/larinova-${handle}-${appointment.id.slice(0, 8)}`)
+      : null;
+
   Promise.all([
     notify(
       "email",
@@ -194,7 +204,7 @@ export async function POST(
         appointmentDate: displayDate,
         startTime: displayTime,
         appointmentType: type as "video" | "in_person",
-        videoCallLink: doctor.video_call_link ?? null,
+        videoCallLink,
         portalUrl,
       },
       {

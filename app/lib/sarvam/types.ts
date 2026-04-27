@@ -1,4 +1,5 @@
 export type SarvamLanguageCode =
+  | "unknown"
   | "hi-IN"
   | "ta-IN"
   | "te-IN"
@@ -11,7 +12,10 @@ export type SarvamLanguageCode =
   | "od-IN"
   | "en-IN";
 
+// "unknown" tells Sarvam Saarika to auto-detect the language from the
+// audio. Listed first so it's the default selection.
 export const SARVAM_LANGUAGES: { code: SarvamLanguageCode; label: string }[] = [
+  { code: "unknown", label: "Auto-detect" },
   { code: "ta-IN", label: "Tamil" },
   { code: "en-IN", label: "English (India)" },
   { code: "hi-IN", label: "Hindi" },

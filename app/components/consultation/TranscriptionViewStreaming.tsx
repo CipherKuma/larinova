@@ -58,7 +58,7 @@ export function TranscriptionViewStreaming({
   const [isPaused, setIsPaused] = useState(false);
   const [isGeneratingReport, setIsGeneratingReport] = useState(false);
   const [reportFailed, setReportFailed] = useState(false);
-  const [language, setLanguage] = useState<SarvamLanguageCode>("ta-IN");
+  const [language, setLanguage] = useState<SarvamLanguageCode>("unknown");
   const [showLangDropdown, setShowLangDropdown] = useState(false);
   const [interimText, setInterimText] = useState("");
   const transcriptContainerRef = useRef<HTMLDivElement>(null);
@@ -275,7 +275,9 @@ export function TranscriptionViewStreaming({
               {t("realtimeTranscription")}
             </h2>
             <p className="text-[7px] md:text-[8px] lg:text-[9px] xl:text-sm text-muted-foreground mt-0.5 md:mt-1 uppercase">
-              {t("streamingSubtitle", { lang: selectedLang?.label || "Tamil" })}
+              {t("streamingSubtitle", {
+                lang: selectedLang?.label || "Auto-detect",
+              })}
             </p>
           </div>
 
@@ -288,7 +290,7 @@ export function TranscriptionViewStreaming({
                   onClick={() => setShowLangDropdown(!showLangDropdown)}
                   className="h-6 md:h-7 lg:h-8 xl:h-10 2xl:h-12 px-2 md:px-3 lg:px-4 border border-border rounded-md flex items-center gap-1 text-xs md:text-[8px] lg:text-[9px] xl:text-[10px] 2xl:text-xs font-semibold uppercase bg-card hover:bg-muted transition-colors"
                 >
-                  {selectedLang?.label || "Tamil"}
+                  {selectedLang?.label || "Auto-detect"}
                   <ChevronDown className="w-2.5 h-2.5 md:w-3 md:h-3" />
                 </button>
                 {showLangDropdown && (

@@ -70,6 +70,9 @@ export function AvailabilityTab({
   const [videoCallLink, setVideoCallLink] = useState(
     initialVideoCallLink ?? "",
   );
+  const [overrideVideo, setOverrideVideo] = useState(
+    Boolean(initialVideoCallLink),
+  );
   const [bookingEnabled, setBookingEnabled] = useState(
     initialBookingEnabled ?? true,
   );
@@ -90,7 +93,7 @@ export function AvailabilityTab({
         body: JSON.stringify({
           availability: rows,
           slot_duration_minutes: slotDuration,
-          video_call_link: videoCallLink || null,
+          video_call_link: overrideVideo ? videoCallLink || null : null,
           booking_enabled: bookingEnabled,
         }),
       });
@@ -239,15 +242,31 @@ export function AvailabilityTab({
         ))}
       </div>
 
-      {/* Video call link */}
-      <div className="flex flex-col gap-1">
-        <Label className="text-sm font-medium">Video call link</Label>
-        <Input
-          value={videoCallLink}
-          onChange={(e) => setVideoCallLink(e.target.value)}
-          placeholder="https://meet.google.com/..."
-          className="max-w-sm"
-        />
+      {/* Video calls */}
+      <div className="flex flex-col gap-2 max-w-md">
+        <Label className="text-sm font-medium">Video calls</Label>
+        <div className="rounded-lg border border-border bg-card p-3 text-sm text-muted-foreground">
+          Each booked tele-consultation gets its own private Jitsi Meet room,
+          generated automatically and included in the patient&apos;s
+          confirmation email. No setup needed.
+        </div>
+        <label className="flex items-center gap-2 mt-1 text-xs text-muted-foreground cursor-pointer">
+          <input
+            type="checkbox"
+            checked={overrideVideo}
+            onChange={(e) => setOverrideVideo(e.target.checked)}
+            className="h-4 w-4 rounded border-border accent-primary"
+          />
+          Use my own video service instead (Zoom, Google Meet, Teams…)
+        </label>
+        {overrideVideo && (
+          <Input
+            value={videoCallLink}
+            onChange={(e) => setVideoCallLink(e.target.value)}
+            placeholder="https://meet.google.com/abc-defg-hij"
+            className="mt-1"
+          />
+        )}
       </div>
 
       <Button onClick={handleSave} disabled={saving} className="w-fit">
