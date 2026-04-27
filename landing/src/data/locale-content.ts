@@ -71,7 +71,6 @@ export interface OpdHero {
   ctaPrimaryHref: string;
   ctaSecondary: string;
   ctaSecondaryHref: string;
-  phoneCaption: string;
 }
 
 export interface OpdFeatures {
@@ -250,7 +249,6 @@ export const content: Record<Locale, LandingContent> = {
         ctaPrimaryHref: "/in/discovery-survey",
         ctaSecondary: "See how it works",
         ctaSecondaryHref: "#opd-journey",
-        phoneCaption: "See it on your phone in 10 seconds",
       },
       features: {
         sectionLabel: "The journey",
@@ -692,7 +690,6 @@ export const content: Record<Locale, LandingContent> = {
         ctaPrimaryHref: "/id/discovery-survey",
         ctaSecondary: "Lihat cara kerjanya",
         ctaSecondaryHref: "#opd-journey",
-        phoneCaption: "Lihat di ponsel Anda dalam 10 detik",
       },
       features: {
         sectionLabel: "Perjalanannya",

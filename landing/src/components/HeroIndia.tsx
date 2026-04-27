@@ -212,9 +212,6 @@ export function HeroIndia({ locale }: HeroIndiaProps) {
               className="pointer-events-none absolute inset-0 rounded-2xl ring-1 ring-inset ring-white/5"
             />
           </div>
-          <p className="mt-4 text-center font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground/70">
-            {hero.phoneCaption}
-          </p>
         </div>
       </div>
     </section>
