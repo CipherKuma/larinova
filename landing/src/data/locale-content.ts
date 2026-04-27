@@ -245,7 +245,7 @@ export const content: Record<Locale, LandingContent> = {
     opd: {
       hero: {
         headline: "The most advanced OPD assistant for Indian doctors.",
-        sub: "See more patients. Type less. Send prescriptions and follow-ups by email — SMS and WhatsApp coming soon.",
+        sub: "See more patients. Type less. Send prescriptions and follow-ups by email, SMS, and WhatsApp.",
         ctaPrimary: "Request access",
         ctaPrimaryHref: "/in/discovery-survey",
         ctaSecondary: "See how it works",
@@ -262,7 +262,7 @@ export const content: Record<Locale, LandingContent> = {
             label: "BOOK",
             verb: "Your booking page,",
             noun: "live in 60 seconds.",
-            desc: "Share a single link. Patients pick a slot, fill contact details, and get email confirmations automatically. SMS and WhatsApp confirmations coming soon.",
+            desc: "Share a single link. Patients pick a slot, fill contact details, and get instant confirmations by email, SMS, and WhatsApp.",
             accent: "#10b981",
           },
           {
@@ -294,7 +294,7 @@ export const content: Record<Locale, LandingContent> = {
             label: "FOLLOW-UP",
             verb: "Follow-ups,",
             noun: "on autopilot.",
-            desc: "Day 1, 3, 7 — a wellness agent checks in by email today (WhatsApp and SMS coming soon). It probes, classifies, and flags you only when something actually needs attention.",
+            desc: "Day 1, 3, 7 — a wellness agent checks in by email, SMS, and WhatsApp. It probes, classifies, and flags you only when something actually needs attention.",
             accent: "#ef4444",
           },
         ],
@@ -316,7 +316,7 @@ export const content: Record<Locale, LandingContent> = {
           features: [
             "20 consultations per month",
             "All five OPD phases included",
-            "Email follow-ups (SMS & WhatsApp coming soon)",
+            "Email, SMS & WhatsApp follow-ups",
             "SOAP notes, ICD-10, prescriptions",
             "No credit card required",
           ],
@@ -687,7 +687,7 @@ export const content: Record<Locale, LandingContent> = {
     opd: {
       hero: {
         headline: "Asisten poliklinik paling canggih untuk dokter Indonesia.",
-        sub: "Lebih banyak pasien. Lebih sedikit menulis. Kirim resep dan tindak lanjut lewat email — SMS dan WhatsApp segera hadir.",
+        sub: "Lebih banyak pasien. Lebih sedikit menulis. Kirim resep dan tindak lanjut lewat email, SMS, dan WhatsApp.",
         ctaPrimary: "Minta akses",
         ctaPrimaryHref: "/id/discovery-survey",
         ctaSecondary: "Lihat cara kerjanya",
@@ -704,7 +704,7 @@ export const content: Record<Locale, LandingContent> = {
             label: "BOOKING",
             verb: "Halaman booking Anda,",
             noun: "siap dalam 60 detik.",
-            desc: "Bagikan satu tautan. Pasien memilih jadwal, mengisi data kontak, dan menerima konfirmasi otomatis lewat email. SMS dan WhatsApp segera hadir.",
+            desc: "Bagikan satu tautan. Pasien memilih jadwal, mengisi data kontak, dan menerima konfirmasi otomatis lewat email, SMS, dan WhatsApp.",
             accent: "#10b981",
           },
           {
@@ -736,7 +736,7 @@ export const content: Record<Locale, LandingContent> = {
             label: "TINDAK LANJUT",
             verb: "Tindak lanjut,",
             noun: "berjalan sendiri.",
-            desc: "Hari 1, 3, 7 — agen wellness menanyakan kabar lewat email hari ini (WhatsApp dan SMS segera hadir). Mengklasifikasi, memberi peringatan hanya saat memang perlu perhatian Anda.",
+            desc: "Hari 1, 3, 7 — agen wellness menanyakan kabar lewat email, SMS, dan WhatsApp. Mengklasifikasi, memberi peringatan hanya saat memang perlu perhatian Anda.",
             accent: "#ef4444",
           },
         ],
@@ -758,7 +758,7 @@ export const content: Record<Locale, LandingContent> = {
           features: [
             "20 konsultasi per bulan",
             "Kelima fase poliklinik",
-            "Tindak lanjut email (SMS & WhatsApp segera hadir)",
+            "Tindak lanjut email, SMS & WhatsApp",
             "Catatan SOAP, ICD-10, resep",
             "Tanpa kartu kredit",
           ],
