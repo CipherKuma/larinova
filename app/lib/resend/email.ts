@@ -543,7 +543,7 @@ function generateAlphaWelcomeHtml({
               Hi Dr. ${name},
             </p>
             <p class="dm-text" style="margin:0 0 28px; font-size:16px; color:#2a2a2a; line-height:1.7;">
-              I added you to the Larinova alpha myself. Genuinely — thank you for being open to trying something this early. I built this because too many doctors I know finish their day at 9 PM still typing notes from a 3 PM consult. I want that hour of your life back.
+              9 PM, still typing up notes from a consult that ended at 3? That hour is what Larinova hands back to you. It's why I added you to the alpha personally — I want to learn what works (and what doesn't) directly from doctors like you.
             </p>
 
             <!-- invite code box (the headline ask) -->
