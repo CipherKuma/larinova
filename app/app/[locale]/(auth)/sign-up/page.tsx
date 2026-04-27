@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { useRouter, Link } from "@/src/i18n/routing";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -57,6 +57,30 @@ export default function SignUpPage() {
       phoneNumber: "",
     },
   });
+
+  // If the visitor arrived via an invite (cookie set by /api/invite/validate),
+  // pre-fill First / Last / Email from what the admin recorded at invite-time.
+  // Fields stay editable — admin typos are correctable here.
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch("/api/invite/details", { cache: "no-store" });
+        if (!res.ok) return;
+        const d = await res.json();
+        if (cancelled || !d?.ok) return;
+        if (d.firstName) form.setValue("firstName", d.firstName);
+        if (d.lastName) form.setValue("lastName", d.lastName);
+        if (d.email) form.setValue("email", d.email);
+      } catch {
+        // No cookie or fetch failed — form stays empty, doctor types manually.
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const onSubmit = async (data: SignUpFormValues) => {
     setLoading(true);

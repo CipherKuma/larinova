@@ -42,13 +42,19 @@ export async function POST(req: Request) {
   );
   const note = `Dr. ${body.firstName} ${body.lastName} <${body.email}>`;
 
-  // Insert a unique code, retry on collision
+  // Insert a unique code, retry on collision. We write the structured
+  // recipient columns (first_name/last_name/email) so the sign-up form
+  // can pre-fill them; `note` stays for human-readable admin context.
   let code: string | null = null;
   for (let attempts = 0; attempts < 5; attempts++) {
     const candidate = genCode();
-    const { error } = await supabase
-      .from("larinova_invite_codes")
-      .insert({ code: candidate, note });
+    const { error } = await supabase.from("larinova_invite_codes").insert({
+      code: candidate,
+      note,
+      first_name: body.firstName,
+      last_name: body.lastName,
+      email: body.email,
+    });
     if (!error) {
       code = candidate;
       break;
