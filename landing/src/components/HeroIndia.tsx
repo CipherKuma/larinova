@@ -188,32 +188,29 @@ export function HeroIndia({ locale }: HeroIndiaProps) {
           </div>
         </div>
 
-        {/* Right column: hero video slot — Higgsfield loop drops in here. */}
+        {/* Right column: cinematic hero loop (Higgsfield + Kling) */}
         <div
           ref={videoRef}
           className="flex flex-1 flex-col items-center md:items-end md:justify-end"
           style={{ opacity: 0 }}
           data-slot="hero-loop"
         >
-          <div className="relative aspect-[9/19] w-[280px] overflow-hidden rounded-[2.4rem] border-[10px] border-foreground/90 bg-card shadow-[0_30px_80px_-20px_rgba(16,185,129,0.25)] sm:w-[320px] md:w-[360px]">
-            {/* Notch */}
-            <div className="absolute left-1/2 top-2 z-20 h-5 w-24 -translate-x-1/2 rounded-full bg-foreground/90" />
-            {/* Placeholder content — replaced by <video> on launch */}
-            <div className="relative flex h-full w-full flex-col items-center justify-center overflow-hidden bg-gradient-to-br from-background via-card to-background px-6 text-center">
-              <div className="absolute inset-0 opacity-30">
-                <div className="absolute left-1/2 top-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/30 blur-3xl" />
-              </div>
-              <div className="relative z-10 space-y-2">
-                <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-primary">
-                  hero loop
-                </div>
-                <div className="text-sm text-muted-foreground">
-                  Product video
-                  <br />
-                  coming soon
-                </div>
-              </div>
-            </div>
+          <div className="relative aspect-video w-[320px] overflow-hidden rounded-2xl border border-border/50 bg-card shadow-[0_30px_80px_-20px_rgba(16,185,129,0.35)] sm:w-[420px] md:w-[480px] lg:w-[560px]">
+            <video
+              src="/videos/hero-loop.mp4"
+              className="h-full w-full object-cover"
+              autoPlay
+              loop
+              muted
+              playsInline
+              preload="auto"
+              aria-label="Larinova product loop"
+            />
+            {/* Subtle inner ring */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0 rounded-2xl ring-1 ring-inset ring-white/5"
+            />
           </div>
           <p className="mt-4 text-center font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground/70">
             {hero.phoneCaption}
