@@ -117,40 +117,91 @@ export async function sendPrescriptionEmail({
 
 // ─── HTML Templates ───────────────────────────────────────────────────────────
 
+// Dark-mode-safe baseline. Three levers per email client family:
+//   - <meta name="color-scheme" content="light dark"> — opts the message
+//     into Apple Mail / iOS Mail / Gmail mobile dark adaptation
+//   - @media (prefers-color-scheme: dark) — Apple Mail, iOS Mail,
+//     Gmail web (Chrome/Edge), Outlook iOS, Outlook Mac
+//   - [data-ogsc] / [data-ogsb] attribute selectors — Outlook Windows
+//     and Outlook.com web force-darken via these JS attributes
+// We DON'T fight every client; we provide explicit dark-mode colors
+// so auto-inversion either picks ours or stays consistent.
 const baseStyles = `
+  <meta name="color-scheme" content="light dark">
+  <meta name="supported-color-schemes" content="light dark">
   <style>
+    :root { color-scheme: light dark; supported-color-schemes: light dark; }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
       line-height: 1.6; color: #111; background: #f5f5f5;
     }
-    .wrapper { max-width: 620px; margin: 32px auto; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,.08); }
+    .wrapper { max-width: 620px; margin: 32px auto; background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,.08); }
     .header { background: #0a0a0a; padding: 28px 32px; }
-    .header h1 { color: #fff; font-size: 20px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 4px; }
-    .header p { color: #888; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; }
-    .body { padding: 32px; }
-    .greeting { font-size: 15px; color: #333; margin-bottom: 24px; }
-    .greeting strong { color: #111; }
+    .header h1 { color: #ffffff; font-size: 20px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 4px; }
+    .header p { color: #aaaaaa; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; }
+    .body { padding: 32px; background: #ffffff; }
+    .greeting { font-size: 15px; color: #2a2a2a; margin-bottom: 24px; }
+    .greeting strong { color: #0a0a0a; }
     .section { margin-bottom: 24px; border: 1px solid #e5e5e5; border-radius: 6px; overflow: hidden; }
-    .section-header { background: #f9f9f9; padding: 10px 16px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #555; border-bottom: 1px solid #e5e5e5; }
-    .section-body { padding: 16px; font-size: 14px; color: #333; white-space: pre-wrap; line-height: 1.7; }
+    .section-header { background: #f9f9f9; padding: 10px 16px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #555555; border-bottom: 1px solid #e5e5e5; }
+    .section-body { padding: 16px; font-size: 14px; color: #2a2a2a; white-space: pre-wrap; line-height: 1.7; background: #ffffff; }
     .meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
-    .meta-cell { padding: 10px 16px; font-size: 13px; border-bottom: 1px solid #f0f0f0; }
+    .meta-cell { padding: 10px 16px; font-size: 13px; border-bottom: 1px solid #f0f0f0; background: #ffffff; }
     .meta-cell:nth-child(odd) { border-right: 1px solid #f0f0f0; }
-    .meta-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #888; margin-bottom: 2px; }
-    .meta-value { font-weight: 600; color: #111; }
-    table.rx { width: 100%; border-collapse: collapse; font-size: 13px; }
-    table.rx thead tr { background: #0a0a0a; color: #fff; }
+    .meta-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #777777; margin-bottom: 2px; }
+    .meta-value { font-weight: 600; color: #0a0a0a; }
+    table.rx { width: 100%; border-collapse: collapse; font-size: 13px; background: #ffffff; }
+    table.rx thead tr { background: #0a0a0a; color: #ffffff; }
     table.rx thead th { padding: 9px 12px; text-align: left; font-size: 11px; font-weight: 600; letter-spacing: .5px; }
     table.rx tbody tr { border-bottom: 1px solid #f0f0f0; }
     table.rx tbody tr:last-child { border-bottom: none; }
-    table.rx tbody td { padding: 10px 12px; vertical-align: top; color: #222; }
-    table.rx tbody td .sub { font-size: 11px; color: #888; margin-top: 2px; }
-    .badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 10px; font-weight: 600; background: #f0f0f0; color: #555; margin-right: 4px; }
+    table.rx tbody td { padding: 10px 12px; vertical-align: top; color: #1a1a1a; }
+    table.rx tbody td .sub { font-size: 11px; color: #777777; margin-top: 2px; }
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 10px; font-weight: 600; background: #f0f0f0; color: #555555; margin-right: 4px; }
     .alert { background: #fff5f5; border: 1px solid #fed7d7; border-radius: 6px; padding: 12px 16px; font-size: 13px; color: #c53030; margin-bottom: 24px; }
     .alert strong { display: block; margin-bottom: 4px; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; }
-    .footer { padding: 20px 32px; border-top: 1px solid #e5e5e5; text-align: center; font-size: 11px; color: #aaa; }
-    .footer strong { color: #666; }
+    .footer { padding: 20px 32px; border-top: 1px solid #e5e5e5; text-align: center; font-size: 11px; color: #888888; background: #ffffff; }
+    .footer strong { color: #555555; }
+    /* ── Dark mode (Apple Mail, iOS Mail, Gmail web, Outlook iOS/Mac) ── */
+    @media (prefers-color-scheme: dark) {
+      body { background: #0d1117 !important; color: #e6e8eb !important; }
+      .wrapper { background: #161b22 !important; box-shadow: 0 2px 12px rgba(0,0,0,0.5) !important; }
+      .body { background: #161b22 !important; }
+      .greeting { color: #d0d4d9 !important; }
+      .greeting strong { color: #ffffff !important; }
+      .section { border-color: #2c333d !important; }
+      .section-header { background: #1c222b !important; color: #b8bdc4 !important; border-bottom-color: #2c333d !important; }
+      .section-body { background: #161b22 !important; color: #d0d4d9 !important; }
+      .meta-cell { background: #161b22 !important; border-bottom-color: #2c333d !important; }
+      .meta-cell:nth-child(odd) { border-right-color: #2c333d !important; }
+      .meta-label { color: #8a9098 !important; }
+      .meta-value { color: #ffffff !important; }
+      table.rx { background: #161b22 !important; }
+      table.rx tbody tr { border-bottom-color: #2c333d !important; }
+      table.rx tbody td { color: #e6e8eb !important; }
+      table.rx tbody td .sub { color: #8a9098 !important; }
+      .badge { background: #2c333d !important; color: #b8bdc4 !important; }
+      .alert { background: #3a1d1d !important; border-color: #5a2a2a !important; color: #f5a8a8 !important; }
+      .footer { background: #161b22 !important; color: #8a9098 !important; border-top-color: #2c333d !important; }
+      .footer strong { color: #b8bdc4 !important; }
+      /* The header is dark in BOTH modes — re-assert so auto-invert
+         doesn't flip it to a light-grey that loses brand identity. */
+      .header { background: #0a0a0a !important; }
+      .header h1 { color: #ffffff !important; }
+      .header p { color: #aaaaaa !important; }
+      table.rx thead tr { background: #0a0a0a !important; color: #ffffff !important; }
+    }
+    /* ── Outlook Windows / Outlook.com (uses [data-ogsc]/[data-ogsb]) ── */
+    [data-ogsc] body, [data-ogsb] body { background: #0d1117 !important; color: #e6e8eb !important; }
+    [data-ogsc] .wrapper, [data-ogsb] .wrapper { background: #161b22 !important; }
+    [data-ogsc] .body, [data-ogsb] .body { background: #161b22 !important; }
+    [data-ogsc] .greeting, [data-ogsb] .greeting { color: #d0d4d9 !important; }
+    [data-ogsc] .section-body, [data-ogsb] .section-body { color: #d0d4d9 !important; background: #161b22 !important; }
+    [data-ogsc] .meta-value, [data-ogsb] .meta-value { color: #ffffff !important; }
+    [data-ogsc] .meta-label, [data-ogsb] .meta-label { color: #8a9098 !important; }
+    [data-ogsc] table.rx tbody td, [data-ogsb] table.rx tbody td { color: #e6e8eb !important; }
+    [data-ogsc] .footer, [data-ogsb] .footer { background: #161b22 !important; color: #8a9098 !important; }
     @media (max-width: 600px) {
       .body { padding: 20px; }
       .meta-grid { grid-template-columns: 1fr; }
@@ -415,16 +466,59 @@ function generateAlphaWelcomeHtml({
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="supported-color-schemes" content="light dark" />
   <title>Welcome to Larinova</title>
+  <style>
+    :root { color-scheme: light dark; supported-color-schemes: light dark; }
+    /* Dark mode (Apple Mail, iOS Mail, Gmail web/iOS, Outlook iOS/Mac).
+       The hero is brand-dark in BOTH modes, so we don't override it.
+       The white card BODY needs to flip to a dark surface so light-grey
+       body text doesn't auto-invert into invisible white-on-white. */
+    @media (prefers-color-scheme: dark) {
+      body, .dm-page { background: #0d1117 !important; }
+      .dm-wrapper { background: #161b22 !important; box-shadow: 0 4px 24px rgba(0,0,0,0.5) !important; }
+      .dm-body { background: #161b22 !important; }
+      .dm-text { color: #d0d4d9 !important; }
+      .dm-text-strong { color: #ffffff !important; }
+      .dm-text-muted { color: #8a9098 !important; }
+      .dm-panel { background: #112318 !important; border-color: #1e3a2a !important; }
+      .dm-panel-label { color: #34d8a0 !important; }
+      .dm-panel-headline { color: #ffffff !important; }
+      .dm-panel-desc { color: #b8bdc4 !important; }
+      .dm-list-row { border-bottom-color: #2c333d !important; }
+      .dm-list-text { color: #d0d4d9 !important; }
+      .dm-list-text-strong { color: #ffffff !important; }
+      .dm-signoff-border { border-top-color: #2c333d !important; }
+      .dm-footer { background: #1c222b !important; border-top-color: #2c333d !important; color: #8a9098 !important; }
+      .dm-footer a { color: #b8bdc4 !important; }
+      .dm-footer strong { color: #c0c4ca !important; }
+      .dm-video-thumb { border-color: #2c333d !important; }
+    }
+    /* Outlook Windows / Outlook.com — same overrides via attribute hooks */
+    [data-ogsc] body, [data-ogsb] body, [data-ogsc] .dm-page, [data-ogsb] .dm-page { background: #0d1117 !important; }
+    [data-ogsc] .dm-wrapper, [data-ogsb] .dm-wrapper { background: #161b22 !important; }
+    [data-ogsc] .dm-body, [data-ogsb] .dm-body { background: #161b22 !important; }
+    [data-ogsc] .dm-text, [data-ogsb] .dm-text { color: #d0d4d9 !important; }
+    [data-ogsc] .dm-text-strong, [data-ogsb] .dm-text-strong { color: #ffffff !important; }
+    [data-ogsc] .dm-text-muted, [data-ogsb] .dm-text-muted { color: #8a9098 !important; }
+    [data-ogsc] .dm-panel, [data-ogsb] .dm-panel { background: #112318 !important; border-color: #1e3a2a !important; }
+    [data-ogsc] .dm-panel-headline, [data-ogsb] .dm-panel-headline { color: #ffffff !important; }
+    [data-ogsc] .dm-panel-desc, [data-ogsb] .dm-panel-desc { color: #b8bdc4 !important; }
+    [data-ogsc] .dm-list-text, [data-ogsb] .dm-list-text { color: #d0d4d9 !important; }
+    [data-ogsc] .dm-list-text-strong, [data-ogsb] .dm-list-text-strong { color: #ffffff !important; }
+    [data-ogsc] .dm-footer, [data-ogsb] .dm-footer { background: #1c222b !important; color: #8a9098 !important; }
+    [data-ogsc] .dm-footer a, [data-ogsb] .dm-footer a { color: #b8bdc4 !important; }
+  </style>
 </head>
-<body style="margin:0; padding:0; background:#f4f5f7; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif; color:#1a1a1a; line-height:1.6;">
+<body style="margin:0; padding:0; background:#f4f5f7; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif; color:#1a1a1a; line-height:1.6;" class="dm-page">
 
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f4f5f7; padding:32px 16px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="dm-page" style="background:#f4f5f7; padding:32px 16px;">
   <tr>
     <td align="center">
 
       <!-- ╭─ wrapper ─╮ -->
-      <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="max-width:600px; width:100%; background:#ffffff; border-radius:14px; overflow:hidden; box-shadow:0 4px 24px rgba(10,18,36,0.06);">
+      <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" class="dm-wrapper" style="max-width:600px; width:100%; background:#ffffff; border-radius:14px; overflow:hidden; box-shadow:0 4px 24px rgba(10,18,36,0.06);">
 
         <!-- ╭─ hero (brand-color) ─╮ -->
         <tr>
@@ -437,19 +531,19 @@ function generateAlphaWelcomeHtml({
 
         <!-- ╭─ body ─╮ -->
         <tr>
-          <td style="padding:36px 40px 32px;">
+          <td class="dm-body" style="padding:36px 40px 32px;">
 
-            <p style="margin:0 0 28px; font-size:16px; color:#2a2a2a; line-height:1.7;">
+            <p class="dm-text" style="margin:0 0 28px; font-size:16px; color:#2a2a2a; line-height:1.7;">
               You're among the very first doctors shaping Larinova. Genuinely — thank you. We built this so you can spend your consult with the patient, not your screen.
             </p>
 
             <!-- alpha access panel -->
-            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f0fdf6; border:1px solid #c7f0db; border-radius:10px; margin:0 0 32px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="dm-panel" style="background:#f0fdf6; border:1px solid #c7f0db; border-radius:10px; margin:0 0 32px;">
               <tr>
                 <td style="padding:22px 24px;">
-                  <div style="font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#10b079; margin-bottom:6px;">Your Alpha Access</div>
-                  <div style="font-size:18px; font-weight:600; color:#0a1224; margin-bottom:10px; letter-spacing:-0.2px;">30 days of Pro, on us.</div>
-                  <div style="font-size:14px; color:#3d4f56; line-height:1.65;">Unlimited consultations. Every feature unlocked — multilingual recording, instant SOAP notes, ICD-10 coding, prescriptions, and Helena, your AI assistant.</div>
+                  <div class="dm-panel-label" style="font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#10b079; margin-bottom:6px;">Your Alpha Access</div>
+                  <div class="dm-panel-headline" style="font-size:18px; font-weight:600; color:#0a1224; margin-bottom:10px; letter-spacing:-0.2px;">30 days of Pro, on us.</div>
+                  <div class="dm-panel-desc" style="font-size:14px; color:#3d4f56; line-height:1.65;">Unlimited consultations. Every feature unlocked — multilingual recording, instant SOAP notes, ICD-10 coding, prescriptions, and Helena, your AI assistant.</div>
                 </td>
               </tr>
             </table>
@@ -457,28 +551,28 @@ function generateAlphaWelcomeHtml({
             <!-- numbered next-steps (table-based, Gmail-safe) -->
             <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 32px;">
               <tr>
-                <td style="padding:14px 0; border-bottom:1px solid #eef0f3;">
+                <td class="dm-list-row" style="padding:14px 0; border-bottom:1px solid #eef0f3;">
                   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
                     <tr>
                       <td valign="top" width="40" style="padding:0 14px 0 0; vertical-align:top;">
                         <div style="width:28px; height:28px; line-height:28px; border-radius:50%; background:#10b079; color:#ffffff; font-size:12px; font-weight:700; text-align:center;">1</div>
                       </td>
-                      <td valign="top" style="font-size:14px; color:#2a2a2a; line-height:1.6;">
-                        <strong style="color:#0a1224; font-weight:600;">Record your first consultation.</strong> Tap record, speak naturally in your patient's language, and watch the structured notes appear.
+                      <td valign="top" class="dm-list-text" style="font-size:14px; color:#2a2a2a; line-height:1.6;">
+                        <strong class="dm-list-text-strong" style="color:#0a1224; font-weight:600;">Record your first consultation.</strong> Tap record, speak naturally in your patient's language, and watch the structured notes appear.
                       </td>
                     </tr>
                   </table>
                 </td>
               </tr>
               <tr>
-                <td style="padding:14px 0; border-bottom:1px solid #eef0f3;">
+                <td class="dm-list-row" style="padding:14px 0; border-bottom:1px solid #eef0f3;">
                   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
                     <tr>
                       <td valign="top" width="40" style="padding:0 14px 0 0; vertical-align:top;">
                         <div style="width:28px; height:28px; line-height:28px; border-radius:50%; background:#10b079; color:#ffffff; font-size:12px; font-weight:700; text-align:center;">2</div>
                       </td>
-                      <td valign="top" style="font-size:14px; color:#2a2a2a; line-height:1.6;">
-                        <strong style="color:#0a1224; font-weight:600;">Generate the prescription &amp; SOAP note.</strong> One tap — fully editable, ready to print or share over WhatsApp.
+                      <td valign="top" class="dm-list-text" style="font-size:14px; color:#2a2a2a; line-height:1.6;">
+                        <strong class="dm-list-text-strong" style="color:#0a1224; font-weight:600;">Generate the prescription &amp; SOAP note.</strong> One tap — fully editable, ready to print or share over WhatsApp.
                       </td>
                     </tr>
                   </table>
@@ -491,8 +585,8 @@ function generateAlphaWelcomeHtml({
                       <td valign="top" width="40" style="padding:0 14px 0 0; vertical-align:top;">
                         <div style="width:28px; height:28px; line-height:28px; border-radius:50%; background:#10b079; color:#ffffff; font-size:12px; font-weight:700; text-align:center;">3</div>
                       </td>
-                      <td valign="top" style="font-size:14px; color:#2a2a2a; line-height:1.6;">
-                        <strong style="color:#0a1224; font-weight:600;">Tell us what's missing.</strong> Reply to this email any time. Bugs, ideas, frustrations — they all go straight to us.
+                      <td valign="top" class="dm-list-text" style="font-size:14px; color:#2a2a2a; line-height:1.6;">
+                        <strong class="dm-list-text-strong" style="color:#0a1224; font-weight:600;">Tell us what's missing.</strong> Reply to this email any time. Bugs, ideas, frustrations — they all go straight to us.
                       </td>
                     </tr>
                   </table>
@@ -514,21 +608,21 @@ function generateAlphaWelcomeHtml({
               <tr>
                 <td align="center">
                   <a href="${videoUrl}" style="display:block; text-decoration:none; line-height:0;">
-                    <img src="${videoThumb}" alt="A quick hello from Gabriel" width="520" style="display:block; width:100%; max-width:520px; height:auto; border-radius:12px; border:1px solid #eef0f3;" />
+                    <img src="${videoThumb}" alt="A quick hello from Gabriel" width="520" class="dm-video-thumb" style="display:block; width:100%; max-width:520px; height:auto; border-radius:12px; border:1px solid #eef0f3;" />
                   </a>
-                  <div style="font-size:12px; color:#6a7681; margin-top:12px; letter-spacing:0.2px; line-height:1.4;">A quick hello from Gabriel · 40 sec</div>
+                  <div class="dm-text-muted" style="font-size:12px; color:#6a7681; margin-top:12px; letter-spacing:0.2px; line-height:1.4;">A quick hello from Gabriel · 40 sec</div>
                 </td>
               </tr>
             </table>
 
             <!-- signoff -->
-            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-top:1px solid #eef0f3;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="dm-signoff-border" style="border-top:1px solid #eef0f3;">
               <tr>
                 <td style="padding:28px 0 0;">
-                  <p style="margin:0 0 12px; font-size:14px; color:#2a2a2a; line-height:1.7;">Larinova exists because clinicians like you are willing to try something new. We don't take that lightly.</p>
-                  <p style="margin:0 0 16px; font-size:14px; color:#2a2a2a; line-height:1.7;">If anything feels off — even a small thing — please tell us. The next 30 days are yours to shape.</p>
-                  <div style="font-size:14px; color:#0a1224; font-weight:600;">— Gabriel</div>
-                  <div style="font-size:12px; color:#6a7681; font-weight:500; margin-top:2px;">Founder, Larinova</div>
+                  <p class="dm-text" style="margin:0 0 12px; font-size:14px; color:#2a2a2a; line-height:1.7;">Larinova exists because clinicians like you are willing to try something new. We don't take that lightly.</p>
+                  <p class="dm-text" style="margin:0 0 16px; font-size:14px; color:#2a2a2a; line-height:1.7;">If anything feels off — even a small thing — please tell us. The next 30 days are yours to shape.</p>
+                  <div class="dm-text-strong" style="font-size:14px; color:#0a1224; font-weight:600;">— Gabriel</div>
+                  <div class="dm-text-muted" style="font-size:12px; color:#6a7681; font-weight:500; margin-top:2px;">Founder, Larinova</div>
                 </td>
               </tr>
             </table>
@@ -538,7 +632,7 @@ function generateAlphaWelcomeHtml({
 
         <!-- ╭─ footer ─╮ -->
         <tr>
-          <td style="padding:22px 40px; background:#f8fafc; border-top:1px solid #eef0f3; text-align:center; font-size:12px; color:#6a7681; line-height:1.5;">
+          <td class="dm-footer" style="padding:22px 40px; background:#f8fafc; border-top:1px solid #eef0f3; text-align:center; font-size:12px; color:#6a7681; line-height:1.5;">
             <strong style="color:#3d4f56;">Larinova</strong> — AI medical scribe<br />
             <a href="mailto:hello@larinova.com" style="color:#3d4f56; text-decoration:none;">hello@larinova.com</a>
             &nbsp;·&nbsp;
