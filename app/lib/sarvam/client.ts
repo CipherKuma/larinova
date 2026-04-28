@@ -3,15 +3,14 @@ const SARVAM_BASE = "https://api.sarvam.ai";
 export async function transcribeAudio(
   apiKey: string,
   audioBlob: Blob,
-  languageCode: string = "ta-IN",
+  languageCode: string = "unknown",
 ) {
   const formData = new FormData();
   // Re-wrap blob with clean MIME type (Sarvam rejects "audio/webm;codecs=opus")
   const cleanBlob = new Blob([audioBlob], { type: "audio/webm" });
   formData.append("file", cleanBlob, "audio.webm");
   formData.append("language_code", languageCode);
-  formData.append("model", "saarika:v2.5");
-  formData.append("with_timestamps", "false");
+  formData.append("model", "saaras:v3");
 
   const response = await fetch(`${SARVAM_BASE}/speech-to-text`, {
     method: "POST",

@@ -22,7 +22,7 @@ interface SarvamSTTState {
 
 export function useSarvamSTT(options: UseSarvamSTTOptions = {}) {
   const {
-    languageCode = "ta-IN",
+    languageCode = "unknown",
     locale,
     chunkDurationMs = 3000,
     onTranscript,
@@ -222,6 +222,7 @@ export function useSarvamSTT(options: UseSarvamSTTOptions = {}) {
         audio: {
           echoCancellation: true,
           noiseSuppression: true,
+          autoGainControl: true,
         },
       });
       streamRef.current = stream;

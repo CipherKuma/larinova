@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
 
     const formData = await request.formData();
     const file = formData.get("file") as Blob | null;
-    const languageCode = (formData.get("language_code") as string) || "hi-IN";
+    const languageCode = (formData.get("language_code") as string) || "unknown";
     const clientLocale = formData.get("locale") as string | null;
 
     const { data: doctor } = await supabase
