@@ -254,6 +254,6 @@ export const config = {
      * - public folder (images, videos, etc.)
      * - api routes
      */
-    "/((?!_next/static|_next/image|favicon.ico|manifest\\.webmanifest|sw\\.js|workbox-.*\\.js|fallback.*\\.js|serwist/|offline$|.*\\.(?:svg|png|jpg|jpeg|gif|webp|mp4|webm|ogg|wav|mp3)$|api|test|book).*)",
+    "/((?!_next/static|_next/image|favicon.ico|manifest\\.webmanifest|sw\\.js|workbox-.*\\.js|fallback.*\\.js|serwist/|offline$|audio-worklet/|.*\\.(?:svg|png|jpg|jpeg|gif|webp|mp4|webm|ogg|wav|mp3)$|api|test|book).*)",
   ],
 };
