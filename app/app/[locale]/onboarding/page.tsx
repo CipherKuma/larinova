@@ -95,8 +95,10 @@ export default function OnboardingPage() {
         return;
       }
 
-      // Persist specialty + locale; consume_invite_code RPC sets
-      // onboarding_completed atomically alongside the invite consumption.
+      // Persist profile details first. The invite consume RPC also flips
+      // onboarding_completed for invite users; existing pre-invite doctors
+      // without an active claim are finalized below after consume returns
+      // no_active_claim.
       const updateData = {
         specialization: specialty,
         locale: locale,
@@ -130,13 +132,17 @@ export default function OnboardingPage() {
         }
       }
 
-      // Consume the invite code — this is the moment the code becomes
-      // permanently used. The RPC sets onboarding_completed = true
-      // atomically alongside consumed_at, so we DO NOT update that flag
-      // ourselves. If consume fails the user must clear the access gate
-      // before they can finish — falling back to UPDATE here would let
-      // anyone bypass the invite system, which is exactly the bug we
-      // are guarding against.
+      const finalizeOnboarding = async () => {
+        const { error } = await supabase
+          .from("larinova_doctors")
+          .update({ onboarding_completed: true })
+          .eq("user_id", user.id);
+        if (error) throw error;
+      };
+
+      // Consume the invite code if this doctor came through the invite gate.
+      // Existing doctors who predate the claim cookie do not have an active
+      // claim; they should still be able to finish onboarding after signing in.
       try {
         const consumeRes = await fetch("/api/invite/consume", {
           method: "POST",
@@ -148,9 +154,8 @@ export default function OnboardingPage() {
             body?.error,
           );
           if (body?.error === "no_active_claim") {
-            // No claim yet — they bypassed the access gate somehow.
-            // Send them back to /access to enter a code first.
-            window.location.href = `/${locale}/access`;
+            await finalizeOnboarding();
+            window.location.href = `/${locale}`;
             return;
           }
           // Other failures: bubble up. Don't silently flip the flag.
@@ -160,6 +165,7 @@ export default function OnboardingPage() {
           );
           return;
         }
+        await finalizeOnboarding();
       } catch (err) {
         console.error("[onboarding] consume request failed:", err);
         savingRef.current = false;

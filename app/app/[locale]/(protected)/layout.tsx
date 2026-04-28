@@ -9,9 +9,12 @@ export const dynamic = "force-dynamic";
 
 export default async function DashboardLayout({
   children,
+  params,
 }: {
   children: React.ReactNode;
+  params: Promise<{ locale: string }>;
 }) {
+  const { locale } = await params;
   const supabase = await createClient();
 
   const {
@@ -19,7 +22,7 @@ export default async function DashboardLayout({
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect("/sign-in");
+    redirect(`/${locale}/sign-in`);
   }
 
   // Verify doctor profile exists
@@ -27,10 +30,10 @@ export default async function DashboardLayout({
     .from("larinova_doctors")
     .select("id")
     .eq("user_id", user.id)
-    .single();
+    .maybeSingle();
 
   if (!doctor) {
-    redirect("/sign-in");
+    redirect(`/${locale}/onboarding`);
   }
 
   return (
