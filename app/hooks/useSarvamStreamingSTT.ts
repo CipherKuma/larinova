@@ -338,7 +338,7 @@ export function useSarvamStreamingSTT(opts: UseSarvamStreamingSTTOptions) {
             audio: {
               data: audioBase64,
               sample_rate: TARGET_SAMPLE_RATE,
-              encoding: "audio/pcm_s16le",
+              encoding: "audio/wav",
             },
           }),
         );
