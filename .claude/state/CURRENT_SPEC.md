@@ -5,6 +5,7 @@ Ship the India OPD platform end-to-end: booking → intake → AI-prepared consu
 
 ## Decided
 - **2026-04-28 hotfix:** Onboarding StepMagic must use Sarvam's raw WebSocket message shape (`audio.data/sample_rate/encoding`) and explicit `flush_signal=true` so Stop finalizes the transcript before SOAP generation. First-time onboarding doctor profile reads must tolerate a missing `larinova_doctors` row without surfacing Supabase 406 noise.
+- **2026-04-28 login gate:** `/` and protected routes should take unauthenticated users to email sign-in first. Invite codes gate new signup only; existing doctors can log in without visiting `/access`.
 - **Tiering:** Free = 20 consultations/month; Pro = unlimited. Whitelist array in `lib/subscription.ts` upgrades emails on login.
 - **Pilot:** 5 doctors whitelisted pro from day one; receive alpha welcome banner + email.
 - **Pricing:** IN ₹999/mo + ₹9,990/yr (save ₹1,998); ID IDR 299k/mo + IDR 2.99M/yr (display-only); default USD $20/$200.

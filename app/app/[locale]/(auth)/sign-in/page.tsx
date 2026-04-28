@@ -56,7 +56,7 @@ export default function SignInPage() {
       .from("larinova_doctors")
       .select("onboarding_completed")
       .eq("user_id", user.id)
-      .single();
+      .maybeSingle();
 
     if (!doctor) {
       // full_name is a GENERATED column (first_name + last_name); don't
@@ -108,7 +108,7 @@ export default function SignInPage() {
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        shouldCreateUser: true,
+        shouldCreateUser: false,
         emailRedirectTo: `${window.location.origin}/${locale}/auth/callback`,
       },
     });

@@ -110,11 +110,9 @@ test.describe("auth + onboarding", () => {
       await expect(page).toHaveURL(/\/in\/sign-up/);
     });
 
-    test("sign-in page renders email step after invite gate", async ({
+    test("sign-in page renders email step without invite gate", async ({
       page,
-      baseURL,
     }) => {
-      await addInviteCookie(page, baseURL);
       await page.goto("/in/sign-in");
       await page.waitForLoadState("networkidle");
 
@@ -144,7 +142,7 @@ test.describe("auth + onboarding", () => {
       ).toBeVisible();
     });
 
-    test("unauthenticated access to a protected route redirects to access gate", async ({
+    test("unauthenticated access to a protected route redirects to sign-in", async ({
       page,
     }) => {
       const response = await page.goto("/in/patients");
@@ -152,7 +150,7 @@ test.describe("auth + onboarding", () => {
       // Middleware may respond 200 after a client-side redirect, or 307.
       // Assert the landing URL rather than the raw status.
       expect(response).not.toBeNull();
-      await expect(page).toHaveURL(/\/in\/access/);
+      await expect(page).toHaveURL(/\/in\/sign-in/);
     });
 
     test("unauthenticated /api/dashboard does not expose data", async ({

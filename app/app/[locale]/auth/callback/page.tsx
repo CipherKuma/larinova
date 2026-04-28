@@ -44,7 +44,7 @@ export default function AuthCallbackPage() {
         .from("larinova_doctors")
         .select("onboarding_completed")
         .eq("user_id", user.id)
-        .single();
+        .maybeSingle();
 
       if (!doctor) {
         // New user — create minimal doctor profile. Name is captured in

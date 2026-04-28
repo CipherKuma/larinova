@@ -160,16 +160,10 @@ export async function proxy(request: NextRequest) {
     "/auth/callback",
   ].includes(pathWithoutLocale);
 
-  // Pre-auth invite-code gate: unauthed visitors hitting sign-in / sign-up /
-  // OTP verify / auth callback MUST first prove they have a valid invite code
-  // by entering it at /access. The /api/invite/validate endpoint sets a
-  // larinova_invite_token httpOnly cookie which we check here.
-  const requiresInviteToken = [
-    "/sign-in",
-    "/sign-up",
-    "/verify-otp",
-    "/auth/callback",
-  ].includes(pathWithoutLocale);
+  // Pre-auth invite-code gate: only new-account signup requires a valid invite
+  // token. Existing doctors must be able to reach sign-in, OTP verify, and auth
+  // callback without first visiting /access.
+  const requiresInviteToken = pathWithoutLocale === "/sign-up";
   if (
     !user &&
     requiresInviteToken &&
