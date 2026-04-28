@@ -117,7 +117,7 @@ export function HeroIndia({ locale }: HeroIndiaProps) {
         <div className="flex flex-1 flex-col items-center text-center lg:items-start lg:text-left">
           <h1
             ref={headlineRef}
-            className="max-w-[16ch] font-display text-[2.25rem] font-bold leading-[1.04] tracking-[-0.02em] text-balance text-foreground sm:max-w-[22ch] sm:text-[3.5rem] md:max-w-[26ch] md:text-[4.25rem] lg:max-w-none lg:text-[5rem] xl:text-[5.5rem]"
+            className="max-w-[14ch] font-display text-[2rem] font-bold leading-[1.02] tracking-[-0.025em] text-balance text-foreground sm:max-w-[22ch] sm:text-[3.25rem] md:max-w-[26ch] md:text-[3.75rem] lg:max-w-none lg:text-[4rem] xl:text-[4.5rem]"
           >
             {hero.headline.split(" ").map((word, i) => (
               <span key={i} className="word inline-block">

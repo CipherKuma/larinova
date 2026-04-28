@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { Fragment, useRef } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -82,24 +82,26 @@ export function PoweredBySarvam({ locale }: PoweredBySarvamProps) {
         </p>
 
         <div className="sarvam-fade mb-14 flex flex-wrap justify-center gap-2">
-          {c.languages.map((lang) => (
-            <span
-              key={lang}
-              className={`rounded-full border px-4 py-1.5 font-mono text-xs transition-colors ${
-                lang === c.highlightLanguage
-                  ? "border-primary bg-primary/10 text-primary"
-                  : "border-border text-muted-foreground"
-              }`}
-            >
-              {lang}
-            </span>
+          {c.languages.map((lang, i) => (
+            <Fragment key={lang}>
+              <span
+                className={`rounded-full border px-4 py-1.5 font-mono text-xs transition-colors ${
+                  lang === c.highlightLanguage
+                    ? "border-primary bg-primary/10 text-primary"
+                    : "border-border text-muted-foreground"
+                }`}
+              >
+                {lang}
+              </span>
+              {i === 7 && <div aria-hidden className="basis-full" />}
+            </Fragment>
           ))}
           <span className="rounded-full border border-border px-4 py-1.5 font-mono text-xs text-muted-foreground">
             {c.moreCount}
           </span>
         </div>
 
-        <div className="sarvam-fade mx-auto grid max-w-3xl gap-x-10 gap-y-6 sm:grid-cols-3">
+        <div className="sarvam-fade mx-auto grid max-w-4xl grid-cols-2 gap-x-10 gap-y-8 lg:grid-cols-4">
           {c.stats.map((s) => (
             <div
               key={s.label}
