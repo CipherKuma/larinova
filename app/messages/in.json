@@ -163,7 +163,10 @@
     "wrongPassword": "Wrong password",
     "loginFailed": "Login failed",
     "checkPhoneForCode": "Check your phone for the verification code",
-    "failedToSendOtp": "Failed to send OTP"
+    "failedToSendOtp": "Failed to send OTP",
+    "firstNameRequired": "First name is required",
+    "lastNameRequired": "Last name is required",
+    "emailRequired": "Email is required"
   },
   "onboarding": {
     "welcome": "Welcome to Larinova",

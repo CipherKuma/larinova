@@ -23,21 +23,13 @@ import {
 } from "@/components/ui/form";
 import { toast } from "sonner";
 
-// Note: Zod error messages will be overridden by FormMessage component translations
-const signUpSchema = z.object({
-  firstName: z.string().trim().min(1).max(60),
-  lastName: z.string().trim().min(1).max(60),
-  email: z.string().email(),
-  password: z.string().min(8),
-  phoneNumber: z
-    .string()
-    .optional()
-    .refine((val) => !val || /^[6-9]\d{9}$/.test(val), {
-      message: "Invalid Indian phone number",
-    }),
-});
-
-type SignUpFormValues = z.infer<typeof signUpSchema>;
+type SignUpFormValues = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  phoneNumber?: string;
+};
 
 export default function SignUpPage() {
   const [loading, setLoading] = useState(false);
@@ -46,6 +38,30 @@ export default function SignUpPage() {
   const locale = params.locale as string;
   const t = useTranslations();
   const supabase = createClient();
+
+  const signUpSchema = z.object({
+    firstName: z
+      .string()
+      .trim()
+      .min(1, { message: t("auth.firstNameRequired") })
+      .max(60),
+    lastName: z
+      .string()
+      .trim()
+      .min(1, { message: t("auth.lastNameRequired") })
+      .max(60),
+    email: z
+      .string()
+      .min(1, { message: t("auth.emailRequired") })
+      .email({ message: t("auth.invalidEmail") }),
+    password: z.string().min(8, { message: t("auth.passwordMin") }),
+    phoneNumber: z
+      .string()
+      .optional()
+      .refine((val) => !val || /^[6-9]\d{9}$/.test(val), {
+        message: t("auth.invalidPhoneNumber"),
+      }),
+  });
 
   const form = useForm<SignUpFormValues>({
     resolver: zodResolver(signUpSchema),

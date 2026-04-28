@@ -163,7 +163,10 @@
     "wrongPassword": "Kata sandi salah",
     "loginFailed": "Gagal masuk",
     "checkPhoneForCode": "Periksa ponsel Anda untuk kode verifikasi",
-    "failedToSendOtp": "Gagal mengirim OTP"
+    "failedToSendOtp": "Gagal mengirim OTP",
+    "firstNameRequired": "Nama depan wajib diisi",
+    "lastNameRequired": "Nama belakang wajib diisi",
+    "emailRequired": "Email wajib diisi"
   },
   "onboarding": {
     "welcome": "Selamat datang di Larinova",
