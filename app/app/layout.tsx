@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, Outfit, IBM_Plex_Mono, Cairo } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
@@ -42,6 +42,19 @@ export const metadata: Metadata = {
     siteName: "Larinova",
     type: "website",
   },
+  manifest: "/manifest.webmanifest",
+  formatDetection: {
+    telephone: false,
+  },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  interactiveWidget: "resizes-content",
+  colorScheme: "dark",
+  themeColor: "#0b0b0f",
 };
 
 export default function RootLayout({
@@ -56,7 +69,6 @@ export default function RootLayout({
       className={`dark grain ${inter.variable} ${outfit.variable} ${ibmPlexMono.variable} ${cairo.variable}`}
     >
       <head>
-        <link rel="manifest" href="/manifest.webmanifest" />
         <link rel="apple-touch-icon" href="/icons/apple-touch-icon-180.png" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta
@@ -64,7 +76,7 @@ export default function RootLayout({
           content="black-translucent"
         />
         <meta name="apple-mobile-web-app-title" content="Larinova" />
-        <meta name="theme-color" content="#0b0b0f" />
+        <meta name="mobile-web-app-capable" content="yes" />
       </head>
       <body className={inter.className}>
         {children}

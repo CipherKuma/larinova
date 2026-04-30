@@ -23,9 +23,15 @@ test.describe("PWA — static assets", () => {
     expect(res.status()).toBe(200);
     const body = await res.json();
     expect(body.name).toBe("Larinova");
+    expect(body.id).toBe("/in");
     expect(body.start_url).toBe("/in");
+    expect(body.display).toBe("standalone");
+    expect(body.scope).toBe("/");
+    expect(body.prefer_related_applications).toBe(false);
     expect(Array.isArray(body.icons)).toBe(true);
     expect(body.icons.length).toBeGreaterThanOrEqual(2);
+    expect(Array.isArray(body.shortcuts)).toBe(true);
+    expect(body.shortcuts.length).toBeGreaterThanOrEqual(2);
     // Ensure every icon declared in the manifest is reachable.
     for (const icon of body.icons) {
       expect(icon.src).toMatch(/^\/icons\//);
@@ -77,9 +83,7 @@ test.describe("PWA — offline + head meta", () => {
     ).toBeVisible({ timeout: 5_000 });
   });
 
-  test("/in <head> contains manifest + apple-touch-icon + theme-color", async ({
-    page,
-  }) => {
+  test("/in <head> contains mobile app install metadata", async ({ page }) => {
     // Probe the authenticated home — storageState cookies are dropped for
     // the public-page use-case here by not overriding. Using /in directly
     // still returns a page that serves the PWA head because the layout is
@@ -103,6 +107,16 @@ test.describe("PWA — offline + head meta", () => {
       .locator("meta[name=theme-color]")
       .getAttribute("content");
     expect(themeColor).toMatch(/^#/);
+
+    await expect(
+      page.locator('meta[name="apple-mobile-web-app-capable"]'),
+    ).toHaveAttribute("content", "yes");
+    await expect(
+      page.locator('meta[name="mobile-web-app-capable"]'),
+    ).toHaveAttribute("content", "yes");
+    await expect(
+      page.locator('meta[name="apple-mobile-web-app-status-bar-style"]'),
+    ).toHaveAttribute("content", "black-translucent");
   });
 
   test("offline mode falls back gracefully", async ({ page, context }) => {

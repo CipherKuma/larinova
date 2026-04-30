@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Share, Plus, X, Download } from "lucide-react";
+import { Share, Plus, X, Smartphone, CheckCircle2 } from "lucide-react";
 
 type DeferredPrompt = Event & {
   prompt: () => Promise<void>;
@@ -11,7 +11,7 @@ type DeferredPrompt = Event & {
 type Platform = "ios" | "android" | "other";
 
 const DISMISS_KEY = "larinova:install-prompt:dismissed-at";
-const REPROMPT_AFTER_DAYS = 7;
+const REPROMPT_AFTER_DAYS = 2;
 
 function detectPlatform(): Platform {
   if (typeof navigator === "undefined") return "other";
@@ -22,6 +22,14 @@ function detectPlatform(): Platform {
   if (isIOS) return "ios";
   if (/Android/i.test(ua)) return "android";
   return "other";
+}
+
+function isMobileBrowser(): boolean {
+  if (typeof navigator === "undefined") return false;
+  return (
+    /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ||
+    (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)
+  );
 }
 
 function isStandalone(): boolean {
@@ -62,7 +70,7 @@ export function InstallPrompt() {
     };
     window.addEventListener("beforeinstallprompt", onBIP);
 
-    if (p === "ios") {
+    if (p === "ios" || isMobileBrowser()) {
       const t = setTimeout(() => setOpen(true), 1500);
       return () => {
         clearTimeout(t);
@@ -92,18 +100,20 @@ export function InstallPrompt() {
   if (platform === "other" && !deferred) return null;
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-40 px-4 pb-[env(safe-area-inset-bottom)] sm:bottom-4 sm:left-auto sm:right-4 sm:max-w-sm">
-      <div className="rounded-2xl border border-white/10 bg-[#15151b]/95 p-4 shadow-2xl backdrop-blur-xl mb-4 sm:mb-0">
+    <div className="fixed inset-x-0 bottom-[calc(76px+env(safe-area-inset-bottom))] z-50 px-4 sm:bottom-4 sm:left-auto sm:right-4 sm:max-w-sm">
+      <div className="rounded-2xl border border-white/10 bg-[#15151b]/95 p-4 shadow-2xl shadow-black/40 backdrop-blur-xl">
         <div className="flex items-start gap-3">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/5 ring-1 ring-white/10">
-            <Download className="h-5 w-5 text-white/80" />
+            <Smartphone className="h-5 w-5 text-primary" />
           </div>
           <div className="flex-1">
-            <p className="text-sm font-semibold text-white">Install Larinova</p>
+            <p className="text-sm font-semibold text-white">
+              Use Larinova as an app
+            </p>
             <p className="mt-0.5 text-xs leading-relaxed text-white/60">
               {platform === "ios"
-                ? "Add Larinova to your Home Screen for faster, full-screen access."
-                : "Install the app for faster, full-screen access — no browser bars."}
+                ? "Add it to your Home Screen for full-screen clinic use without Safari chrome."
+                : "Install once for a full-screen clinic workspace without browser bars."}
             </p>
           </div>
           <button
@@ -115,7 +125,7 @@ export function InstallPrompt() {
           </button>
         </div>
 
-        {platform === "ios" ? (
+        {platform === "ios" || (platform === "other" && !deferred) ? (
           <ol className="mt-3 space-y-2 text-xs text-white/70">
             <li className="flex items-center gap-2">
               <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white/10 text-[10px] font-semibold text-white">
@@ -149,8 +159,9 @@ export function InstallPrompt() {
         ) : (
           <button
             onClick={triggerAndroidInstall}
-            className="mt-3 w-full rounded-lg bg-white px-3 py-2 text-sm font-semibold text-[#0b0b0f] transition hover:bg-white/90"
+            className="mt-3 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-white px-3 py-2 text-sm font-semibold text-[#0b0b0f] transition hover:bg-white/90"
           >
+            <CheckCircle2 className="h-4 w-4" />
             Install app
           </button>
         )}

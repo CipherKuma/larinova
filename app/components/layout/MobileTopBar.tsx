@@ -44,12 +44,12 @@ export function MobileTopBar() {
 
   return (
     <header
-      className={`md:hidden sticky top-0 z-40 h-14 flex items-center justify-between px-4
+      className={`md:hidden shrink-0 z-40 min-h-14 flex items-center justify-between px-4
         bg-background/95 backdrop-blur-lg
         transition-[border-color,box-shadow] duration-200
         ${scrolled ? "border-b border-border/60 shadow-[0_1px_0_rgba(0,0,0,0.04)]" : "border-b border-transparent"}
       `}
-      style={{ paddingTop: "env(safe-area-inset-top)" }}
+      style={{ paddingTop: "max(env(safe-area-inset-top), 0px)" }}
     >
       <div className="flex items-center gap-2 min-w-0">
         <Image
