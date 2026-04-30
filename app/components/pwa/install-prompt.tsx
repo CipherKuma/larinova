@@ -12,6 +12,7 @@ type Platform = "ios" | "android" | "other";
 
 const DISMISS_KEY = "larinova:install-prompt:dismissed-at";
 const REPROMPT_AFTER_DAYS = 2;
+const CONTINUE_BROWSER_KEY = "larinova:install-gate:continue-browser";
 
 function detectPlatform(): Platform {
   if (typeof navigator === "undefined") return "other";
@@ -54,14 +55,25 @@ function shouldShow(): boolean {
 export function InstallPrompt() {
   const [platform, setPlatform] = useState<Platform>("other");
   const [open, setOpen] = useState(false);
+  const [mobileGate, setMobileGate] = useState(false);
   const [deferred, setDeferred] = useState<DeferredPrompt | null>(null);
 
   useEffect(() => {
     if (isStandalone()) return;
-    if (!shouldShow()) return;
 
     const p = detectPlatform();
+    const mobile = isMobileBrowser();
     setPlatform(p);
+    setMobileGate(mobile);
+
+    if (mobile) {
+      try {
+        if (sessionStorage.getItem(CONTINUE_BROWSER_KEY) === "true") return;
+      } catch {}
+      setOpen(true);
+    } else if (!shouldShow()) {
+      return;
+    }
 
     const onBIP = (e: Event) => {
       e.preventDefault();
@@ -69,14 +81,6 @@ export function InstallPrompt() {
       setOpen(true);
     };
     window.addEventListener("beforeinstallprompt", onBIP);
-
-    if (p === "ios" || isMobileBrowser()) {
-      const t = setTimeout(() => setOpen(true), 1500);
-      return () => {
-        clearTimeout(t);
-        window.removeEventListener("beforeinstallprompt", onBIP);
-      };
-    }
 
     return () => window.removeEventListener("beforeinstallprompt", onBIP);
   }, []);
@@ -91,12 +95,112 @@ export function InstallPrompt() {
   const triggerAndroidInstall = async () => {
     if (!deferred) return;
     await deferred.prompt();
-    await deferred.userChoice;
+    const choice = await deferred.userChoice;
     setDeferred(null);
-    dismiss();
+    if (choice.outcome === "accepted") dismiss();
   };
 
   if (!open) return null;
+
+  const continueInBrowser = () => {
+    try {
+      sessionStorage.setItem(CONTINUE_BROWSER_KEY, "true");
+    } catch {}
+    setOpen(false);
+  };
+
+  if (mobileGate) {
+    return (
+      <div
+        data-testid="mobile-install-gate"
+        className="fixed inset-0 z-[100] flex min-h-dvh flex-col bg-background px-5 text-foreground"
+      >
+        <div className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center pb-[max(24px,env(safe-area-inset-bottom))] pt-[max(24px,env(safe-area-inset-top))]">
+          <div className="mb-7 inline-flex h-14 w-14 items-center justify-center rounded-2xl border border-white/10 bg-card shadow-2xl shadow-black/30">
+            <Smartphone className="h-7 w-7 text-primary" />
+          </div>
+
+          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">
+            Mobile app required
+          </p>
+          <h1 className="mt-3 text-3xl font-bold leading-tight tracking-tight text-white">
+            Install Larinova for the proper clinic experience.
+          </h1>
+          <p className="mt-3 text-base leading-relaxed text-white/65">
+            Larinova is built to be used full-screen from your Home Screen, not
+            inside Safari or Chrome with browser controls taking up space.
+          </p>
+
+          {platform === "android" && deferred ? (
+            <button
+              onClick={triggerAndroidInstall}
+              className="mt-8 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-base font-semibold text-primary-foreground shadow-lg shadow-primary/20 active:bg-primary/90"
+            >
+              <CheckCircle2 className="h-5 w-5" />
+              Install Larinova
+            </button>
+          ) : (
+            <ol className="mt-8 space-y-3 text-base text-white/78">
+              <li className="flex items-center gap-3">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/10 text-sm font-semibold text-white">
+                  1
+                </span>
+                {platform === "android" ? (
+                  <span>Open Chrome&apos;s menu</span>
+                ) : (
+                  <span className="flex min-w-0 items-center gap-2">
+                    Tap
+                    <Share className="h-5 w-5 text-sky-400" />
+                    in Safari&apos;s toolbar
+                  </span>
+                )}
+              </li>
+              <li className="flex items-center gap-3">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/10 text-sm font-semibold text-white">
+                  2
+                </span>
+                {platform === "android" ? (
+                  <span>
+                    Choose{" "}
+                    <span className="font-semibold text-white">
+                      Install app
+                    </span>{" "}
+                    or{" "}
+                    <span className="font-semibold text-white">
+                      Add to Home screen
+                    </span>
+                  </span>
+                ) : (
+                  <span className="flex min-w-0 items-center gap-2">
+                    Choose
+                    <Plus className="h-5 w-5 text-white/90" />
+                    <span className="font-semibold text-white">
+                      Add to Home Screen
+                    </span>
+                  </span>
+                )}
+              </li>
+              <li className="flex items-center gap-3">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/10 text-sm font-semibold text-white">
+                  3
+                </span>
+                <span>Open Larinova from the new Home Screen icon.</span>
+              </li>
+            </ol>
+          )}
+
+          <button
+            type="button"
+            onClick={continueInBrowser}
+            className="mt-4 min-h-12 w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 text-base font-semibold text-white/75 active:bg-white/[0.06]"
+          >
+            Continue in browser for now
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   if (platform === "other" && !deferred) return null;
 
   return (

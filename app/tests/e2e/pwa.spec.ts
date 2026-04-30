@@ -139,3 +139,46 @@ test.describe("PWA — offline + head meta", () => {
     await context.setOffline(false);
   });
 });
+
+test.describe("PWA — mobile install gate", () => {
+  test.use({
+    storageState: { cookies: [], origins: [] },
+    viewport: { width: 390, height: 844 },
+    isMobile: true,
+    hasTouch: true,
+    userAgent:
+      "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1",
+  });
+
+  test("mobile browser sees install gate before the sign-in form", async ({
+    page,
+  }) => {
+    await page.goto("/in/sign-in");
+    await page.waitForLoadState("domcontentloaded");
+
+    await expect(
+      page.getByRole("heading", {
+        name: /install larinova for the proper clinic experience/i,
+      }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: /continue in browser/i }),
+    ).toBeVisible();
+
+    const topLayerText = await page.evaluate(() => {
+      const el = document.elementFromPoint(
+        window.innerWidth / 2,
+        window.innerHeight / 2,
+      );
+      return (
+        el?.closest('[data-testid="mobile-install-gate"]')?.textContent ?? ""
+      );
+    });
+    expect(topLayerText).toContain("Mobile app required");
+
+    await page.getByRole("button", { name: /continue in browser/i }).click();
+    await expect(
+      page.getByRole("heading", { name: /get started/i }),
+    ).toBeVisible();
+  });
+});
