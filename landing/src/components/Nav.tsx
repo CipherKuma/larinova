@@ -46,7 +46,7 @@ export function Nav({ locale }: NavProps) {
         <a href={`/${locale}`}>
           <div className="flex items-center gap-2.5">
             <Image
-              src="/larinova-icon.png"
+              src="/light-mode-icon-only.png"
               alt="Larinova"
               width={48}
               height={48}

@@ -484,7 +484,7 @@ function Logo() {
     <div className="flex-shrink-0 flex items-center gap-2.5 p-6 lg:p-8">
       <Link href="/" className="flex items-center gap-2.5">
         <Image
-          src="/larinova-icon.png"
+          src="/light-mode-icon-only.png"
           alt="Larinova"
           width={36}
           height={36}

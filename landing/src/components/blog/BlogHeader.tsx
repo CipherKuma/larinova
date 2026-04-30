@@ -30,7 +30,7 @@ export function BlogHeader() {
         <Link href="/">
           <div className="flex items-center gap-2">
             <Image
-              src="/larinova-icon.png"
+              src="/light-mode-icon-only.png"
               alt="Larinova"
               width={32}
               height={32}

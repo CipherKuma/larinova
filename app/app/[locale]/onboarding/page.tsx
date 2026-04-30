@@ -209,7 +209,7 @@ export default function OnboardingPage() {
             {/* Logo — permanent top left */}
             <div className="flex-shrink-0 flex items-center gap-2.5 p-6 lg:p-8">
               <Image
-                src={sharedAsset("larinova-icon.png")}
+                src={sharedAsset("dark-mode-icon-only.png")}
                 alt="Larinova"
                 width={36}
                 height={36}

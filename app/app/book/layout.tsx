@@ -31,7 +31,10 @@ export default function BookLayout({
       className={`dark grain ${inter.variable} ${outfit.variable} ${ibmPlexMono.variable}`}
     >
       <head>
-        <link rel="apple-touch-icon" href="/icons/apple-touch-icon-180.png" />
+        <link
+          rel="apple-touch-icon"
+          href="/icons/apple-touch-icon-180.png?v=20260430"
+        />
         <meta name="theme-color" content="#0b0b0f" />
       </head>
       <body className={inter.className}>

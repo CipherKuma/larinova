@@ -58,7 +58,7 @@ export function AccessForm({ locale }: { locale: string }) {
       <div className="flex justify-center">
         <div className="flex items-center gap-2">
           <Image
-            src={sharedAsset("larinova-icon.png")}
+            src={sharedAsset("dark-mode-icon-only.png")}
             alt="Larinova"
             width={48}
             height={48}

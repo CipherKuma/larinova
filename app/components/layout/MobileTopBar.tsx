@@ -53,7 +53,7 @@ export function MobileTopBar() {
     >
       <div className="flex items-center gap-2 min-w-0">
         <Image
-          src={sharedAsset("larinova-icon.png")}
+          src={sharedAsset("dark-mode-icon-only.png")}
           alt="Larinova"
           width={28}
           height={28}

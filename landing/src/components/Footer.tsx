@@ -18,7 +18,7 @@ export function Footer({ locale }: FooterProps) {
           <div className="md:col-span-5 lg:col-span-6">
             <div className="flex items-center gap-2 mb-3">
               <Image
-                src="/larinova-icon.png"
+                src="/light-mode-icon-only.png"
                 alt="Larinova"
                 width={32}
                 height={32}

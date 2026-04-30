@@ -106,7 +106,7 @@ export function Sidebar() {
               className="flex items-center justify-center h-[48px]"
             >
               <Image
-                src={sharedAsset("larinova-icon.png")}
+                src={sharedAsset("dark-mode-icon-only.png")}
                 alt="Larinova"
                 width={32}
                 height={32}
@@ -125,7 +125,7 @@ export function Sidebar() {
             >
               <div className="flex items-center gap-2">
                 <Image
-                  src={sharedAsset("larinova-icon.png")}
+                  src={sharedAsset("dark-mode-icon-only.png")}
                   alt="Larinova"
                   width={32}
                   height={32}

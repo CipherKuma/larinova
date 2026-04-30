@@ -1,6 +1,6 @@
 # larinova/ops
 
-Non-technical subdir of the Larinova project — strategy, sales, collateral, pricing docs, and ops tooling (local Gmail MCP + WhatsApp CLI). Code lives one level up at the repo root.
+Non-technical subdir of the Larinova project — strategy, sales, collateral, pricing docs, brand assets, and ops tooling (local Gmail MCP + WhatsApp CLI). Code lives one level up at the repo root.
 
 See [CLAUDE.md](./CLAUDE.md) for full context and why this is a subdir.
 
@@ -17,6 +17,7 @@ cd docs && ./build.sh
 ## Directory map
 
 - `agent-tooling/` — ops-specific agent skills and lockfiles. Do not scatter generated `.claude`, `.agents`, `.qwen`, `.roo`, `.windsurf`, or similar folders directly under `ops/`.
+- `brand/` — canonical Larinova logo assets. Use only the four approved files in `brand/logos/`.
 - `collateral/` — reusable designed assets and campaign collateral.
 - `company-docs/` — durable company/legal documents. Raw imports go under `company-docs/_incoming/` until reviewed.
 - `docs/` — built pricing, research, and sales documents that are meant to be shared.

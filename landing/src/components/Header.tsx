@@ -30,7 +30,7 @@ export function Header() {
           <Link href="/" className="group">
             <div className="flex items-center gap-2 transform group-hover:scale-105 transition-transform duration-200">
               <Image
-                src="/larinova-icon.png"
+                src="/light-mode-icon-only.png"
                 alt="Larinova"
                 width={36}
                 height={36}

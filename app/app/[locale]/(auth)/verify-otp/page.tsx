@@ -190,7 +190,7 @@ export default function VerifyOtpPage() {
       <div className="flex justify-center mb-8">
         <div className="flex items-center gap-2">
           <Image
-            src={sharedAsset("larinova-icon.png")}
+            src={sharedAsset("dark-mode-icon-only.png")}
             alt="Larinova"
             width={48}
             height={48}

@@ -69,7 +69,10 @@ export default function RootLayout({
       className={`dark grain ${inter.variable} ${outfit.variable} ${ibmPlexMono.variable} ${cairo.variable}`}
     >
       <head>
-        <link rel="apple-touch-icon" href="/icons/apple-touch-icon-180.png" />
+        <link
+          rel="apple-touch-icon"
+          href="/icons/apple-touch-icon-180.png?v=20260430"
+        />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta
           name="apple-mobile-web-app-status-bar-style"

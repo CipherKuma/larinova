@@ -12,7 +12,7 @@ export function generateOrganizationJsonLd() {
     name: SITE_NAME,
     legalName: "Larinova",
     url: SITE_URL,
-    logo: `${SITE_URL}/larinova-icon.png`,
+    logo: `${SITE_URL}/light-mode-icon-only.png`,
     description: SITE_DESCRIPTION,
     contactPoint: [
       {
@@ -126,7 +126,7 @@ export function generateMedicalBusinessJsonLd() {
     "@type": ["MedicalBusiness", "Organization"],
     name: SITE_NAME,
     url: SITE_URL,
-    logo: `${SITE_URL}/larinova-icon.png`,
+    logo: `${SITE_URL}/light-mode-icon-only.png`,
     description: SITE_DESCRIPTION,
     areaServed: [
       { "@type": "Country", name: "India" },
@@ -170,7 +170,7 @@ export function generateArticleJsonLd(post: BlogPost) {
       name: SITE_NAME,
       logo: {
         "@type": "ImageObject",
-        url: `${SITE_URL}/larinova-icon.png`,
+        url: `${SITE_URL}/light-mode-icon-only.png`,
       },
     },
     mainEntityOfPage: {
