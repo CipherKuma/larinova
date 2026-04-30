@@ -33,12 +33,13 @@
       }
 
       :root {
-        --navy: #0d3349;
-        --navy-mid: #1a4a66;
-        --navy-light: #e8eef3;
-        --orange: #b84e18;
-        --orange-light: #fff3ec;
-        --orange-dark: #8a3810;
+        /* Larinova brand palette — sourced from landing/src/app/globals.css */
+        --navy: #0a0f1e; /* primary background, official brand bg */
+        --navy-mid: #1a1f2e; /* card / surface */
+        --navy-light: #e8eef3; /* light tint navy for callouts on white */
+        --orange: #10b981; /* brand emerald (the green almond in the logo) */
+        --orange-light: #ecfdf5; /* emerald tint for light callouts */
+        --orange-dark: #047857; /* deeper emerald for emphasis */
         --ink: #14141c;
         --ink-mid: #3a3a52;
         --ink-light: #6c6c88;
@@ -80,13 +81,24 @@
         text-transform: uppercase;
         margin-bottom: 28pt;
       }
+      .cover-brand {
+        display: flex;
+        align-items: center;
+        gap: 14pt;
+        margin-bottom: 22pt;
+      }
+      .cover-icon {
+        display: block;
+        width: 52pt;
+        height: 52pt;
+      }
       .cover-wordmark {
-        font-size: 64pt;
-        font-weight: 300;
-        color: rgba(255, 255, 255, 0.97);
+        font-family: "Inter", sans-serif;
+        font-size: 52pt;
+        font-weight: 600;
+        color: #ffffff;
         letter-spacing: -0.025em;
         line-height: 1;
-        margin-bottom: 18pt;
       }
       .cover-title {
         font-size: 22pt;
@@ -98,7 +110,7 @@
         max-width: 380pt;
       }
       .cover-title em {
-        color: #ffb887;
+        color: #34d399;
         font-style: normal;
       }
       .cover-doctype {
@@ -109,7 +121,7 @@
         text-transform: uppercase;
       }
       .cover-meta {
-        background: #07202e;
+        background: #040711;
         padding: 22pt 52pt;
       }
       .cover-meta-line {
@@ -314,7 +326,10 @@
     <div class="cover">
       <div class="cover-hero">
         <p class="cover-eyebrow">Confidential · April 2026</p>
-        <h1 class="cover-wordmark">Larinova</h1>
+        <div class="cover-brand">
+          <img class="cover-icon" src="assets/larinova-icon.png" alt="" />
+          <span class="cover-wordmark">Larinova</span>
+        </div>
         <p class="cover-title">
           Investor memo<br />
           <em>The OPD assistant for Indian doctors.</em>

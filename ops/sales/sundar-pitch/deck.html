@@ -19,12 +19,13 @@
       }
 
       :root {
-        --navy: #0d3349;
-        --navy-mid: #1a4a66;
-        --navy-light: #e8eef3;
-        --orange: #b84e18;
-        --orange-light: #fff3ec;
-        --orange-dark: #8a3810;
+        /* Larinova brand palette — sourced from landing/src/app/globals.css */
+        --navy: #0a0f1e; /* primary background, official brand bg */
+        --navy-mid: #1a1f2e; /* card / surface */
+        --navy-light: #e8eef3; /* light tint navy for callouts on white */
+        --orange: #10b981; /* brand emerald (the green almond in the logo) */
+        --orange-light: #ecfdf5; /* emerald tint for light callouts */
+        --orange-dark: #047857; /* deeper emerald for emphasis */
         --ink: #14141c;
         --ink-mid: #444455;
         --ink-light: #777788;
@@ -90,10 +91,21 @@
         right: 18mm;
         display: flex;
         justify-content: space-between;
+        align-items: center;
         font-size: 9px;
         color: var(--ink-light);
         border-top: 1px solid var(--rule);
         padding-top: 8px;
+      }
+      .footer .footer-left {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .footer .footer-icon {
+        width: 12px;
+        height: 12px;
+        display: block;
       }
       .footer .footer-mark {
         color: var(--navy);
@@ -118,13 +130,24 @@
         text-transform: uppercase;
         margin-bottom: 26px;
       }
+      .cover-brand {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 18px;
+      }
+      .cover-icon {
+        display: block;
+        width: 56px;
+        height: 56px;
+      }
       .cover-wordmark {
-        font-size: 64px;
-        font-weight: 300;
-        color: #fff;
+        font-family: "Inter", sans-serif;
+        font-size: 54px;
+        font-weight: 600;
+        color: #ffffff;
         letter-spacing: -0.025em;
         line-height: 1;
-        margin-bottom: 14px;
       }
       .cover-tagline {
         font-size: 18px;
@@ -135,7 +158,7 @@
         margin-bottom: 30px;
       }
       .cover-tagline em {
-        color: #ffb887;
+        color: #34d399;
         font-style: normal;
       }
 
@@ -155,7 +178,7 @@
       .cover-stat-num {
         font-size: 26px;
         font-weight: 800;
-        color: #ffb887;
+        color: #34d399;
         line-height: 1;
         margin-bottom: 6px;
       }
@@ -166,7 +189,7 @@
       }
 
       .cover-bottom {
-        background: #07202e;
+        background: #040711;
         padding: 22px 22mm;
         font-size: 10.5px;
         color: rgba(255, 255, 255, 0.78);
@@ -264,7 +287,7 @@
       .moat-callout-label {
         font-size: 10px;
         font-weight: 700;
-        color: #ffb887;
+        color: #34d399;
         letter-spacing: 0.14em;
         text-transform: uppercase;
         margin-bottom: 6px;
@@ -495,7 +518,7 @@
       .id-callout h3 {
         font-size: 16px;
         font-weight: 700;
-        color: #ffb887;
+        color: #34d399;
         margin-bottom: 8px;
       }
       .id-callout p {
@@ -673,7 +696,7 @@
       .ask-hero-num {
         font-size: 40px;
         font-weight: 800;
-        color: #ffb887;
+        color: #34d399;
         line-height: 1;
         margin-bottom: 10px;
         letter-spacing: -0.02em;
@@ -751,7 +774,10 @@
     <div class="page cover">
       <div class="cover-top">
         <p class="cover-eyebrow">Investor brief · Confidential · April 2026</p>
-        <h1 class="cover-wordmark">Larinova</h1>
+        <div class="cover-brand">
+          <img class="cover-icon" src="assets/larinova-icon.png" alt="" />
+          <span class="cover-wordmark">Larinova</span>
+        </div>
         <p class="cover-tagline">
           1.1 million Indian doctors. One English-only AI scribe.<br />
           <em>One alternative — speaking all 22 Indian languages.</em>
@@ -850,7 +876,15 @@
       </div>
 
       <div class="footer">
-        <span>Larinova · Investor brief for Mr. Sundar Venkatraman</span>
+        <span class="footer-left"
+          ><img
+            class="footer-icon"
+            src="assets/larinova-icon.png"
+            alt=""
+          /><span
+            >Larinova · Investor brief for Mr. Sundar Venkatraman</span
+          ></span
+        >
         <span class="footer-mark">2 / 12</span>
       </div>
     </div>
@@ -925,7 +959,15 @@
       </div>
 
       <div class="footer">
-        <span>Larinova · Investor brief for Mr. Sundar Venkatraman</span>
+        <span class="footer-left"
+          ><img
+            class="footer-icon"
+            src="assets/larinova-icon.png"
+            alt=""
+          /><span
+            >Larinova · Investor brief for Mr. Sundar Venkatraman</span
+          ></span
+        >
         <span class="footer-mark">3 / 12</span>
       </div>
     </div>
@@ -1000,7 +1042,15 @@
       </div>
 
       <div class="footer">
-        <span>Larinova · Investor brief for Mr. Sundar Venkatraman</span>
+        <span class="footer-left"
+          ><img
+            class="footer-icon"
+            src="assets/larinova-icon.png"
+            alt=""
+          /><span
+            >Larinova · Investor brief for Mr. Sundar Venkatraman</span
+          ></span
+        >
         <span class="footer-mark">4 / 12</span>
       </div>
     </div>
@@ -1094,7 +1144,15 @@
       </div>
 
       <div class="footer">
-        <span>Larinova · Investor brief for Mr. Sundar Venkatraman</span>
+        <span class="footer-left"
+          ><img
+            class="footer-icon"
+            src="assets/larinova-icon.png"
+            alt=""
+          /><span
+            >Larinova · Investor brief for Mr. Sundar Venkatraman</span
+          ></span
+        >
         <span class="footer-mark">5 / 12</span>
       </div>
     </div>
@@ -1185,7 +1243,15 @@
       </div>
 
       <div class="footer">
-        <span>Larinova · Investor brief for Mr. Sundar Venkatraman</span>
+        <span class="footer-left"
+          ><img
+            class="footer-icon"
+            src="assets/larinova-icon.png"
+            alt=""
+          /><span
+            >Larinova · Investor brief for Mr. Sundar Venkatraman</span
+          ></span
+        >
         <span class="footer-mark">6 / 12</span>
       </div>
     </div>
@@ -1274,7 +1340,15 @@
       </div>
 
       <div class="footer">
-        <span>Larinova · Investor brief for Mr. Sundar Venkatraman</span>
+        <span class="footer-left"
+          ><img
+            class="footer-icon"
+            src="assets/larinova-icon.png"
+            alt=""
+          /><span
+            >Larinova · Investor brief for Mr. Sundar Venkatraman</span
+          ></span
+        >
         <span class="footer-mark">7 / 12</span>
       </div>
     </div>
@@ -1355,7 +1429,15 @@
       </div>
 
       <div class="footer">
-        <span>Larinova · Investor brief for Mr. Sundar Venkatraman</span>
+        <span class="footer-left"
+          ><img
+            class="footer-icon"
+            src="assets/larinova-icon.png"
+            alt=""
+          /><span
+            >Larinova · Investor brief for Mr. Sundar Venkatraman</span
+          ></span
+        >
         <span class="footer-mark">8 / 12</span>
       </div>
     </div>
@@ -1426,7 +1508,15 @@
       </table>
 
       <div class="footer">
-        <span>Larinova · Investor brief for Mr. Sundar Venkatraman</span>
+        <span class="footer-left"
+          ><img
+            class="footer-icon"
+            src="assets/larinova-icon.png"
+            alt=""
+          /><span
+            >Larinova · Investor brief for Mr. Sundar Venkatraman</span
+          ></span
+        >
         <span class="footer-mark">9 / 12</span>
       </div>
     </div>
@@ -1520,7 +1610,15 @@
       </table>
 
       <div class="footer">
-        <span>Larinova · Investor brief for Mr. Sundar Venkatraman</span>
+        <span class="footer-left"
+          ><img
+            class="footer-icon"
+            src="assets/larinova-icon.png"
+            alt=""
+          /><span
+            >Larinova · Investor brief for Mr. Sundar Venkatraman</span
+          ></span
+        >
         <span class="footer-mark">10 / 12</span>
       </div>
     </div>
@@ -1632,7 +1730,15 @@
       </table>
 
       <div class="footer">
-        <span>Larinova · Investor brief for Mr. Sundar Venkatraman</span>
+        <span class="footer-left"
+          ><img
+            class="footer-icon"
+            src="assets/larinova-icon.png"
+            alt=""
+          /><span
+            >Larinova · Investor brief for Mr. Sundar Venkatraman</span
+          ></span
+        >
         <span class="footer-mark">11 / 12</span>
       </div>
     </div>
@@ -1730,10 +1836,13 @@
       </div>
 
       <div class="footer">
-        <span
-          >Larinova Private Limited · CIN U62012TN2026PTC192444 ·
-          larinova.com</span
-        >
+        <span class="footer-left">
+          <img class="footer-icon" src="assets/larinova-icon.png" alt="" />
+          <span
+            >Larinova Private Limited · CIN U62012TN2026PTC192444 ·
+            larinova.com</span
+          >
+        </span>
         <span class="footer-mark">12 / 12</span>
       </div>
     </div>
