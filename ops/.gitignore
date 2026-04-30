@@ -18,3 +18,43 @@ whatsapp/.wwebjs_cache/
 
 # Claude Code local settings (keep the skills dir, but not local settings)
 .claude/settings.local.json
+
+# Agent-client generated exports. Canonical Larinova ops skills live in
+# agent-tooling/skills; provider-specific generated folders should not clutter
+# the top level.
+agent-tooling/skills/
+agent-tooling/skills-lock.json
+agent-tooling/provider-exports/
+.agents/
+.codebuddy/
+.commandcode/
+.continue/
+.crush/
+.factory/
+.goose/
+.junie/
+.kilocode/
+.kiro/
+.kode/
+.mcpjam/
+.mux/
+.neovate/
+.openhands/
+.pi/
+.pochi/
+.qoder/
+.qwen/
+.roo/
+.trae/
+.windsurf/
+.zencoder/
+
+# Private/raw working inputs. Move reviewed, durable files into the structured
+# tracked folders before committing.
+company-docs/_incoming/
+sales/bala-feedback/
+
+# Media workspaces can be huge; commit source intentionally, not build output.
+media/demo-video/
+media/**/node_modules/
+media/**/out/

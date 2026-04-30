@@ -14,6 +14,18 @@ cd whatsapp && npm install && npm run pair
 cd docs && ./build.sh
 ```
 
+## Directory map
+
+- `agent-tooling/` — ops-specific agent skills and lockfiles. Do not scatter generated `.claude`, `.agents`, `.qwen`, `.roo`, `.windsurf`, or similar folders directly under `ops/`.
+- `collateral/` — reusable designed assets and campaign collateral.
+- `company-docs/` — durable company/legal documents. Raw imports go under `company-docs/_incoming/` until reviewed.
+- `docs/` — built pricing, research, and sales documents that are meant to be shared.
+- `media/` — media production workspaces such as Remotion/demo-video projects. Commit source intentionally, not `node_modules` or render outputs.
+- `research/` — source research notes that are not product specs.
+- `sales/` — sales evidence, pitch decks, prospect research, and meeting/customer feedback.
+- `strategy/` — go-to-market, startup-program, CRM, and outreach strategy.
+- `whatsapp/` — local WhatsApp automation tooling and docs.
+
 ## Gmail MCP setup (two accounts)
 
 We run **two local Gmail MCP instances in parallel** — one for `gabrielantony56@gmail.com`, one for `gabriel@larinova.com`. Same OAuth client, separate token caches. Both are available simultaneously in any Claude Code session started inside `ops/`.
