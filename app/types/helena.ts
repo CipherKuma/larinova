@@ -150,6 +150,7 @@ export interface DocumentWithPatient extends HelenaDocument {
     patient_code: string;
     date_of_birth?: string;
     gender?: string;
+    address?: string;
   } | null;
   doctor?: {
     id: string;

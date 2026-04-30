@@ -404,6 +404,15 @@ export function HelenaInlineChat() {
                 <button
                   key={type}
                   onClick={() => {
+                    if (type === "medical_certificate") {
+                      window.sessionStorage.setItem(
+                        "openSickLeaveCertificate",
+                        "1",
+                      );
+                      router.push(`/${locale}/documents`);
+                      setShowDocumentTypes(false);
+                      return;
+                    }
                     setSelectedDocumentType(type);
                     setShowDocumentTypes(false);
                     inputRef.current?.focus();

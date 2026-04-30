@@ -66,8 +66,6 @@ export function AssemblyAITranscriber({
       socketRef.current = socket;
 
       socket.onopen = () => {
-        console.log("AssemblyAI connected");
-
         const mediaRecorder = new MediaRecorder(stream, {
           mimeType: "audio/webm",
         });
@@ -119,9 +117,7 @@ export function AssemblyAITranscriber({
         setError("Connection error occurred");
       };
 
-      socket.onclose = () => {
-        console.log("AssemblyAI disconnected");
-      };
+      socket.onclose = () => {};
     } catch (err: any) {
       console.error("Error starting:", err);
       setError(err.message || "Failed to start recording");

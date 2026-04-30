@@ -65,8 +65,6 @@ export function DeepgramTranscriber({
       socketRef.current = socket;
 
       socket.onopen = () => {
-        console.log("Deepgram connected");
-
         const mediaRecorder = new MediaRecorder(stream, {
           mimeType: "audio/webm",
         });
@@ -120,9 +118,7 @@ export function DeepgramTranscriber({
         setError("Connection error occurred");
       };
 
-      socket.onclose = () => {
-        console.log("Deepgram disconnected");
-      };
+      socket.onclose = () => {};
     } catch (err: any) {
       console.error("Error starting:", err);
       setError(err.message || "Failed to start recording");

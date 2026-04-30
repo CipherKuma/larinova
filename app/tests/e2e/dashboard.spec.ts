@@ -19,6 +19,13 @@ import {
   type DoctorHandle,
 } from "./helpers/auth";
 
+function formatLocalDateYmd(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
 test.describe("dashboard (authenticated)", () => {
   test("home route renders today's-schedule heading", async ({ page }) => {
     await page.goto("/in");
@@ -132,5 +139,139 @@ test.describe("flagged follow-up alert surfaces on dashboard", () => {
     await expect(
       page.getByText(/flagged from follow-?up|needs attention/i).first(),
     ).toBeVisible({ timeout: 15_000 });
+  });
+});
+
+test.describe("scheduled appointments surface in doctor schedule", () => {
+  test.use({ storageState: { cookies: [], origins: [] } });
+
+  let handle: DoctorHandle | null = null;
+
+  test.afterEach(async () => {
+    if (!handle) return;
+    const admin = adminClient();
+    await admin
+      .from("larinova_appointments")
+      .delete()
+      .eq("doctor_id", handle.doctorId);
+    await cleanupDoctor(admin, handle);
+    handle = null;
+  });
+
+  test("today's confirmed appointment appears on dashboard and consultations", async ({
+    page,
+    baseURL,
+  }) => {
+    const admin = adminClient();
+    const email = uniqueEmail("schedule");
+    handle = await provisionDoctor(admin, email, {
+      fullName: "Schedule Doctor",
+    });
+
+    const today = formatLocalDateYmd(new Date());
+    const { error } = await admin.from("larinova_appointments").insert({
+      doctor_id: handle.doctorId,
+      appointment_date: today,
+      start_time: "12:30:00",
+      end_time: "13:00:00",
+      type: "in_person",
+      status: "confirmed",
+      booker_name: "Raghu",
+      booker_email: "raghu.schedule@larinova.test",
+      booker_phone: "9999900000",
+      booker_age: 42,
+      booker_gender: "male",
+      reason: "Fever",
+      chief_complaint: "Fever",
+    });
+    expect(error).toBeNull();
+
+    const { data: seededAppointments, error: seededError } = await admin
+      .from("larinova_appointments")
+      .select("id, doctor_id, appointment_date, start_time, status, booker_name")
+      .eq("doctor_id", handle.doctorId)
+      .eq("appointment_date", today);
+    expect(seededError).toBeNull();
+    expect(seededAppointments, "seeded appointment rows").toHaveLength(1);
+    const appointmentId = seededAppointments?.[0]?.id;
+
+    await signInViaMagicLink(page, email, baseURL, "in");
+
+    const calendarResponse = await page.evaluate(async () => {
+      const res = await fetch("/api/calendar/appointments");
+      return {
+        status: res.status,
+        body: await res.json(),
+      };
+    });
+    expect(calendarResponse.status, JSON.stringify(calendarResponse.body)).toBe(
+      200,
+    );
+    expect(
+      calendarResponse.body.appointments.some(
+        (item: { id?: string }) => item.id === appointmentId,
+      ),
+      JSON.stringify(calendarResponse.body.appointments),
+    ).toBe(true);
+
+    const { data: directScheduleAppointments, error: directScheduleError } =
+      await admin
+        .from("larinova_appointments")
+        .select(
+          "id, appointment_date, start_time, end_time, status, booker_name, chief_complaint",
+        )
+        .eq("doctor_id", handle.doctorId)
+        .eq("appointment_date", today)
+        .eq("status", "confirmed")
+        .order("start_time", { ascending: true });
+    expect(directScheduleError).toBeNull();
+    expect(
+      directScheduleAppointments?.some((item) => item.id === appointmentId),
+      JSON.stringify(directScheduleAppointments),
+    ).toBe(true);
+
+    const dashboardResponse = await page.evaluate(async () => {
+      const res = await fetch(`/api/dashboard/home?probe=${Date.now()}`, {
+        cache: "no-store",
+      });
+      return {
+        status: res.status,
+        body: await res.json(),
+      };
+    });
+    expect(dashboardResponse.status, JSON.stringify(dashboardResponse.body)).toBe(
+      200,
+    );
+    expect(Array.isArray(dashboardResponse.body.todayConsultations)).toBe(true);
+    expect(
+      dashboardResponse.body.todayConsultations.some(
+        (item: { source?: string; larinova_patients?: { full_name?: string } }) =>
+          item.source === "appointment" &&
+          item.id === appointmentId &&
+          item.larinova_patients?.full_name === "Raghu",
+      ),
+      JSON.stringify(dashboardResponse.body.todayConsultations),
+    ).toBe(true);
+
+    await page.goto("/in");
+    await page.waitForLoadState("networkidle");
+    await expect(
+      page.getByText("Raghu").filter({ visible: true }).first(),
+    ).toBeVisible({ timeout: 15_000 });
+    await expect(
+      page.getByText(/scheduled/i).filter({ visible: true }).first(),
+    ).toBeVisible();
+
+    await page.goto("/in/consultations");
+    await page.waitForLoadState("networkidle");
+    await expect(
+      page.getByText("Raghu").filter({ visible: true }).first(),
+    ).toBeVisible({ timeout: 15_000 });
+    await expect(
+      page
+        .getByText(/scheduled appointment/i)
+        .filter({ visible: true })
+        .first(),
+    ).toBeVisible();
   });
 });

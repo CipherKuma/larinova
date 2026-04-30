@@ -1,5 +1,17 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import {
+  appointmentToScheduleEntry,
+  consultationToScheduleEntry,
+  sortScheduleEntries,
+} from "@/lib/appointments/schedule";
+
+function formatLocalDateYmd(date: Date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
 
 export async function GET() {
   try {
@@ -75,6 +87,16 @@ export async function GET() {
       .lt("start_time", tomorrow.toISOString())
       .order("start_time", { ascending: true });
 
+    let todayAppointmentsQuery = doctor?.id
+      ? supabase
+          .from("larinova_appointments")
+          .select("*")
+          .eq("doctor_id", doctor.id)
+          .eq("appointment_date", formatLocalDateYmd(today))
+          .eq("status", "confirmed")
+          .order("start_time", { ascending: true })
+      : Promise.resolve({ data: [], error: null });
+
     if (organizationId) {
       todayConsultationsQuery = todayConsultationsQuery.eq(
         "organization_id",
@@ -87,19 +109,32 @@ export async function GET() {
       );
     } else {
       todayConsultationsQuery = todayConsultationsQuery.limit(0);
+      todayAppointmentsQuery = Promise.resolve({ data: [], error: null });
     }
 
-    const [tasksResult, todayResult] = await Promise.all([
+    const [tasksResult, todayResult, appointmentsResult] = await Promise.all([
       tasksQuery,
       todayConsultationsQuery,
+      todayAppointmentsQuery,
     ]);
 
     if (todayResult.error) throw todayResult.error;
+    if (appointmentsResult.error) throw appointmentsResult.error;
 
-    return NextResponse.json({
-      tasks: tasksResult.error ? [] : tasksResult.data || [],
-      todayConsultations: todayResult.data || [],
-    });
+    return NextResponse.json(
+      {
+        tasks: tasksResult.error ? [] : tasksResult.data || [],
+        todayConsultations: sortScheduleEntries([
+          ...(todayResult.data || []).map(consultationToScheduleEntry),
+          ...(appointmentsResult.data || []).map(appointmentToScheduleEntry),
+        ]),
+      },
+      {
+        headers: {
+          "Cache-Control": "no-store",
+        },
+      },
+    );
   } catch {
     return NextResponse.json(
       { error: "Internal server error" },

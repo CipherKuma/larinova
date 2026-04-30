@@ -240,7 +240,6 @@ export async function POST(req: Request) {
     chatMessages.push({ role: "user", content: message });
 
     let assistantResponse: string;
-    const sarvamStart = Date.now();
     try {
       const result = await chatSyncMessages({
         messages: chatMessages,
@@ -249,13 +248,6 @@ export async function POST(req: Request) {
         reasoningEffort: "low",
       });
       assistantResponse = result.text;
-      console.log(
-        "[helena/chat] sarvam ok",
-        `${Date.now() - sarvamStart}ms`,
-        `prompt=${result.promptTokens}`,
-        `completion=${result.completionTokens}`,
-        `finish=${result.finishReason}`,
-      );
     } catch (e) {
       console.error("[helena/chat] sarvam error:", e);
       return NextResponse.json(

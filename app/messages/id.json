@@ -850,15 +850,15 @@
     "downloadPdf": "Unduh PDF",
     "fullTranscript": "Transkrip Lengkap",
     "segmentsSpeakerAi": "segmen • Identifikasi pembicara oleh AI",
+    "prescriptionNextTitle": "Tambahkan resep setelah catatan SOAP",
+    "prescriptionNextDescription": "Tinjau dokumentasi yang dibuat, lalu pilih dan konfirmasi obat sendiri sebelum membuat resep siap cetak.",
+    "addPrescription": "Tambah resep / konfirmasi obat",
     "backToPatients": "Kembali ke Pasien",
     "regenerating": "Membuat ulang...",
     "regenerateSummary": "Buat Ulang Ringkasan",
     "generatingSoapAndCodes": "Membuat Catatan SOAP & Kode Medis...",
     "completeAndGenerate": "Selesaikan Konsultasi & Buat Dokumentasi",
-    "optional": "Opsional",
-    "prescriptionNextTitle": "Tambahkan resep setelah catatan SOAP",
-    "prescriptionNextDescription": "Tinjau dokumentasi yang dibuat, lalu pilih dan konfirmasi obat sendiri sebelum membuat resep siap cetak.",
-    "addPrescription": "Tambah resep / konfirmasi obat"
+    "optional": "Opsional"
   },
   "consultationResults": {
     "consultationComplete": "Konsultasi Selesai",
@@ -880,6 +880,7 @@
     "noSoapNote": "Tidak ada catatan SOAP yang dibuat.",
     "backToPatient": "Kembali ke Pasien",
     "backToConsultations": "Kembali ke Konsultasi",
+    "addPrescription": "Tambah resep / konfirmasi obat",
     "print": "Cetak",
     "emailToPatient": "Email ke Pasien",
     "emailSent": "Ringkasan dikirim ke {email}",
@@ -888,8 +889,7 @@
     "emailNotAvailable": "Email pasien tidak tersedia",
     "noEmail": "tanpa email",
     "whatsapp": "Kirim via WhatsApp",
-    "comingSoon": "Segera hadir",
-    "addPrescription": "Tambah resep / konfirmasi obat"
+    "comingSoon": "Segera hadir"
   },
   "medicalCodesView": {
     "clinicalDocumentation": "DOKUMENTASI KLINIS & PENGKODEAN",

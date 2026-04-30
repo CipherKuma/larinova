@@ -9,14 +9,15 @@ import { Badge } from "@/components/ui/badge";
 
 export interface ConsultationListItem {
   id: string;
+  source?: "consultation" | "appointment";
   consultation_code: string;
   start_time: string;
   end_time: string | null;
   status: string;
   chief_complaint: string | null;
   larinova_patients: {
-    full_name: string;
-    patient_code: string;
+    full_name: string | null;
+    patient_code: string | null;
   } | null;
 }
 
@@ -54,6 +55,14 @@ export function ConsultationsClient({
     }
   };
 
+  const openConsultation = (item: ConsultationListItem) => {
+    if (item.source === "appointment") {
+      router.push("/calendar" as any);
+      return;
+    }
+    router.push(`/consultations/${item.id}/summary` as any);
+  };
+
   return (
     <div className="space-y-3 md:space-y-6">
       <div className="md:glass-card md:p-6 px-1 md:px-6">
@@ -89,9 +98,7 @@ export function ConsultationsClient({
                 <li key={c.id}>
                   <button
                     type="button"
-                    onClick={() =>
-                      router.push(`/consultations/${c.id}/summary` as any)
-                    }
+                    onClick={() => openConsultation(c)}
                     className="w-full text-left px-4 py-3.5 min-h-[68px] active:bg-muted/40 flex items-start gap-3"
                   >
                     <div className="flex-1 min-w-0">
@@ -146,11 +153,7 @@ export function ConsultationsClient({
                     <tr
                       key={consultation.id}
                       className="border-b border-border hover:bg-muted cursor-pointer transition-colors"
-                      onClick={() =>
-                        router.push(
-                          `/consultations/${consultation.id}/summary` as any,
-                        )
-                      }
+                      onClick={() => openConsultation(consultation)}
                     >
                       <td className="p-4">
                         <span className="text-sm font-mono text-foreground">

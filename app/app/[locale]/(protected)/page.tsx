@@ -27,6 +27,7 @@ interface Task {
 
 interface Consultation {
   id: string;
+  source?: "consultation" | "appointment";
   consultation_code: string;
   start_time: string;
   status: string;
@@ -154,6 +155,14 @@ export default function DashboardPage() {
       default:
         return status.replace("_", " ");
     }
+  };
+
+  const openScheduleItem = (item: Consultation) => {
+    if (item.source === "appointment") {
+      router.push("/calendar" as any);
+      return;
+    }
+    router.push(`/consultations/${item.id}/summary` as any);
   };
 
   const sortedTasks = data?.tasks
@@ -306,9 +315,7 @@ export default function DashboardPage() {
                 <li key={c.id}>
                   <button
                     type="button"
-                    onClick={() =>
-                      router.push(`/consultations/${c.id}/summary` as any)
-                    }
+                    onClick={() => openScheduleItem(c)}
                     className="w-full text-left px-3 py-3 min-h-[56px] active:bg-muted/40 flex items-center justify-between gap-3"
                   >
                     <div className="flex-1 min-w-0">
@@ -350,11 +357,7 @@ export default function DashboardPage() {
                   <tr
                     key={consultation.id}
                     className="border-b border-border hover:bg-muted/50 cursor-pointer transition-colors"
-                    onClick={() =>
-                      router.push(
-                        `/consultations/${consultation.id}/summary` as any,
-                      )
-                    }
+                    onClick={() => openScheduleItem(consultation)}
                   >
                     <td className="p-2">
                       <span className="text-xs font-medium text-foreground">

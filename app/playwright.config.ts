@@ -14,6 +14,7 @@ dotenv.config({
 
 const STORAGE_STATE = path.join(__dirname, ".playwright-data", "auth.json");
 const BASE_URL = process.env.PLAYWRIGHT_BASE_URL ?? "http://localhost:3000";
+const BASE_URL_PORT = new URL(BASE_URL).port || "3000";
 
 export default defineConfig({
   testDir: "./tests",
@@ -57,7 +58,7 @@ export default defineConfig({
   ],
 
   webServer: {
-    command: "pnpm dev",
+    command: `pnpm exec next dev -p ${BASE_URL_PORT}`,
     url: BASE_URL,
     env: { SIMULATE_NOTIFY: "1" },
     reuseExistingServer: !process.env.CI,

@@ -98,7 +98,7 @@ export function DatePicker({
         align="start"
         side="bottom"
         sideOffset={4}
-        avoidCollisions={false}
+        collisionPadding={16}
       >
         <div className="p-3 space-y-3">
           {/* Month and Year Selectors */}

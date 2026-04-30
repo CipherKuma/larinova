@@ -164,7 +164,6 @@ export default function ConsultationSummaryPage({
 
     // Step 1: try SOAP note generation
     try {
-      console.log("Generating SOAP note...");
       const soapResponse = await fetch(
         `/api/consultations/${consultationId}/soap-note`,
         {
@@ -175,7 +174,6 @@ export default function ConsultationSummaryPage({
         const soapData = await soapResponse.json();
         soapNoteResult = soapData.soapNote;
         setSoapNote(soapData.soapNote);
-        console.log("SOAP note generated successfully");
       }
     } catch (e) {
       console.error("Error generating SOAP note:", e);
@@ -183,7 +181,6 @@ export default function ConsultationSummaryPage({
 
     // Step 2: try medical codes generation
     try {
-      console.log("Generating medical codes...");
       const codesResponse = await fetch(
         `/api/consultations/${consultationId}/medical-codes`,
         {
@@ -196,7 +193,6 @@ export default function ConsultationSummaryPage({
         const codesData = await codesResponse.json();
         codesResult = codesData.medicalCodes;
         setMedicalCodes(codesData.medicalCodes);
-        console.log("Medical codes generated successfully");
       }
     } catch (e) {
       console.error("Error generating medical codes:", e);
@@ -227,7 +223,6 @@ export default function ConsultationSummaryPage({
 
     // Step 5: save documents (best effort)
     try {
-      console.log("Creating consultation documents...");
       await fetch(`/api/consultations/${consultationId}/create-documents`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -237,7 +232,6 @@ export default function ConsultationSummaryPage({
           medicalCodes: codesResult,
         }),
       });
-      console.log("Consultation documents created");
     } catch (e) {
       console.error("Error creating consultation documents:", e);
     }

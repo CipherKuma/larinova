@@ -18,7 +18,6 @@ export default function STTTestPage() {
   const recordingRef = useRef(false);
 
   const log = (msg: string) => {
-    console.log(`[STT-TEST] ${msg}`);
     setLogs((prev) => [...prev, `${new Date().toLocaleTimeString()} — ${msg}`]);
   };
 

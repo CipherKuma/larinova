@@ -218,7 +218,12 @@ async function signInWithPassword(
       `Supabase returned no access_token: ${JSON.stringify(json)}`,
     );
   }
-  return json as SignInResult;
+  return {
+    ...json,
+    expires_at:
+      json.expires_at ??
+      Math.floor(Date.now() / 1000) + Number(json.expires_in ?? 3600),
+  } as SignInResult;
 }
 
 function buildSessionCookies(
@@ -263,6 +268,9 @@ export async function signInViaMagicLink(
 
   const origin = baseURL ?? "http://localhost:3000";
   const cookies = buildSessionCookies(session, origin);
+  await page.context().clearCookies({
+    name: new RegExp(`^sb-${projectRef()}-auth-token`),
+  });
   await page.context().addCookies(cookies);
 
   await page.goto(`${origin}/${locale}`);

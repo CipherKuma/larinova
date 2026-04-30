@@ -3,6 +3,11 @@ import {
   ConsultationsClient,
   type ConsultationListItem,
 } from "@/components/consultations/ConsultationsClient";
+import {
+  appointmentToScheduleEntry,
+  consultationToScheduleEntry,
+  sortScheduleEntries,
+} from "@/lib/appointments/schedule";
 
 export default async function ConsultationsPage() {
   const supabase = await createClient();
@@ -23,40 +28,47 @@ export default async function ConsultationsPage() {
     return <ConsultationsClient consultations={[]} />;
   }
 
-  const { data, error } = await supabase
-    .from("larinova_consultations")
-    .select(
-      `
-      id,
-      consultation_code,
-      start_time,
-      end_time,
-      status,
-      chief_complaint,
-      larinova_patients (
-        full_name,
-        patient_code
+  const [consultationsResult, appointmentsResult] = await Promise.all([
+    supabase
+      .from("larinova_consultations")
+      .select(
+        `
+        id,
+        consultation_code,
+        start_time,
+        end_time,
+        status,
+        chief_complaint,
+        larinova_patients (
+          full_name,
+          patient_code
+        )
+      `,
       )
-    `,
-    )
-    .eq("doctor_id", doctor.id)
-    .order("start_time", { ascending: false })
-    .limit(50);
+      .eq("doctor_id", doctor.id)
+      .order("start_time", { ascending: false })
+      .limit(50),
+    supabase
+      .from("larinova_appointments")
+      .select("*")
+      .eq("doctor_id", doctor.id)
+      .eq("status", "confirmed")
+      .order("appointment_date", { ascending: false })
+      .order("start_time", { ascending: false })
+      .limit(50),
+  ]);
 
-  if (error) {
-    console.error("Error fetching consultations:", error);
+  if (consultationsResult.error) {
+    console.error("Error fetching consultations:", consultationsResult.error);
+  }
+  if (appointmentsResult.error) {
+    console.error("Error fetching appointments:", appointmentsResult.error);
   }
 
-  const consultations = (data || []).map((consultation) => {
-    const patient = Array.isArray(consultation.larinova_patients)
-      ? consultation.larinova_patients[0]
-      : consultation.larinova_patients;
-
-    return {
-      ...consultation,
-      larinova_patients: patient ?? null,
-    };
-  }) as ConsultationListItem[];
+  const consultations = sortScheduleEntries([
+    ...(consultationsResult.data || []).map(consultationToScheduleEntry),
+    ...(appointmentsResult.data || []).map(appointmentToScheduleEntry),
+  ]).reverse() as ConsultationListItem[];
 
   return <ConsultationsClient consultations={consultations} />;
 }
