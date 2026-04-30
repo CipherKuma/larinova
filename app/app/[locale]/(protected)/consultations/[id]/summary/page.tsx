@@ -18,6 +18,7 @@ import {
   Hash,
   ArrowLeft,
   PartyPopper,
+  Pill,
 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { exportToPdf } from "@/lib/pdf/export";
@@ -344,6 +345,36 @@ export default function ConsultationSummaryPage({
               </div>
             </div>
           )}
+        </div>
+
+        {/* Prescription Medication Confirmation */}
+        <div className="glass-card-strong p-4 md:p-5 border-l-4 border-primary">
+          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <div className="flex items-start gap-3">
+              <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <Pill className="h-4 w-4" />
+              </div>
+              <div>
+                <h2 className="text-base font-semibold text-foreground">
+                  {t("summaryPage.prescriptionNextTitle")}
+                </h2>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {t("summaryPage.prescriptionNextDescription")}
+                </p>
+              </div>
+            </div>
+            <Button
+              onClick={() =>
+                router.push(
+                  `/consultations/${consultationId}/prescription` as any,
+                )
+              }
+              className="w-full shrink-0 md:w-auto"
+            >
+              <Pill className="mr-2 h-4 w-4" />
+              {t("summaryPage.addPrescription")}
+            </Button>
+          </div>
         </div>
 
         {/* Generated Documents Summary */}

@@ -148,6 +148,45 @@ test.describe("consultation detail flow — seeded + mocked", () => {
     expect(res!.status()).toBeLessThan(400);
   });
 
+  test("completed consultation routes doctor to confirm prescription medicines", async ({
+    page,
+    baseURL,
+  }) => {
+    if (!handle) throw new Error("handle not provisioned");
+    const admin = adminClient();
+    const { error } = await admin
+      .from("larinova_consultations")
+      .update({
+        status: "completed",
+        soap_note:
+          "Assessment: Viral fever. Plan: consider paracetamol only if clinically appropriate after review.",
+        ai_summary: "Patient has fever and body ache.",
+        medical_codes: { icd10: [], cpt: [] },
+      })
+      .eq("id", consultationId);
+    expect(error, error?.message).toBeNull();
+
+    await mockExternalAPIs(page);
+    await signInViaMagicLink(page, handle.email, baseURL, "in");
+    const res = await page.goto(`/in/consultations/${consultationId}/summary`);
+    expect(res).not.toBeNull();
+    expect(res!.status()).toBeLessThan(400);
+    await page.waitForLoadState("networkidle");
+
+    const prescriptionStep = page.getByRole("button", {
+      name: /add prescription|confirm medicines/i,
+    });
+    await expect(prescriptionStep).toBeVisible();
+    await prescriptionStep.click();
+    await expect(page).toHaveURL(
+      new RegExp(`/in/consultations/${consultationId}/prescription`),
+    );
+
+    await expect(page.getByText(/paracetamol/i)).toHaveCount(0);
+    await expect(page.getByText(/search & add medicines/i)).toBeVisible();
+    await expect(page.getByText(/search medicines/i)).toBeVisible();
+  });
+
   test("GET /api/consultations/:id/notes returns structured response", async ({
     request,
   }) => {

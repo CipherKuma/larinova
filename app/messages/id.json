@@ -826,7 +826,10 @@
     "regenerateSummary": "Buat Ulang Ringkasan",
     "generatingSoapAndCodes": "Membuat Catatan SOAP & Kode Medis...",
     "completeAndGenerate": "Selesaikan Konsultasi & Buat Dokumentasi",
-    "optional": "Opsional"
+    "optional": "Opsional",
+    "prescriptionNextTitle": "Tambahkan resep setelah catatan SOAP",
+    "prescriptionNextDescription": "Tinjau dokumentasi yang dibuat, lalu pilih dan konfirmasi obat sendiri sebelum membuat resep siap cetak.",
+    "addPrescription": "Tambah resep / konfirmasi obat"
   },
   "consultationResults": {
     "consultationComplete": "Konsultasi Selesai",
@@ -856,7 +859,8 @@
     "emailNotAvailable": "Email pasien tidak tersedia",
     "noEmail": "tanpa email",
     "whatsapp": "Kirim via WhatsApp",
-    "comingSoon": "Segera hadir"
+    "comingSoon": "Segera hadir",
+    "addPrescription": "Tambah resep / konfirmasi obat"
   },
   "medicalCodesView": {
     "clinicalDocumentation": "DOKUMENTASI KLINIS & PENGKODEAN",

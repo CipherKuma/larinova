@@ -826,7 +826,10 @@
     "regenerateSummary": "Regenerate Summary",
     "generatingSoapAndCodes": "Generating SOAP Note & Medical Codes...",
     "completeAndGenerate": "Complete Consultation & Generate Documentation",
-    "optional": "Optional"
+    "optional": "Optional",
+    "prescriptionNextTitle": "Add prescription after SOAP notes",
+    "prescriptionNextDescription": "Review the generated documentation, then select and confirm medicines yourself before creating the printable prescription.",
+    "addPrescription": "Add prescription / confirm medicines"
   },
   "consultationResults": {
     "consultationComplete": "Consultation Complete",
@@ -856,7 +859,8 @@
     "emailNotAvailable": "Patient email not available",
     "noEmail": "no email",
     "whatsapp": "Send via WhatsApp",
-    "comingSoon": "Coming soon"
+    "comingSoon": "Coming soon",
+    "addPrescription": "Add prescription / confirm medicines"
   },
   "medicalCodesView": {
     "clinicalDocumentation": "CLINICAL DOCUMENTATION & CODING",

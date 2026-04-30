@@ -19,6 +19,7 @@ import {
   MessageCircle,
   CheckCircle,
   XCircle,
+  Pill,
 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { createClient } from "@/lib/supabase/client";
@@ -417,6 +418,17 @@ export function ConsultationResults({
             <span>{emailError}</span>
           </div>
         )}
+
+        <Button
+          onClick={() =>
+            router.push(`/consultations/${consultationId}/prescription` as any)
+          }
+          className="w-full"
+          size="lg"
+        >
+          <Pill className="w-4 h-4 mr-2" />
+          {t("addPrescription")}
+        </Button>
 
         <div className="grid grid-cols-2 gap-3">
           {/* Back */}

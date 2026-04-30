@@ -223,8 +223,8 @@ async function signInWithPassword(
 
 function buildSessionCookies(
   session: SignInResult,
-  originHost: string,
-): Array<{ name: string; value: string; domain: string; path: string }> {
+  origin: string,
+): Array<{ name: string; value: string; url: string }> {
   const storageKey = `sb-${projectRef()}-auth-token`;
   const encoded = `base64-${base64UrlEncode(JSON.stringify(session))}`;
 
@@ -245,8 +245,7 @@ function buildSessionCookies(
 
   return chunks.map((c) => ({
     ...c,
-    domain: originHost,
-    path: "/",
+    url: origin,
   }));
 }
 
@@ -263,8 +262,7 @@ export async function signInViaMagicLink(
   const session = await signInWithPassword(email, password);
 
   const origin = baseURL ?? "http://localhost:3000";
-  const host = new URL(origin).hostname;
-  const cookies = buildSessionCookies(session, host);
+  const cookies = buildSessionCookies(session, origin);
   await page.context().addCookies(cookies);
 
   await page.goto(`${origin}/${locale}`);
