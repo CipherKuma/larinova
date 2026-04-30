@@ -13,6 +13,8 @@ import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 
 type Step = "email" | "verify-email-otp" | "phone" | "buttons";
+const EMAIL_OTP_STATE_KEY = "larinova.emailOtpSignIn";
+const EMAIL_OTP_STATE_TTL_MS = 10 * 60 * 1000;
 
 export default function SignInPage() {
   const [loading, setLoading] = useState(false);
@@ -28,6 +30,16 @@ export default function SignInPage() {
   const t = useTranslations("auth");
   const tc = useTranslations("common");
   const supabase = createClient();
+
+  useEffect(() => {
+    const saved = readSavedEmailOtpState();
+    if (!saved) return;
+
+    setEmail(saved.email);
+    setStep("verify-email-otp");
+    const elapsedSeconds = Math.floor((Date.now() - saved.sentAt) / 1000);
+    setResendTimer(Math.max(0, 60 - elapsedSeconds));
+  }, []);
 
   useEffect(() => {
     if (resendTimer > 0) {
@@ -71,6 +83,7 @@ export default function SignInPage() {
 
     // Claim the invite code now that we're authenticated. Best-effort.
     await fetch("/api/invite/claim", { method: "POST" }).catch(() => {});
+    clearSavedEmailOtpState();
 
     if (!doctor || !doctor.onboarding_completed) {
       router.push("/onboarding");
@@ -123,6 +136,7 @@ export default function SignInPage() {
     setOtp(Array(6).fill(""));
     setResendTimer(60);
     setStep("verify-email-otp");
+    saveEmailOtpState(email);
     setTimeout(() => otpRefs.current[0]?.focus(), 100);
   };
 
@@ -385,6 +399,7 @@ export default function SignInPage() {
               onClick={() => {
                 setStep("email");
                 setOtp(Array(6).fill(""));
+                clearSavedEmailOtpState();
               }}
               className="ml-auto text-xs text-primary hover:underline flex-shrink-0"
             >
@@ -440,6 +455,7 @@ export default function SignInPage() {
               onClick={() => {
                 setStep("email");
                 setOtp(Array(6).fill(""));
+                clearSavedEmailOtpState();
               }}
               className="text-xs text-muted-foreground hover:text-foreground transition-colors"
             >
@@ -528,4 +544,35 @@ export default function SignInPage() {
       )}
     </div>
   );
+}
+
+function saveEmailOtpState(email: string) {
+  window.sessionStorage.setItem(
+    EMAIL_OTP_STATE_KEY,
+    JSON.stringify({ email, sentAt: Date.now() }),
+  );
+}
+
+function readSavedEmailOtpState(): { email: string; sentAt: number } | null {
+  try {
+    const raw = window.sessionStorage.getItem(EMAIL_OTP_STATE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as { email?: unknown; sentAt?: unknown };
+    if (typeof parsed.email !== "string" || typeof parsed.sentAt !== "number") {
+      clearSavedEmailOtpState();
+      return null;
+    }
+    if (Date.now() - parsed.sentAt > EMAIL_OTP_STATE_TTL_MS) {
+      clearSavedEmailOtpState();
+      return null;
+    }
+    return { email: parsed.email, sentAt: parsed.sentAt };
+  } catch {
+    clearSavedEmailOtpState();
+    return null;
+  }
+}
+
+function clearSavedEmailOtpState() {
+  window.sessionStorage.removeItem(EMAIL_OTP_STATE_KEY);
 }

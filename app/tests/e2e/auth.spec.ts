@@ -114,6 +114,50 @@ test.describe("auth + onboarding", () => {
       ).toBeVisible();
     });
 
+    test("sign-in restores email OTP step after reload without resending", async ({
+      page,
+    }) => {
+      let otpRequests = 0;
+      await page.route("**/auth/v1/otp**", async (route) => {
+        otpRequests += 1;
+        await route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: "{}",
+        });
+      });
+
+      await page.goto("/in/sign-in");
+      await page.waitForLoadState("networkidle");
+
+      await page
+        .locator('input[type="email"], input[type="text"]')
+        .first()
+        .fill("immanbala@gmail.com");
+      await page.getByRole("button", { name: /^continue$/i }).click();
+
+      await expect(
+        page.getByRole("heading", { name: /check your email/i }),
+      ).toBeVisible();
+      await expect(
+        page.getByText("immanbala@gmail.com", { exact: true }),
+      ).toBeVisible();
+      await expect(page.locator('input[inputmode="numeric"]')).toHaveCount(6);
+      expect(otpRequests).toBe(1);
+
+      await page.reload();
+      await page.waitForLoadState("networkidle");
+
+      await expect(
+        page.getByRole("heading", { name: /check your email/i }),
+      ).toBeVisible();
+      await expect(
+        page.getByText("immanbala@gmail.com", { exact: true }),
+      ).toBeVisible();
+      await expect(page.locator('input[inputmode="numeric"]')).toHaveCount(6);
+      expect(otpRequests).toBe(1);
+    });
+
     test("invite access page terminates instead of redirect-looping", async ({
       page,
     }) => {
