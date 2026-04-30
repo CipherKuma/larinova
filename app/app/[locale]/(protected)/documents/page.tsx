@@ -12,6 +12,7 @@ import {
   X,
   CheckCircle,
   Send,
+  Plus,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -31,6 +32,7 @@ import { DocumentsSidebar } from "@/components/documents/DocumentsSidebar";
 import { DocumentsList } from "@/components/documents/DocumentsList";
 import { DocumentPrintPreview } from "@/components/documents/DocumentPrintPreview";
 import { EditableField } from "@/components/documents/EditableField";
+import { SickLeaveCertificateDialog } from "@/components/documents/SickLeaveCertificateDialog";
 
 export default function DocumentsPage() {
   const [documents, setDocuments] = useState<DocumentWithPatient[]>([]);
@@ -46,6 +48,7 @@ export default function DocumentsPage() {
   const [downloading, setDownloading] = useState(false);
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [showSickLeaveForm, setShowSickLeaveForm] = useState(false);
   const printableRef = useRef<HTMLDivElement>(null);
 
   const params = useParams();
@@ -55,6 +58,13 @@ export default function DocumentsPage() {
 
   useEffect(() => {
     loadDocuments();
+  }, []);
+
+  useEffect(() => {
+    if (window.sessionStorage.getItem("openSickLeaveCertificate") === "1") {
+      window.sessionStorage.removeItem("openSickLeaveCertificate");
+      setShowSickLeaveForm(true);
+    }
   }, []);
 
   const loadDocuments = async () => {
@@ -249,6 +259,18 @@ export default function DocumentsPage() {
         onDocumentClick={handleDocumentClick}
         onDeleteDocument={handleDeleteDocument}
         onBackToFolders={() => setSelectedDocument(null)}
+        toolbarAction={
+          !selectedDocument ? (
+            <Button
+              size="sm"
+              className="h-8"
+              onClick={() => setShowSickLeaveForm(true)}
+            >
+              <Plus className="h-3.5 w-3.5 mr-1" />
+              {td("sickLeaveForm.action")}
+            </Button>
+          ) : null
+        }
         labels={{
           noDocumentsFound: td("noDocumentsFound"),
           noDocumentsHint: "Complete consultations to generate documents",
@@ -402,6 +424,21 @@ export default function DocumentsPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      <SickLeaveCertificateDialog
+        open={showSickLeaveForm}
+        onOpenChange={setShowSickLeaveForm}
+        onCreated={(document) => {
+          setDocuments((current) => [document, ...current]);
+          setDocumentsByType((current) => {
+            const medicalCertificates = current.medical_certificate || [];
+            return {
+              ...current,
+              medical_certificate: [document, ...medicalCertificates],
+            };
+          });
+          setSelectedDocument(document);
+        }}
+      />
     </div>
   );
 }

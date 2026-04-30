@@ -26,6 +26,7 @@ interface DatePickerProps {
   placeholder?: string;
   className?: string;
   disabled?: boolean;
+  initialMonth?: Date;
 }
 
 const MONTHS = [
@@ -49,9 +50,12 @@ export function DatePicker({
   placeholder = "Pick a date",
   className,
   disabled = false,
+  initialMonth,
 }: DatePickerProps) {
   const currentYear = new Date().getFullYear();
-  const [month, setMonth] = React.useState<Date>(date || new Date(2000, 0));
+  const [month, setMonth] = React.useState<Date>(
+    date || initialMonth || new Date(2000, 0),
+  );
 
   // Generate years from 1920 to current year
   const years = React.useMemo(() => {

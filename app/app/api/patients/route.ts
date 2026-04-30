@@ -37,7 +37,9 @@ export async function GET(request: Request) {
 
     const { data, error } = await auth.supabase
       .from("larinova_patients")
-      .select("id, patient_code, full_name, email, date_of_birth, blood_group, phone, gender")
+      .select(
+        "id, patient_code, full_name, email, date_of_birth, blood_group, phone, gender, address",
+      )
       .eq("created_by_doctor_id", auth.doctor.id)
       .order("full_name")
       .limit(Number.isFinite(limit) ? Math.min(Math.max(limit, 1), 1000) : 500);

@@ -23,7 +23,7 @@ export async function GET(
       .select(
         `
         *,
-        patient:larinova_patients(id, full_name, patient_code, date_of_birth, gender),
+        patient:larinova_patients(id, full_name, patient_code, date_of_birth, gender, address),
         doctor:larinova_doctors(id, full_name, specialization, license_number),
         consultation:larinova_consultations(id, consultation_code)
       `,

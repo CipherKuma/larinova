@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import type { ReactNode } from "react";
 import {
   FileText,
   Grid3X3,
@@ -35,6 +36,7 @@ interface DocumentsListProps {
   onDocumentClick: (doc: DocumentWithPatient) => void;
   onDeleteDocument: (id: string, e?: React.MouseEvent) => void;
   onBackToFolders?: () => void;
+  toolbarAction?: ReactNode;
   labels: {
     noDocumentsFound: string;
     noDocumentsHint: string;
@@ -50,6 +52,7 @@ export function DocumentsList({
   onDocumentClick,
   onDeleteDocument,
   onBackToFolders,
+  toolbarAction,
   labels,
 }: DocumentsListProps) {
   const [viewMode, setViewMode] = useState<ViewMode>("list");
@@ -102,6 +105,7 @@ export function DocumentsList({
         </div>
 
         <div className="flex items-center gap-2">
+          {toolbarAction}
           <div className="relative hidden min-[1200px]:block">
             <Input
               placeholder="Search..."
