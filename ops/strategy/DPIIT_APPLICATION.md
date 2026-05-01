@@ -1,7 +1,7 @@
 # Larinova — DPIIT Recognition Application Packet
 
-**Status:** Draft, ready for Gabriel's review before Session 2 (form-fill on M2 Chrome)
-**Last updated:** 2026-04-30
+**Status:** Ready for filing prep; do not submit without Gabriel's explicit approval
+**Last updated:** 2026-05-01
 **Portal:** `https://www.startupindia.gov.in/content/sih/en/registration.html` → "Get Recognised" → DPIIT Recognition Form (Form 1)
 **Expected outcome:** DPIIT certificate in 2–10 working days (free, ₹0 fee)
 **Unlocks downstream:** AWS Activate ($300K), GCP Startups ($350K), Microsoft Founders Hub, Trademark 50% rebate (₹4.5K/class), 80-IAC tax holiday eligibility, IPR fast-track, self-certification under labour/env laws
@@ -14,7 +14,7 @@
 - [ ] Confirm the registered email for the Startup India account: **`gabriel@larinova.com`** (proposed)
 - [ ] Confirm the registered mobile for the Startup India account: **`+91 98844 50152`** (dad's phone — Aadhaar-linked, ensures OTPs land in one place)
 - [ ] Confirm logo file path — proposed: `~/Documents/products/larinova/ops/brand/logos/dark-mode-icon-text.png`
-- [ ] Confirm passport photo to upload — proposed: `~/Documents/personal documents/photo.JPG` or `gabriel.jpg` (whichever is cleaner — let me know which)
+- [ ] Confirm passport photo to upload — proposed: `~/Documents/products/larinova/ops/company-docs/_incoming/2026-04-30-incorporation-shortnames/photos/gabriel-passport-350x450.jpg`
 - [ ] Confirm I should use `https://larinova.com` as the website link (not `app.larinova.com`)
 
 ---
@@ -104,27 +104,25 @@ Larinova is a SaaS platform with near-zero marginal cost per consultation — ev
 
 ## Section 6 — Documents to Upload
 
-| # | Document | Source path | Required |
-|---|---|---|---|
-All incorporation PDFs are now staged at `ops/incorporation/` for upload.
+All incorporation PDFs are staged at `ops/company-docs/_incoming/2026-04-30-incorporation-shortnames/` for upload.
 
 | # | Document | Source path | Required |
 |---|---|---|---|
-| 1 | Certificate of Incorporation (CoI / SPICe+ approval) | `ops/incorporation/coi-spice-approval.pdf` | YES |
-| 2 | PAN of Company allotment letter | `ops/incorporation/pan-050-allotment.pdf` (or `pan-882-allotment.pdf`) | YES |
-| 3 | DIN Approval Letter — Gabriel | `ops/incorporation/din-approval-gabriel.pdf` | YES |
-| 4 | MoA (INC-33) | `ops/incorporation/moa-inc-33.pdf` | YES |
-| 5 | AoA (INC-34) | `ops/incorporation/aoa-inc-34.pdf` | YES |
-| 6 | TAN allotment letter | `ops/incorporation/tan-allotment.pdf` | If asked |
-| 7 | Name approval letter | `ops/incorporation/name-approval.pdf` | If asked |
-| 8 | Board Resolution authorising Gabriel as DPIIT signatory | `ops/incorporation/board-resolution-dpiit-auth.pdf` *(drafted — needs printout + 2 wet signatures)* | YES |
+| 1 | Certificate of Incorporation (CoI / SPICe+ approval) | `ops/company-docs/_incoming/2026-04-30-incorporation-shortnames/coi-spice-approval.pdf` | YES |
+| 2 | PAN of Company allotment letter | `ops/company-docs/_incoming/2026-04-30-incorporation-shortnames/pan-050-allotment.pdf` (or `pan-882-allotment.pdf`) | YES |
+| 3 | DIN Approval Letter — Gabriel | `ops/company-docs/_incoming/2026-04-30-incorporation-shortnames/din-approval-gabriel.pdf` | YES |
+| 4 | MoA (INC-33) | `ops/company-docs/_incoming/2026-04-30-incorporation-shortnames/moa-inc-33.pdf` | YES |
+| 5 | AoA (INC-34) | `ops/company-docs/_incoming/2026-04-30-incorporation-shortnames/aoa-inc-34.pdf` | YES |
+| 6 | TAN allotment letter | `ops/company-docs/_incoming/2026-04-30-incorporation-shortnames/tan-allotment.pdf` | If asked |
+| 7 | Name approval letter | `ops/company-docs/_incoming/2026-04-30-incorporation-shortnames/name-approval.pdf` | If asked |
+| 8 | Board Resolution authorising Gabriel as DPIIT signatory | `ops/company-docs/_incoming/2026-04-30-incorporation-shortnames/board-resolution-dpiit-auth.pdf` *(draft exists as `.md`; signed PDF still needed)* | YES |
 | 9 | Pitch deck (PDF) or product website | `https://larinova.com` | Optional — website link sufficient |
 | 10 | Logo (rectangle, PNG) | `ops/brand/logos/dark-mode-icon-text.png` or `ops/brand/logos/light-mode-icon-text.png` | Optional but recommended |
 | 11 | Logo (square icon, PNG) | `ops/brand/logos/dark-mode-icon-only.png` or `ops/brand/logos/light-mode-icon-only.png` | Optional but recommended |
-| 12 | Founder photo (passport-size, 350x450) | `ops/incorporation/photos/gabriel-passport-350x450.jpg` | Optional |
-| 13 | Founder photo (small, 200x230) | `ops/incorporation/photos/gabriel-passport-200x230.jpg` | If portal caps file size |
+| 12 | Founder photo (passport-size, 350x450) | `ops/company-docs/_incoming/2026-04-30-incorporation-shortnames/photos/gabriel-passport-350x450.jpg` | Optional |
+| 13 | Founder photo (small, 200x230) | `ops/company-docs/_incoming/2026-04-30-incorporation-shortnames/photos/gabriel-passport-200x230.jpg` | If portal caps file size |
 
-**TODO before Session 2:** I'll draft the Board Resolution (item 6) as a separate action; needs both directors' wet signatures on a printout.
+**TODO before Session 2:** Board Resolution draft exists as `board-resolution-dpiit-auth.md`; it needs meeting date filled, both directors' wet signatures, and a scanned PDF saved as `board-resolution-dpiit-auth.pdf` in the same folder.
 
 ---
 
@@ -175,7 +173,7 @@ After submission: **2-10 working days** → DPIIT recognition certificate. Then 
 
 ## Open questions / dependencies
 
-- **Board Resolution authorising Gabriel as Startup India signatory** — to be drafted; needs both directors' wet signatures or DSC. Can do via Murugan once he's onboarded.
+- **Board Resolution authorising Gabriel as Startup India signatory** — draft exists; needs both directors' wet signatures or DSC, then scanned/exported PDF. Can do via Murugan once he's onboarded.
 - **NIC code primary choice** — I picked **6201 (Computer programming)**. Alternative: **6209 (Other IT services)**. 6201 is what almost every Indian SaaS company uses for DPIIT. Confirm.
 - **Sector tag** — DPIIT taxonomy lets us pick multiple. I propose: **Healthcare & Life Sciences (primary), AI (cross-cutting), Enterprise Software (cross-cutting)**. Confirm.
 - **Authorised signatory** — defaulting to Gabriel. Dad as backup signatory if needed.

@@ -27,6 +27,10 @@ cd docs && ./build.sh
 - `strategy/` — go-to-market, startup-program, CRM, and outreach strategy.
 - `whatsapp/` — local WhatsApp automation tooling and docs.
 
+## Active operations tracker
+
+- `strategy/OPERATIONS_TRACKER.md` — source of truth for company operations, registrations, compliance, funding, grants, loans, accelerators, legal setup, and cmux surface ownership. Update it after every material operational action.
+
 ## Gmail MCP setup (two accounts)
 
 We run **two local Gmail MCP instances in parallel** — one for `gabrielantony56@gmail.com`, one for `gabriel@larinova.com`. Same OAuth client, separate token caches. Both are available simultaneously in any Claude Code session started inside `ops/`.

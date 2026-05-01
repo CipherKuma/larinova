@@ -403,7 +403,7 @@ Separate Next.js App Router project, separate Vercel project, shared Supabase DB
 
 **Design:** minimal. Large fonts, mobile-first, single-column, no chrome. Light/dark via system preference. Hindi/Tamil support via same `next-intl` setup.
 
-**Deployment:** subdomain `patient.larinova.com` pointed at its own Vercel project `larinova-patient-portal`.
+**Deployment:** subdomain `patient.larinova.com` pointed at its own Vercel project `larinova-patient`.
 
 ### 6.4 Public booking (`app.larinova.com/book/[slug]`)
 
@@ -582,7 +582,7 @@ Before pilot launch:
 
 ## 14. Rollout plan
 
-1. Create Vercel project `larinova-patient-portal` + DNS `patient.larinova.com`
+1. Use Vercel project `larinova-patient` + DNS `patient.larinova.com`
 2. Apply migrations (append to `APPLY_MIGRATIONS.sql` or ship as a new numbered migration file)
 3. Configure Razorpay dashboard (plans, webhook, bank payouts confirmed)
 4. Register MSG91 DLT templates

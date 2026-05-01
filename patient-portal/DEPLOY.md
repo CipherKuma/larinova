@@ -19,9 +19,8 @@ vercel login
 vercel switch
 # pick "CipherKuma"
 
-# 3. Link this directory to a NEW Vercel project named `larinova-patient-portal`
-vercel link --yes --project larinova-patient-portal
-# If prompted, accept creating a new project
+# 3. Link this directory to the existing Vercel project named `larinova-patient`
+vercel link --yes --project larinova-patient
 ```
 
 ## Environment variables
@@ -40,16 +39,14 @@ Quickest path using our vault:
 
 ```bash
 ~/.claude/vault/inject.sh get \
-  NEXT_PUBLIC_SUPABASE_URL NEXT_PUBLIC_SUPABASE_ANON_KEY SUPABASE_SERVICE_ROLE_KEY \
+  NEXT_PUBLIC_SUPABASE_URL_LARINOVA NEXT_PUBLIC_SUPABASE_ANON_KEY_LARINOVA SUPABASE_SERVICE_ROLE_KEY_LARINOVA \
   --dir ~/Documents/products/larinova/patient-portal
 
-# Then push those into Vercel:
+# Then map those values to the app's expected variable names and push them into Vercel:
 cd ~/Documents/products/larinova/patient-portal
-for KEY in NEXT_PUBLIC_SUPABASE_URL NEXT_PUBLIC_SUPABASE_ANON_KEY SUPABASE_SERVICE_ROLE_KEY; do
-  VALUE=$(grep "^$KEY=" .env.local | cut -d= -f2-)
-  printf '%s' "$VALUE" | vercel env add "$KEY" production
-  printf '%s' "$VALUE" | vercel env add "$KEY" preview
-done
+printf '%s' "$(grep '^NEXT_PUBLIC_SUPABASE_URL_LARINOVA=' .env.local | cut -d= -f2-)" | vercel env add NEXT_PUBLIC_SUPABASE_URL production
+printf '%s' "$(grep '^NEXT_PUBLIC_SUPABASE_ANON_KEY_LARINOVA=' .env.local | cut -d= -f2-)" | vercel env add NEXT_PUBLIC_SUPABASE_ANON_KEY production
+printf '%s' "$(grep '^SUPABASE_SERVICE_ROLE_KEY_LARINOVA=' .env.local | cut -d= -f2-)" | vercel env add SUPABASE_SERVICE_ROLE_KEY production
 
 printf 'https://patient.larinova.com' | vercel env add NEXT_PUBLIC_APP_URL production
 printf 'https://app.larinova.com'     | vercel env add NEXT_PUBLIC_MAIN_APP_URL production

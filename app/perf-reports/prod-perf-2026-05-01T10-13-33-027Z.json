@@ -1,0 +1,561 @@
+{
+  "generatedAt": "2026-05-01T10:13:33.026Z",
+  "baseUrl": "https://app.larinova.com",
+  "pageCount": 17,
+  "apiCount": 21,
+  "pages": [
+    {
+      "route": "/in/sign-in",
+      "finalUrl": "/in",
+      "status": 200,
+      "elapsedMs": 5182,
+      "metrics": {
+        "domContentLoadedMs": 1814,
+        "loadMs": 1871,
+        "responseStartMs": 1588,
+        "transferSize": 83052,
+        "encodedBodySize": 82752,
+        "decodedBodySize": 82752,
+        "paints": {
+          "first-paint": 1856,
+          "first-contentful-paint": 1856
+        }
+      },
+      "apiCalls": [
+        {
+          "method": "GET",
+          "status": 200,
+          "durationMs": 997,
+          "url": "/api/dashboard/home"
+        }
+      ]
+    },
+    {
+      "route": "/id/sign-in",
+      "finalUrl": "/in",
+      "status": 200,
+      "elapsedMs": 4877,
+      "metrics": {
+        "domContentLoadedMs": 1570,
+        "loadMs": 1570,
+        "responseStartMs": 1328,
+        "transferSize": 83052,
+        "encodedBodySize": 82752,
+        "decodedBodySize": 82752,
+        "paints": {
+          "first-paint": 1588,
+          "first-contentful-paint": 1588
+        }
+      },
+      "apiCalls": [
+        {
+          "method": "GET",
+          "status": 200,
+          "durationMs": 1016,
+          "url": "/api/dashboard/home"
+        }
+      ]
+    },
+    {
+      "route": "/in/access",
+      "finalUrl": "/in",
+      "status": 200,
+      "elapsedMs": 4879,
+      "metrics": {
+        "domContentLoadedMs": 1525,
+        "loadMs": 1525,
+        "responseStartMs": 1285,
+        "transferSize": 83052,
+        "encodedBodySize": 82752,
+        "decodedBodySize": 82752,
+        "paints": {
+          "first-paint": 1544,
+          "first-contentful-paint": 1544
+        }
+      },
+      "apiCalls": [
+        {
+          "method": "GET",
+          "status": 200,
+          "durationMs": 1005,
+          "url": "/api/dashboard/home"
+        }
+      ]
+    },
+    {
+      "route": "/in/redeem",
+      "finalUrl": "/in/redeem",
+      "status": 200,
+      "elapsedMs": 1594,
+      "metrics": {
+        "domContentLoadedMs": 1053,
+        "loadMs": 1065,
+        "responseStartMs": 830,
+        "transferSize": 61296,
+        "encodedBodySize": 60996,
+        "decodedBodySize": 60996,
+        "paints": {
+          "first-paint": 1084,
+          "first-contentful-paint": 1084
+        }
+      },
+      "apiCalls": []
+    },
+    {
+      "route": "/in",
+      "finalUrl": "/in",
+      "status": 200,
+      "elapsedMs": 4598,
+      "metrics": {
+        "domContentLoadedMs": 1283,
+        "loadMs": 1284,
+        "responseStartMs": 1101,
+        "transferSize": 83052,
+        "encodedBodySize": 82752,
+        "decodedBodySize": 82752,
+        "paints": {
+          "first-paint": 1308,
+          "first-contentful-paint": 1308
+        }
+      },
+      "apiCalls": [
+        {
+          "method": "GET",
+          "status": 200,
+          "durationMs": 1445,
+          "url": "/api/dashboard/home"
+        },
+        {
+          "method": "POST",
+          "status": 204,
+          "durationMs": 795,
+          "url": "/api/analytics/ingest"
+        }
+      ]
+    },
+    {
+      "route": "/in/patients",
+      "finalUrl": "/in/patients",
+      "status": 200,
+      "elapsedMs": 4651,
+      "metrics": {
+        "domContentLoadedMs": 1341,
+        "loadMs": 1349,
+        "responseStartMs": 1106,
+        "transferSize": 86391,
+        "encodedBodySize": 86091,
+        "decodedBodySize": 86091,
+        "paints": {
+          "first-paint": 1372,
+          "first-contentful-paint": 1372
+        }
+      },
+      "apiCalls": []
+    },
+    {
+      "route": "/in/patients/new",
+      "finalUrl": "/in/patients/new",
+      "status": 200,
+      "elapsedMs": 4678,
+      "metrics": {
+        "domContentLoadedMs": 1356,
+        "loadMs": 1369,
+        "responseStartMs": 1122,
+        "transferSize": 94759,
+        "encodedBodySize": 94459,
+        "decodedBodySize": 94459,
+        "paints": {
+          "first-paint": 1392,
+          "first-contentful-paint": 1392
+        }
+      },
+      "apiCalls": []
+    },
+    {
+      "route": "/in/consultations",
+      "finalUrl": "/in/consultations",
+      "status": 200,
+      "elapsedMs": 4634,
+      "metrics": {
+        "domContentLoadedMs": 1322,
+        "loadMs": 1334,
+        "responseStartMs": 1086,
+        "transferSize": 87041,
+        "encodedBodySize": 86741,
+        "decodedBodySize": 86741,
+        "paints": {
+          "first-paint": 1348,
+          "first-contentful-paint": 1348
+        }
+      },
+      "apiCalls": []
+    },
+    {
+      "route": "/in/consultations/new",
+      "finalUrl": "/in/consultations/new",
+      "status": 200,
+      "elapsedMs": 4787,
+      "metrics": {
+        "domContentLoadedMs": 1315,
+        "loadMs": 1322,
+        "responseStartMs": 1090,
+        "transferSize": 89012,
+        "encodedBodySize": 88712,
+        "decodedBodySize": 88712,
+        "paints": {
+          "first-paint": 1340,
+          "first-contentful-paint": 1340
+        }
+      },
+      "apiCalls": []
+    },
+    {
+      "route": "/in/calendar",
+      "finalUrl": "/in/calendar",
+      "status": 200,
+      "elapsedMs": 4773,
+      "metrics": {
+        "domContentLoadedMs": 1368,
+        "loadMs": 1381,
+        "responseStartMs": 1181,
+        "transferSize": 83061,
+        "encodedBodySize": 82761,
+        "decodedBodySize": 82761,
+        "paints": {
+          "first-paint": 1400,
+          "first-contentful-paint": 1400
+        }
+      },
+      "apiCalls": [
+        {
+          "method": "GET",
+          "status": 200,
+          "durationMs": 2232,
+          "url": "/api/calendar/availability"
+        },
+        {
+          "method": "GET",
+          "status": 200,
+          "durationMs": 1070,
+          "url": "/api/calendar/appointments"
+        }
+      ]
+    },
+    {
+      "route": "/in/tasks",
+      "finalUrl": "/in/tasks",
+      "status": 200,
+      "elapsedMs": 5109,
+      "metrics": {
+        "domContentLoadedMs": 1619,
+        "loadMs": 1931,
+        "responseStartMs": 1398,
+        "transferSize": 83280,
+        "encodedBodySize": 82980,
+        "decodedBodySize": 82980,
+        "paints": {
+          "first-paint": 1644,
+          "first-contentful-paint": 1644
+        }
+      },
+      "apiCalls": [
+        {
+          "method": "GET",
+          "status": 200,
+          "durationMs": 2339,
+          "url": "/api/tasks?limit=100"
+        },
+        {
+          "method": "GET",
+          "status": 200,
+          "durationMs": 1522,
+          "url": "/api/patients?limit=500"
+        }
+      ]
+    },
+    {
+      "route": "/in/documents",
+      "finalUrl": "/in/documents",
+      "status": 200,
+      "elapsedMs": 5156,
+      "metrics": {
+        "domContentLoadedMs": 1631,
+        "loadMs": 2014,
+        "responseStartMs": 1489,
+        "transferSize": 95790,
+        "encodedBodySize": 95490,
+        "decodedBodySize": 95490,
+        "paints": {
+          "first-paint": 1664,
+          "first-contentful-paint": 1664
+        }
+      },
+      "apiCalls": [
+        {
+          "method": "GET",
+          "status": 200,
+          "durationMs": 1562,
+          "url": "/api/documents"
+        }
+      ]
+    },
+    {
+      "route": "/in/issues",
+      "finalUrl": "/in/issues",
+      "status": 200,
+      "elapsedMs": 5102,
+      "metrics": {
+        "domContentLoadedMs": 1821,
+        "loadMs": 1822,
+        "responseStartMs": 1605,
+        "transferSize": 86249,
+        "encodedBodySize": 85949,
+        "decodedBodySize": 85949,
+        "paints": {
+          "first-paint": 1856,
+          "first-contentful-paint": 1856
+        }
+      },
+      "apiCalls": []
+    },
+    {
+      "route": "/in/issues/new",
+      "finalUrl": "/in/issues/new",
+      "status": 200,
+      "elapsedMs": 5195,
+      "metrics": {
+        "domContentLoadedMs": 1588,
+        "loadMs": 1912,
+        "responseStartMs": 1340,
+        "transferSize": 86217,
+        "encodedBodySize": 85917,
+        "decodedBodySize": 85917,
+        "paints": {
+          "first-paint": 1612,
+          "first-contentful-paint": 1612
+        }
+      },
+      "apiCalls": []
+    },
+    {
+      "route": "/in/settings/billing",
+      "finalUrl": "/in/settings/billing",
+      "status": 200,
+      "elapsedMs": 4996,
+      "metrics": {
+        "domContentLoadedMs": 1634,
+        "loadMs": 1919,
+        "responseStartMs": 1402,
+        "transferSize": 82855,
+        "encodedBodySize": 82555,
+        "decodedBodySize": 82555,
+        "paints": {
+          "first-paint": 1660,
+          "first-contentful-paint": 1660
+        }
+      },
+      "apiCalls": [
+        {
+          "method": "GET",
+          "status": 200,
+          "durationMs": 1737,
+          "url": "/api/subscription/status"
+        }
+      ]
+    },
+    {
+      "route": "/in/settings/intake",
+      "finalUrl": "/in/settings/intake",
+      "status": 200,
+      "elapsedMs": 5202,
+      "metrics": {
+        "domContentLoadedMs": 1938,
+        "loadMs": 2324,
+        "responseStartMs": 1695,
+        "transferSize": 85877,
+        "encodedBodySize": 85577,
+        "decodedBodySize": 85577,
+        "paints": {
+          "first-paint": 1968,
+          "first-contentful-paint": 1968
+        }
+      },
+      "apiCalls": [
+        {
+          "method": "GET",
+          "status": 200,
+          "durationMs": 1702,
+          "url": "/api/intake-templates"
+        }
+      ]
+    },
+    {
+      "route": "/in/voice-ai-testing",
+      "finalUrl": "/in/voice-ai-testing",
+      "status": 200,
+      "elapsedMs": 4996,
+      "metrics": {
+        "domContentLoadedMs": 1722,
+        "loadMs": 2017,
+        "responseStartMs": 1600,
+        "transferSize": 89075,
+        "encodedBodySize": 88775,
+        "decodedBodySize": 88775,
+        "paints": {
+          "first-paint": 1676,
+          "first-contentful-paint": 1676
+        }
+      },
+      "apiCalls": []
+    }
+  ],
+  "apis": [
+    {
+      "route": "/api/nmc/lookup?regNo=12345&council=",
+      "status": 200,
+      "durationMs": 4797,
+      "bytes": 8343,
+      "ok": true
+    },
+    {
+      "route": "/api/dashboard/home",
+      "status": 200,
+      "durationMs": 1452,
+      "bytes": 79,
+      "ok": true
+    },
+    {
+      "route": "/api/follow-ups/flagged",
+      "status": 200,
+      "durationMs": 1259,
+      "bytes": 14,
+      "ok": true
+    },
+    {
+      "route": "/api/dashboard/stats",
+      "status": 200,
+      "durationMs": 1257,
+      "bytes": 84,
+      "ok": true
+    },
+    {
+      "route": "/api/dashboard/next-patient",
+      "status": 200,
+      "durationMs": 1253,
+      "bytes": 13,
+      "ok": true
+    },
+    {
+      "route": "/api/helena/conversations",
+      "status": 200,
+      "durationMs": 1233,
+      "bytes": 20,
+      "ok": true
+    },
+    {
+      "route": "/api/user/shell",
+      "status": 200,
+      "durationMs": 1222,
+      "bytes": 105,
+      "ok": true
+    },
+    {
+      "route": "/api/subscription/status",
+      "status": 200,
+      "durationMs": 1215,
+      "bytes": 541,
+      "ok": true
+    },
+    {
+      "route": "/api/calendar/handle",
+      "status": 200,
+      "durationMs": 1111,
+      "bytes": 51,
+      "ok": true
+    },
+    {
+      "route": "/api/issues/list",
+      "status": 200,
+      "durationMs": 1107,
+      "bytes": 13,
+      "ok": true
+    },
+    {
+      "route": "/api/consultation/streaming-session",
+      "status": 200,
+      "durationMs": 1091,
+      "bytes": 122,
+      "ok": true
+    },
+    {
+      "route": "/api/intake-templates",
+      "status": 200,
+      "durationMs": 1063,
+      "bytes": 16,
+      "ok": true
+    },
+    {
+      "route": "/api/documents",
+      "status": 200,
+      "durationMs": 1047,
+      "bytes": 47,
+      "ok": true
+    },
+    {
+      "route": "/api/razorpay/healthz",
+      "status": 200,
+      "durationMs": 1031,
+      "bytes": 51,
+      "ok": true
+    },
+    {
+      "route": "/api/patients?limit=100",
+      "status": 200,
+      "durationMs": 1004,
+      "bytes": 15,
+      "ok": true
+    },
+    {
+      "route": "/api/calendar/availability",
+      "status": 200,
+      "durationMs": 998,
+      "bytes": 1286,
+      "ok": true
+    },
+    {
+      "route": "/api/calendar/appointments",
+      "status": 200,
+      "durationMs": 985,
+      "bytes": 19,
+      "ok": true
+    },
+    {
+      "route": "/api/tasks?limit=100",
+      "status": 200,
+      "durationMs": 968,
+      "bytes": 12,
+      "ok": true
+    },
+    {
+      "route": "/api/medicines/search?q=paracetamol",
+      "status": 200,
+      "durationMs": 801,
+      "bytes": 16,
+      "ok": true
+    },
+    {
+      "route": "/api/formulary/search?q=paracetamol",
+      "status": 200,
+      "durationMs": 800,
+      "bytes": 14,
+      "ok": true
+    },
+    {
+      "route": "/api/geo",
+      "status": 200,
+      "durationMs": 557,
+      "bytes": 16,
+      "ok": true
+    }
+  ]
+}

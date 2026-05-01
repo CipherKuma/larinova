@@ -1,0 +1,545 @@
+{
+  "generatedAt": "2026-05-01T10:30:03.237Z",
+  "baseUrl": "https://app.larinova.com",
+  "pageCount": 17,
+  "apiCount": 21,
+  "pages": [
+    {
+      "route": "/in/sign-in",
+      "finalUrl": "/in",
+      "status": 200,
+      "elapsedMs": 7016,
+      "metrics": {
+        "domContentLoadedMs": 2788,
+        "loadMs": 3601,
+        "responseStartMs": 2599,
+        "transferSize": 77497,
+        "encodedBodySize": 77197,
+        "decodedBodySize": 77197,
+        "paints": {
+          "first-paint": 2820,
+          "first-contentful-paint": 2820
+        }
+      },
+      "apiCalls": [
+        {
+          "method": "GET",
+          "status": 200,
+          "durationMs": 2574,
+          "url": "/api/dashboard/home"
+        },
+        {
+          "method": "GET",
+          "status": 200,
+          "durationMs": 1620,
+          "url": "/api/user/shell"
+        }
+      ]
+    },
+    {
+      "route": "/id/sign-in",
+      "finalUrl": "/in",
+      "status": 200,
+      "elapsedMs": 4142,
+      "metrics": {
+        "domContentLoadedMs": 769,
+        "loadMs": 769,
+        "responseStartMs": 564,
+        "transferSize": 77497,
+        "encodedBodySize": 77197,
+        "decodedBodySize": 77197,
+        "paints": {
+          "first-paint": 784,
+          "first-contentful-paint": 784
+        }
+      },
+      "apiCalls": [
+        {
+          "method": "GET",
+          "status": 200,
+          "durationMs": 1119,
+          "url": "/api/user/shell"
+        },
+        {
+          "method": "GET",
+          "status": 200,
+          "durationMs": 1069,
+          "url": "/api/dashboard/home"
+        }
+      ]
+    },
+    {
+      "route": "/in/access",
+      "finalUrl": "/in",
+      "status": 200,
+      "elapsedMs": 4966,
+      "metrics": {
+        "domContentLoadedMs": 1630,
+        "loadMs": 1631,
+        "responseStartMs": 1406,
+        "transferSize": 77497,
+        "encodedBodySize": 77197,
+        "decodedBodySize": 77197,
+        "paints": {
+          "first-paint": 1660,
+          "first-contentful-paint": 1660
+        }
+      },
+      "apiCalls": [
+        {
+          "method": "GET",
+          "status": 200,
+          "durationMs": 1519,
+          "url": "/api/dashboard/home"
+        },
+        {
+          "method": "GET",
+          "status": 200,
+          "durationMs": 1087,
+          "url": "/api/user/shell"
+        }
+      ]
+    },
+    {
+      "route": "/in/redeem",
+      "finalUrl": "/in/redeem",
+      "status": 200,
+      "elapsedMs": 2181,
+      "metrics": {
+        "domContentLoadedMs": 1639,
+        "loadMs": 1653,
+        "responseStartMs": 1502,
+        "transferSize": 59039,
+        "encodedBodySize": 58739,
+        "decodedBodySize": 58739,
+        "paints": {
+          "first-paint": 1688,
+          "first-contentful-paint": 1688
+        }
+      },
+      "apiCalls": []
+    },
+    {
+      "route": "/in",
+      "finalUrl": "/in",
+      "status": 200,
+      "elapsedMs": 5343,
+      "metrics": {
+        "domContentLoadedMs": 1960,
+        "loadMs": 1960,
+        "responseStartMs": 1728,
+        "transferSize": 77497,
+        "encodedBodySize": 77197,
+        "decodedBodySize": 77197,
+        "paints": {
+          "first-paint": 1992,
+          "first-contentful-paint": 1992
+        }
+      },
+      "apiCalls": [
+        {
+          "method": "GET",
+          "status": 200,
+          "durationMs": 2351,
+          "url": "/api/user/shell"
+        },
+        {
+          "method": "GET",
+          "status": 200,
+          "durationMs": 2038,
+          "url": "/api/dashboard/home"
+        },
+        {
+          "method": "POST",
+          "status": 204,
+          "durationMs": 927,
+          "url": "/api/analytics/ingest"
+        }
+      ]
+    },
+    {
+      "route": "/in/patients",
+      "finalUrl": "/in/patients",
+      "status": 200,
+      "elapsedMs": 4534,
+      "metrics": {
+        "domContentLoadedMs": 1669,
+        "loadMs": 1672,
+        "responseStartMs": 992,
+        "transferSize": 81175,
+        "encodedBodySize": 80875,
+        "decodedBodySize": 80875,
+        "paints": {
+          "first-paint": 1056,
+          "first-contentful-paint": 1056
+        }
+      },
+      "apiCalls": [
+        {
+          "method": "GET",
+          "status": 200,
+          "durationMs": 970,
+          "url": "/api/user/shell"
+        }
+      ]
+    },
+    {
+      "route": "/in/patients/new",
+      "finalUrl": "/in/sign-in",
+      "status": 200,
+      "elapsedMs": 2928,
+      "metrics": {
+        "domContentLoadedMs": 1686,
+        "loadMs": 2394,
+        "responseStartMs": 1533,
+        "transferSize": 65065,
+        "encodedBodySize": 64765,
+        "decodedBodySize": 64765,
+        "paints": {
+          "first-paint": 1764,
+          "first-contentful-paint": 1764
+        }
+      },
+      "apiCalls": []
+    },
+    {
+      "route": "/in/consultations",
+      "finalUrl": "/in/sign-in",
+      "status": 200,
+      "elapsedMs": 1230,
+      "metrics": {
+        "domContentLoadedMs": 690,
+        "loadMs": 699,
+        "responseStartMs": 479,
+        "transferSize": 65065,
+        "encodedBodySize": 64765,
+        "decodedBodySize": 64765,
+        "paints": {
+          "first-paint": 764,
+          "first-contentful-paint": 764
+        }
+      },
+      "apiCalls": []
+    },
+    {
+      "route": "/in/consultations/new",
+      "finalUrl": "/in/sign-in",
+      "status": 200,
+      "elapsedMs": 1174,
+      "metrics": {
+        "domContentLoadedMs": 644,
+        "loadMs": 645,
+        "responseStartMs": 425,
+        "transferSize": 65065,
+        "encodedBodySize": 64765,
+        "decodedBodySize": 64765,
+        "paints": {
+          "first-paint": 712,
+          "first-contentful-paint": 712
+        }
+      },
+      "apiCalls": []
+    },
+    {
+      "route": "/in/calendar",
+      "finalUrl": "/in/sign-in",
+      "status": 200,
+      "elapsedMs": 1252,
+      "metrics": {
+        "domContentLoadedMs": 701,
+        "loadMs": 726,
+        "responseStartMs": 521,
+        "transferSize": 65065,
+        "encodedBodySize": 64765,
+        "decodedBodySize": 64765,
+        "paints": {
+          "first-paint": 776,
+          "first-contentful-paint": 776
+        }
+      },
+      "apiCalls": []
+    },
+    {
+      "route": "/in/tasks",
+      "finalUrl": "/in/sign-in",
+      "status": 200,
+      "elapsedMs": 1185,
+      "metrics": {
+        "domContentLoadedMs": 655,
+        "loadMs": 656,
+        "responseStartMs": 528,
+        "transferSize": 65065,
+        "encodedBodySize": 64765,
+        "decodedBodySize": 64765,
+        "paints": {
+          "first-paint": 688,
+          "first-contentful-paint": 688
+        }
+      },
+      "apiCalls": []
+    },
+    {
+      "route": "/in/documents",
+      "finalUrl": "/in/sign-in",
+      "status": 200,
+      "elapsedMs": 1203,
+      "metrics": {
+        "domContentLoadedMs": 659,
+        "loadMs": 677,
+        "responseStartMs": 436,
+        "transferSize": 65065,
+        "encodedBodySize": 64765,
+        "decodedBodySize": 64765,
+        "paints": {
+          "first-paint": 740,
+          "first-contentful-paint": 740
+        }
+      },
+      "apiCalls": []
+    },
+    {
+      "route": "/in/issues",
+      "finalUrl": "/in/sign-in",
+      "status": 200,
+      "elapsedMs": 1201,
+      "metrics": {
+        "domContentLoadedMs": 651,
+        "loadMs": 674,
+        "responseStartMs": 487,
+        "transferSize": 65065,
+        "encodedBodySize": 64765,
+        "decodedBodySize": 64765,
+        "paints": {
+          "first-paint": 740,
+          "first-contentful-paint": 740
+        }
+      },
+      "apiCalls": []
+    },
+    {
+      "route": "/in/issues/new",
+      "finalUrl": "/in/sign-in",
+      "status": 200,
+      "elapsedMs": 1184,
+      "metrics": {
+        "domContentLoadedMs": 644,
+        "loadMs": 653,
+        "responseStartMs": 415,
+        "transferSize": 65065,
+        "encodedBodySize": 64765,
+        "decodedBodySize": 64765,
+        "paints": {
+          "first-paint": 716,
+          "first-contentful-paint": 716
+        }
+      },
+      "apiCalls": []
+    },
+    {
+      "route": "/in/settings/billing",
+      "finalUrl": "/in/sign-in",
+      "status": 200,
+      "elapsedMs": 1183,
+      "metrics": {
+        "domContentLoadedMs": 661,
+        "loadMs": 661,
+        "responseStartMs": 480,
+        "transferSize": 65065,
+        "encodedBodySize": 64765,
+        "decodedBodySize": 64765,
+        "paints": {
+          "first-paint": 640,
+          "first-contentful-paint": 640
+        }
+      },
+      "apiCalls": []
+    },
+    {
+      "route": "/in/settings/intake",
+      "finalUrl": "/in/sign-in",
+      "status": 200,
+      "elapsedMs": 1049,
+      "metrics": {
+        "domContentLoadedMs": 505,
+        "loadMs": 523,
+        "responseStartMs": 484,
+        "transferSize": 65065,
+        "encodedBodySize": 64765,
+        "decodedBodySize": 64765,
+        "paints": {
+          "first-paint": 612,
+          "first-contentful-paint": 612
+        }
+      },
+      "apiCalls": []
+    },
+    {
+      "route": "/in/voice-ai-testing",
+      "finalUrl": "/in/sign-in",
+      "status": 200,
+      "elapsedMs": 968,
+      "metrics": {
+        "domContentLoadedMs": 428,
+        "loadMs": 442,
+        "responseStartMs": 410,
+        "transferSize": 65065,
+        "encodedBodySize": 64765,
+        "decodedBodySize": 64765,
+        "paints": {
+          "first-paint": 536,
+          "first-contentful-paint": 536
+        }
+      },
+      "apiCalls": []
+    }
+  ],
+  "apis": [
+    {
+      "route": "/api/nmc/lookup?regNo=12345&council=",
+      "status": 200,
+      "durationMs": 4792,
+      "bytes": 8343,
+      "ok": true
+    },
+    {
+      "route": "/api/geo",
+      "status": 200,
+      "durationMs": 1123,
+      "bytes": 16,
+      "ok": true
+    },
+    {
+      "route": "/api/intake-templates",
+      "status": 401,
+      "durationMs": 905,
+      "bytes": 24,
+      "ok": false
+    },
+    {
+      "route": "/api/dashboard/next-patient",
+      "status": 401,
+      "durationMs": 871,
+      "bytes": 24,
+      "ok": false
+    },
+    {
+      "route": "/api/medicines/search?q=paracetamol",
+      "status": 200,
+      "durationMs": 850,
+      "bytes": 16,
+      "ok": true
+    },
+    {
+      "route": "/api/issues/list",
+      "status": 401,
+      "durationMs": 843,
+      "bytes": 27,
+      "ok": false
+    },
+    {
+      "route": "/api/documents",
+      "status": 401,
+      "durationMs": 834,
+      "bytes": 24,
+      "ok": false
+    },
+    {
+      "route": "/api/calendar/appointments",
+      "status": 401,
+      "durationMs": 813,
+      "bytes": 24,
+      "ok": false
+    },
+    {
+      "route": "/api/subscription/status",
+      "status": 401,
+      "durationMs": 809,
+      "bytes": 24,
+      "ok": false
+    },
+    {
+      "route": "/api/calendar/handle",
+      "status": 401,
+      "durationMs": 807,
+      "bytes": 24,
+      "ok": false
+    },
+    {
+      "route": "/api/follow-ups/flagged",
+      "status": 401,
+      "durationMs": 803,
+      "bytes": 24,
+      "ok": false
+    },
+    {
+      "route": "/api/consultation/streaming-session",
+      "status": 401,
+      "durationMs": 800,
+      "bytes": 24,
+      "ok": false
+    },
+    {
+      "route": "/api/formulary/search?q=paracetamol",
+      "status": 200,
+      "durationMs": 800,
+      "bytes": 14,
+      "ok": true
+    },
+    {
+      "route": "/api/calendar/availability",
+      "status": 401,
+      "durationMs": 796,
+      "bytes": 24,
+      "ok": false
+    },
+    {
+      "route": "/api/dashboard/stats",
+      "status": 401,
+      "durationMs": 777,
+      "bytes": 24,
+      "ok": false
+    },
+    {
+      "route": "/api/patients?limit=100",
+      "status": 401,
+      "durationMs": 769,
+      "bytes": 24,
+      "ok": false
+    },
+    {
+      "route": "/api/helena/conversations",
+      "status": 401,
+      "durationMs": 762,
+      "bytes": 24,
+      "ok": false
+    },
+    {
+      "route": "/api/tasks?limit=100",
+      "status": 401,
+      "durationMs": 754,
+      "bytes": 24,
+      "ok": false
+    },
+    {
+      "route": "/api/razorpay/healthz",
+      "status": 200,
+      "durationMs": 690,
+      "bytes": 51,
+      "ok": true
+    },
+    {
+      "route": "/api/dashboard/home",
+      "status": 401,
+      "durationMs": 526,
+      "bytes": 24,
+      "ok": false
+    },
+    {
+      "route": "/api/user/shell",
+      "status": 401,
+      "durationMs": 505,
+      "bytes": 24,
+      "ok": false
+    }
+  ]
+}

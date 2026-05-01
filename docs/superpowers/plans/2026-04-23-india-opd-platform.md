@@ -920,7 +920,7 @@ export async function chatSync(opts: {
 
 **Files:** `vercel.json`, Vercel dashboard
 
-- [ ] `vercel link` inside `patient-portal/` — new project `larinova-patient-portal`
+- [ ] `vercel link` inside `patient-portal/` — project `larinova-patient`
 - [ ] Add envs (Supabase URL, anon key, NEXT_PUBLIC_APP_URL)
 - [ ] Add custom domain `patient.larinova.com` in Vercel settings
 - [ ] Configure DNS: CNAME `patient` → `cname.vercel-dns.com` at DNS provider

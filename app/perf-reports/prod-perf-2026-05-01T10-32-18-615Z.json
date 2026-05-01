@@ -1,0 +1,652 @@
+{
+  "generatedAt": "2026-05-01T10:32:18.612Z",
+  "baseUrl": "https://app.larinova.com",
+  "pageCount": 17,
+  "apiCount": 21,
+  "pages": [
+    {
+      "route": "/in/sign-in",
+      "finalUrl": "/in",
+      "status": 200,
+      "elapsedMs": 4942,
+      "metrics": {
+        "domContentLoadedMs": 1200,
+        "loadMs": 1200,
+        "responseStartMs": 957,
+        "transferSize": 77497,
+        "encodedBodySize": 77197,
+        "decodedBodySize": 77197,
+        "paints": {
+          "first-paint": 1028,
+          "first-contentful-paint": 1028
+        }
+      },
+      "apiCalls": [
+        {
+          "method": "GET",
+          "status": 200,
+          "durationMs": 1491,
+          "url": "/api/user/shell"
+        },
+        {
+          "method": "GET",
+          "status": 200,
+          "durationMs": 1489,
+          "url": "/api/dashboard/home"
+        }
+      ]
+    },
+    {
+      "route": "/id/sign-in",
+      "finalUrl": "/in",
+      "status": 200,
+      "elapsedMs": 4123,
+      "metrics": {
+        "domContentLoadedMs": 709,
+        "loadMs": 709,
+        "responseStartMs": 525,
+        "transferSize": 77497,
+        "encodedBodySize": 77197,
+        "decodedBodySize": 77197,
+        "paints": {
+          "first-paint": 728,
+          "first-contentful-paint": 728
+        }
+      },
+      "apiCalls": [
+        {
+          "method": "GET",
+          "status": 200,
+          "durationMs": 2368,
+          "url": "/api/dashboard/home"
+        },
+        {
+          "method": "GET",
+          "status": 200,
+          "durationMs": 1042,
+          "url": "/api/user/shell"
+        }
+      ]
+    },
+    {
+      "route": "/in/access",
+      "finalUrl": "/in",
+      "status": 200,
+      "elapsedMs": 4022,
+      "metrics": {
+        "domContentLoadedMs": 740,
+        "loadMs": 740,
+        "responseStartMs": 615,
+        "transferSize": 77497,
+        "encodedBodySize": 77197,
+        "decodedBodySize": 77197,
+        "paints": {
+          "first-paint": 764,
+          "first-contentful-paint": 764
+        }
+      },
+      "apiCalls": [
+        {
+          "method": "GET",
+          "status": 200,
+          "durationMs": 1617,
+          "url": "/api/dashboard/home"
+        },
+        {
+          "method": "GET",
+          "status": 200,
+          "durationMs": 954,
+          "url": "/api/user/shell"
+        }
+      ]
+    },
+    {
+      "route": "/in/redeem",
+      "finalUrl": "/in/redeem",
+      "status": 200,
+      "elapsedMs": 1829,
+      "metrics": {
+        "domContentLoadedMs": 1295,
+        "loadMs": 1298,
+        "responseStartMs": 1059,
+        "transferSize": 59039,
+        "encodedBodySize": 58739,
+        "decodedBodySize": 58739,
+        "paints": {
+          "first-paint": 1328,
+          "first-contentful-paint": 1328
+        }
+      },
+      "apiCalls": []
+    },
+    {
+      "route": "/in",
+      "finalUrl": "/in",
+      "status": 200,
+      "elapsedMs": 3841,
+      "metrics": {
+        "domContentLoadedMs": 567,
+        "loadMs": 575,
+        "responseStartMs": 534,
+        "transferSize": 77497,
+        "encodedBodySize": 77197,
+        "decodedBodySize": 77197,
+        "paints": {
+          "first-paint": 628,
+          "first-contentful-paint": 628
+        }
+      },
+      "apiCalls": [
+        {
+          "method": "GET",
+          "status": 200,
+          "durationMs": 1114,
+          "url": "/api/dashboard/home"
+        },
+        {
+          "method": "GET",
+          "status": 200,
+          "durationMs": 1105,
+          "url": "/api/user/shell"
+        }
+      ]
+    },
+    {
+      "route": "/in/patients",
+      "finalUrl": "/in/patients",
+      "status": 200,
+      "elapsedMs": 3953,
+      "metrics": {
+        "domContentLoadedMs": 1172,
+        "loadMs": 1176,
+        "responseStartMs": 464,
+        "transferSize": 81175,
+        "encodedBodySize": 80875,
+        "decodedBodySize": 80875,
+        "paints": {
+          "first-paint": 644,
+          "first-contentful-paint": 644
+        }
+      },
+      "apiCalls": [
+        {
+          "method": "GET",
+          "status": 200,
+          "durationMs": 951,
+          "url": "/api/user/shell"
+        }
+      ]
+    },
+    {
+      "route": "/in/patients/new",
+      "finalUrl": "/in/patients/new",
+      "status": 200,
+      "elapsedMs": 4278,
+      "metrics": {
+        "domContentLoadedMs": 938,
+        "loadMs": 946,
+        "responseStartMs": 697,
+        "transferSize": 89027,
+        "encodedBodySize": 88727,
+        "decodedBodySize": 88727,
+        "paints": {
+          "first-paint": 968,
+          "first-contentful-paint": 968
+        }
+      },
+      "apiCalls": [
+        {
+          "method": "GET",
+          "status": 200,
+          "durationMs": 961,
+          "url": "/api/user/shell"
+        }
+      ]
+    },
+    {
+      "route": "/in/consultations",
+      "finalUrl": "/in/consultations",
+      "status": 200,
+      "elapsedMs": 4633,
+      "metrics": {
+        "domContentLoadedMs": 1956,
+        "loadMs": 1958,
+        "responseStartMs": 1141,
+        "transferSize": 82121,
+        "encodedBodySize": 81821,
+        "decodedBodySize": 81821,
+        "paints": {
+          "first-paint": 1212,
+          "first-contentful-paint": 1212
+        }
+      },
+      "apiCalls": [
+        {
+          "method": "GET",
+          "status": 200,
+          "durationMs": 953,
+          "url": "/api/user/shell"
+        }
+      ]
+    },
+    {
+      "route": "/in/consultations/new",
+      "finalUrl": "/in/consultations/new",
+      "status": 200,
+      "elapsedMs": 4197,
+      "metrics": {
+        "domContentLoadedMs": 1423,
+        "loadMs": 1426,
+        "responseStartMs": 692,
+        "transferSize": 83809,
+        "encodedBodySize": 83509,
+        "decodedBodySize": 83509,
+        "paints": {
+          "first-paint": 964,
+          "first-contentful-paint": 964
+        }
+      },
+      "apiCalls": [
+        {
+          "method": "GET",
+          "status": 200,
+          "durationMs": 972,
+          "url": "/api/user/shell"
+        }
+      ]
+    },
+    {
+      "route": "/in/calendar",
+      "finalUrl": "/in/calendar",
+      "status": 200,
+      "elapsedMs": 4146,
+      "metrics": {
+        "domContentLoadedMs": 1221,
+        "loadMs": 1222,
+        "responseStartMs": 726,
+        "transferSize": 79406,
+        "encodedBodySize": 79106,
+        "decodedBodySize": 79106,
+        "paints": {
+          "first-paint": 792,
+          "first-contentful-paint": 792
+        }
+      },
+      "apiCalls": [
+        {
+          "method": "GET",
+          "status": 200,
+          "durationMs": 1945,
+          "url": "/api/calendar/availability"
+        },
+        {
+          "method": "GET",
+          "status": 200,
+          "durationMs": 1871,
+          "url": "/api/calendar/appointments"
+        },
+        {
+          "method": "GET",
+          "status": 200,
+          "durationMs": 957,
+          "url": "/api/user/shell"
+        }
+      ]
+    },
+    {
+      "route": "/in/tasks",
+      "finalUrl": "/in/tasks",
+      "status": 200,
+      "elapsedMs": 4681,
+      "metrics": {
+        "domContentLoadedMs": 883,
+        "loadMs": 896,
+        "responseStartMs": 656,
+        "transferSize": 77738,
+        "encodedBodySize": 77438,
+        "decodedBodySize": 77438,
+        "paints": {
+          "first-paint": 908,
+          "first-contentful-paint": 908
+        }
+      },
+      "apiCalls": [
+        {
+          "method": "GET",
+          "status": 200,
+          "durationMs": 987,
+          "url": "/api/tasks?limit=100"
+        },
+        {
+          "method": "GET",
+          "status": 200,
+          "durationMs": 972,
+          "url": "/api/user/shell"
+        }
+      ]
+    },
+    {
+      "route": "/in/documents",
+      "finalUrl": "/in/documents",
+      "status": 200,
+      "elapsedMs": 5202,
+      "metrics": {
+        "domContentLoadedMs": 1556,
+        "loadMs": 1758,
+        "responseStartMs": 995,
+        "transferSize": 95003,
+        "encodedBodySize": 94703,
+        "decodedBodySize": 94703,
+        "paints": {
+          "first-paint": 1592,
+          "first-contentful-paint": 1592
+        }
+      },
+      "apiCalls": [
+        {
+          "method": "GET",
+          "status": 200,
+          "durationMs": 2006,
+          "url": "/api/user/shell"
+        },
+        {
+          "method": "GET",
+          "status": 200,
+          "durationMs": 1677,
+          "url": "/api/documents"
+        }
+      ]
+    },
+    {
+      "route": "/in/issues",
+      "finalUrl": "/in/issues",
+      "status": 200,
+      "elapsedMs": 5189,
+      "metrics": {
+        "domContentLoadedMs": 1911,
+        "loadMs": 1911,
+        "responseStartMs": 1646,
+        "transferSize": 85788,
+        "encodedBodySize": 85488,
+        "decodedBodySize": 85488,
+        "paints": {
+          "first-paint": 1716,
+          "first-contentful-paint": 1716
+        }
+      },
+      "apiCalls": [
+        {
+          "method": "GET",
+          "status": 200,
+          "durationMs": 1647,
+          "url": "/api/user/shell"
+        }
+      ]
+    },
+    {
+      "route": "/in/issues/new",
+      "finalUrl": "/in/issues/new",
+      "status": 200,
+      "elapsedMs": 4211,
+      "metrics": {
+        "domContentLoadedMs": 913,
+        "loadMs": 1238,
+        "responseStartMs": 677,
+        "transferSize": 85430,
+        "encodedBodySize": 85130,
+        "decodedBodySize": 85130,
+        "paints": {
+          "first-paint": 940,
+          "first-contentful-paint": 940
+        }
+      },
+      "apiCalls": [
+        {
+          "method": "GET",
+          "status": 200,
+          "durationMs": 1008,
+          "url": "/api/user/shell"
+        }
+      ]
+    },
+    {
+      "route": "/in/settings/billing",
+      "finalUrl": "/in/settings/billing",
+      "status": 200,
+      "elapsedMs": 4316,
+      "metrics": {
+        "domContentLoadedMs": 959,
+        "loadMs": 1345,
+        "responseStartMs": 928,
+        "transferSize": 82068,
+        "encodedBodySize": 81768,
+        "decodedBodySize": 81768,
+        "paints": {
+          "first-paint": 1024,
+          "first-contentful-paint": 1024
+        }
+      },
+      "apiCalls": [
+        {
+          "method": "GET",
+          "status": 200,
+          "durationMs": 2294,
+          "url": "/api/user/shell"
+        },
+        {
+          "method": "GET",
+          "status": 200,
+          "durationMs": 2178,
+          "url": "/api/subscription/status"
+        }
+      ]
+    },
+    {
+      "route": "/in/settings/intake",
+      "finalUrl": "/in/settings/intake",
+      "status": 200,
+      "elapsedMs": 4217,
+      "metrics": {
+        "domContentLoadedMs": 938,
+        "loadMs": 1761,
+        "responseStartMs": 906,
+        "transferSize": 85090,
+        "encodedBodySize": 84790,
+        "decodedBodySize": 84790,
+        "paints": {
+          "first-paint": 988,
+          "first-contentful-paint": 988
+        }
+      },
+      "apiCalls": [
+        {
+          "method": "GET",
+          "status": 200,
+          "durationMs": 1297,
+          "url": "/api/intake-templates"
+        },
+        {
+          "method": "GET",
+          "status": 200,
+          "durationMs": 980,
+          "url": "/api/user/shell"
+        }
+      ]
+    },
+    {
+      "route": "/in/voice-ai-testing",
+      "finalUrl": "/in/voice-ai-testing",
+      "status": 200,
+      "elapsedMs": 4523,
+      "metrics": {
+        "domContentLoadedMs": 1151,
+        "loadMs": 1447,
+        "responseStartMs": 927,
+        "transferSize": 88288,
+        "encodedBodySize": 87988,
+        "decodedBodySize": 87988,
+        "paints": {
+          "first-paint": 1180,
+          "first-contentful-paint": 1180
+        }
+      },
+      "apiCalls": [
+        {
+          "method": "GET",
+          "status": 200,
+          "durationMs": 959,
+          "url": "/api/user/shell"
+        }
+      ]
+    }
+  ],
+  "apis": [
+    {
+      "route": "/api/nmc/lookup?regNo=12345&council=",
+      "status": 200,
+      "durationMs": 5207,
+      "bytes": 8343,
+      "ok": true
+    },
+    {
+      "route": "/api/dashboard/stats",
+      "status": 200,
+      "durationMs": 1641,
+      "bytes": 84,
+      "ok": true
+    },
+    {
+      "route": "/api/helena/conversations",
+      "status": 200,
+      "durationMs": 1581,
+      "bytes": 20,
+      "ok": true
+    },
+    {
+      "route": "/api/patients?limit=100",
+      "status": 200,
+      "durationMs": 1550,
+      "bytes": 15,
+      "ok": true
+    },
+    {
+      "route": "/api/calendar/appointments",
+      "status": 200,
+      "durationMs": 1420,
+      "bytes": 19,
+      "ok": true
+    },
+    {
+      "route": "/api/follow-ups/flagged",
+      "status": 200,
+      "durationMs": 1418,
+      "bytes": 14,
+      "ok": true
+    },
+    {
+      "route": "/api/calendar/availability",
+      "status": 200,
+      "durationMs": 1414,
+      "bytes": 1286,
+      "ok": true
+    },
+    {
+      "route": "/api/tasks?limit=100",
+      "status": 200,
+      "durationMs": 1405,
+      "bytes": 12,
+      "ok": true
+    },
+    {
+      "route": "/api/dashboard/home",
+      "status": 200,
+      "durationMs": 1313,
+      "bytes": 79,
+      "ok": true
+    },
+    {
+      "route": "/api/subscription/status",
+      "status": 200,
+      "durationMs": 1308,
+      "bytes": 541,
+      "ok": true
+    },
+    {
+      "route": "/api/dashboard/next-patient",
+      "status": 200,
+      "durationMs": 1291,
+      "bytes": 13,
+      "ok": true
+    },
+    {
+      "route": "/api/user/shell",
+      "status": 200,
+      "durationMs": 1112,
+      "bytes": 105,
+      "ok": true
+    },
+    {
+      "route": "/api/consultation/streaming-session",
+      "status": 200,
+      "durationMs": 1109,
+      "bytes": 122,
+      "ok": true
+    },
+    {
+      "route": "/api/calendar/handle",
+      "status": 200,
+      "durationMs": 1083,
+      "bytes": 51,
+      "ok": true
+    },
+    {
+      "route": "/api/issues/list",
+      "status": 200,
+      "durationMs": 1080,
+      "bytes": 13,
+      "ok": true
+    },
+    {
+      "route": "/api/intake-templates",
+      "status": 200,
+      "durationMs": 1049,
+      "bytes": 16,
+      "ok": true
+    },
+    {
+      "route": "/api/documents",
+      "status": 200,
+      "durationMs": 1038,
+      "bytes": 47,
+      "ok": true
+    },
+    {
+      "route": "/api/medicines/search?q=paracetamol",
+      "status": 200,
+      "durationMs": 907,
+      "bytes": 16,
+      "ok": true
+    },
+    {
+      "route": "/api/formulary/search?q=paracetamol",
+      "status": 200,
+      "durationMs": 906,
+      "bytes": 14,
+      "ok": true
+    },
+    {
+      "route": "/api/geo",
+      "status": 200,
+      "durationMs": 632,
+      "bytes": 16,
+      "ok": true
+    },
+    {
+      "route": "/api/razorpay/healthz",
+      "status": 200,
+      "durationMs": 593,
+      "bytes": 51,
+      "ok": true
+    }
+  ]
+}
