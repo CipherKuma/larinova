@@ -76,19 +76,22 @@ export default function SignInPage() {
 
     const { data: doctor } = await supabase
       .from("larinova_doctors")
-      .select("onboarding_completed")
+      .select(
+        "onboarding_completed, invite_code_claimed_at, invite_code_redeemed_at",
+      )
       .eq("user_id", user.id)
       .maybeSingle();
+    const hasAlphaDoctorAccess = Boolean(
+      doctor?.invite_code_claimed_at || doctor?.invite_code_redeemed_at,
+    );
 
-    if (!doctor) {
-      // full_name is a GENERATED column (first_name + last_name); don't
-      // supply it. StepName captures the name during onboarding.
-      await supabase.from("larinova_doctors").insert({
-        user_id: user.id,
-        email: user.email!,
-        locale: locale === "id" ? "id" : "in",
-        onboarding_completed: false,
-      });
+    if (!doctor || !hasAlphaDoctorAccess) {
+      await supabase.auth.signOut();
+      clearSavedEmailOtpState();
+      setStep("email");
+      setOtp(Array(6).fill(""));
+      setEmailError("not_recognized");
+      return;
     }
 
     // Claim the invite code now that we're authenticated. Best-effort.
@@ -119,7 +122,26 @@ export default function SignInPage() {
 
     setLoading(true);
     try {
-      await sendMagicLink();
+      const normalizedEmail = email.trim().toLowerCase();
+      const access = await fetch("/api/auth/check-email", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ email: normalizedEmail }),
+      }).then((res) => res.json());
+
+      if (access?.isAdmin && !access?.exists) {
+        window.location.assign("/admin/sign-in");
+        return;
+      }
+
+      if (!access?.exists) {
+        setEmailError("not_recognized");
+        setEmailErrorMessage("");
+        return;
+      }
+
+      setEmail(normalizedEmail);
+      await sendMagicLink(normalizedEmail);
     } catch {
       setEmailError("generic");
       setEmailErrorMessage(t("unexpectedErrorOccurred"));
@@ -143,9 +165,9 @@ export default function SignInPage() {
     );
   };
 
-  const sendMagicLink = async () => {
+  const sendMagicLink = async (emailForOtp = email) => {
     const { error } = await supabase.auth.signInWithOtp({
-      email,
+      email: emailForOtp,
       options: {
         shouldCreateUser: false,
         emailRedirectTo: `${window.location.origin}/${locale}/auth/callback`,
@@ -166,7 +188,7 @@ export default function SignInPage() {
     setOtp(Array(6).fill(""));
     setResendTimer(60);
     setStep("verify-email-otp");
-    saveEmailOtpState(email);
+    saveEmailOtpState(emailForOtp);
     setTimeout(() => otpRefs.current[0]?.focus(), 100);
   };
 
@@ -614,7 +636,7 @@ export default function SignInPage() {
               </span>
             ) : (
               <button
-                onClick={sendMagicLink}
+                onClick={() => sendMagicLink()}
                 className="text-xs text-primary hover:underline"
               >
                 {t("resendCode")}

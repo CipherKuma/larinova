@@ -42,20 +42,19 @@ export default function AuthCallbackPage() {
       // Check if doctor profile exists
       const { data: doctor } = await supabase
         .from("larinova_doctors")
-        .select("onboarding_completed")
+        .select(
+          "onboarding_completed, invite_code_claimed_at, invite_code_redeemed_at",
+        )
         .eq("user_id", user.id)
         .maybeSingle();
+      const hasAlphaDoctorAccess = Boolean(
+        doctor?.invite_code_claimed_at || doctor?.invite_code_redeemed_at,
+      );
 
-      if (!doctor) {
-        // New user — create minimal doctor profile. Name is captured in
-        // onboarding step 1 (StepName writes first_name + last_name);
-        // full_name is a GENERATED column so we don't supply it here.
-        await supabase.from("larinova_doctors").insert({
-          user_id: user.id,
-          email: user.email!,
-          locale: locale === "id" ? "id" : "in",
-          onboarding_completed: false,
-        });
+      if (!doctor || !hasAlphaDoctorAccess) {
+        await supabase.auth.signOut();
+        router.push(`/${locale}/sign-in`);
+        return;
       }
 
       // Claim the invite code now that we're authenticated. Best-effort —

@@ -201,14 +201,16 @@ export async function proxy(request: NextRequest) {
       redirectUrl.pathname = `/${locale}/onboarding`;
       return NextResponse.redirect(redirectUrl);
     }
+    const hasAlphaDoctorAccess = Boolean(
+      doctorData.invite_code_claimed_at || doctorData.invite_code_redeemed_at,
+    );
 
     // Invite-code gate: an authed user without a claim hasn't cleared the
     // access gate. If they still have a token cookie, they're mid-flow and
     // /api/invite/claim hasn't fired yet — let them proceed; the auth
     // callback will run claim shortly. Otherwise bounce them to /access.
     if (
-      !doctorData.onboarding_completed &&
-      !doctorData.invite_code_claimed_at &&
+      !hasAlphaDoctorAccess &&
       !request.cookies.get("larinova_invite_token")?.value &&
       !pathname.includes("/access")
     ) {

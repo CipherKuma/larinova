@@ -56,20 +56,19 @@ export default function VerifyOtpPage() {
 
     const { data: doctor } = await supabase
       .from("larinova_doctors")
-      .select("onboarding_completed")
+      .select(
+        "onboarding_completed, invite_code_claimed_at, invite_code_redeemed_at",
+      )
       .eq("user_id", user.id)
       .single();
+    const hasAlphaDoctorAccess = Boolean(
+      doctor?.invite_code_claimed_at || doctor?.invite_code_redeemed_at,
+    );
 
-    if (!doctor) {
-      // The signup API normally creates this. This is a defensive fallback
-      // for users who arrived via /sign-in without ever going through
-      // /sign-up — they get a minimal row and finish profile in onboarding.
-      await supabase.from("larinova_doctors").insert({
-        user_id: user.id,
-        email: user.email!,
-        locale: locale === "id" ? "id" : "in",
-        onboarding_completed: false,
-      });
+    if (!doctor || !hasAlphaDoctorAccess) {
+      await supabase.auth.signOut();
+      router.push("/sign-in");
+      return;
     }
 
     // Best-effort invite claim. Cookie set on /access; ignored if absent.
