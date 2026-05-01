@@ -20,6 +20,10 @@ export const AUTH_DIR =
 
 export const CLIENT_ID = process.env.WHATSAPP_CLIENT_ID ?? "marty";
 
+export const USER_AGENT =
+  process.env.WHATSAPP_USER_AGENT ??
+  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36";
+
 export const PUPPETEER_OPTS = {
   headless: true,
   args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"],

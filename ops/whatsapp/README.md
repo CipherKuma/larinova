@@ -29,6 +29,9 @@ npm run send -- --group="xaviour" --text="team update"
 # Send a file
 npm run send -- --to=919884009228@c.us --file=/tmp/brief.pdf --caption="Today's brief" --as-document
 
+# Send multiple files in one boot
+npm run send -- --to=919884009228@c.us --text="Sharing docs" --files=/tmp/deck.pdf,/tmp/memo.pdf --as-document
+
 # Send an image (inline)
 npm run send -- --to=919884009228@c.us --file=~/Desktop/photo.jpg --caption="FYI"
 ```
@@ -63,13 +66,18 @@ Then prefix all future `npm run` calls with the same two env vars, or `export` t
 
 Session location is controlled by `config.ts` via env vars:
 
-| Env var               | Default                                                    |
-| --------------------- | ---------------------------------------------------------- |
-| `WHATSAPP_AUTH_DIR`   | `~/Documents/agents/marty/data/whatsapp-auth`              |
-| `WHATSAPP_CLIENT_ID`  | `marty`                                                    |
+| Env var               | Default                                       |
+| --------------------- | --------------------------------------------- |
+| `WHATSAPP_AUTH_DIR`   | `~/Documents/agents/marty/data/whatsapp-auth` |
+| `WHATSAPP_CLIENT_ID`  | `marty`                                       |
+| `WHATSAPP_USER_AGENT` | Modern Chrome UA from `config.ts`             |
 
 ## Notes
 
 - **JID format.** DMs are `<countrycode><number>@c.us` (no `+`, no spaces). Groups are `<long-id>@g.us`. `list` prints both.
+- **Modern UA is required.** If a command hangs before `ready`, or a diagnostic browser shows "WhatsApp works with Google Chrome 85+", use the modern UA configured in `config.ts`. The upstream `whatsapp-web.js` default UA can be rejected by WhatsApp Web.
+- **`@lid` caveat.** Newer Mac WhatsApp chat IDs such as `202688230871237@lid` may not send reliably through `whatsapp-web.js`. For those, use WhatsApp Web search by contact name and verify in the chat. Do not claim sent until SQLite or a screenshot confirms it.
+- **Document upload fallback.** In WhatsApp Web, the PDF path is Attach → Document. If automation is needed, click the Document row by coordinates after opening Attach; the hidden default input is often image-only and will not send PDFs correctly.
+- **Verification.** After sending, verify recent outgoing rows in `ChatStorage.sqlite` and/or capture a screenshot. A CLI log or a clicked send button is not enough.
 - **Do NOT commit** `data/` — it holds the live auth token. Already gitignored.
 - **Based on** `~/Documents/agents/clan-runtime/scripts/whatsapp-pair.ts` + `wa-multi-test.ts`.

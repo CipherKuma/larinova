@@ -178,7 +178,7 @@ test.describe("PWA — mobile install gate", () => {
 
     await page.getByRole("button", { name: /continue in browser/i }).click();
     await expect(
-      page.getByRole("heading", { name: /get started/i }),
+      page.getByRole("heading", { name: /welcome back/i }),
     ).toBeVisible();
   });
 });

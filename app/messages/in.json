@@ -166,7 +166,22 @@
     "failedToSendOtp": "Failed to send OTP",
     "firstNameRequired": "First name is required",
     "lastNameRequired": "Last name is required",
-    "emailRequired": "Email is required"
+    "emailRequired": "Email is required",
+    "signInTitle": "Welcome back",
+    "signInSubtitle": "Sign in to continue to Larinova",
+    "dontHaveAccountQ": "Don't have an account?",
+    "enterInviteCode": "Enter invite code",
+    "haveInviteCodeTitle": "Have an invite code?",
+    "haveInviteCodeSubtitle": "Larinova is invite-only during alpha. Paste the code from your invite email, or tap the link in the email to skip this step.",
+    "inviteCodeLabel": "Invite code",
+    "inviteCodePlaceholder": "LARINOVA-XXXXX",
+    "alreadyHaveAccountQ": "Already have an account?",
+    "signInLink": "Sign in",
+    "emailNotRecognizedTitle": "We don't recognize this email",
+    "emailNotRecognizedHint": "Larinova is invite-only right now. If you have an invite, enter the code to create your account.",
+    "useInviteCodeAction": "Use invite code",
+    "tryDifferentEmailAction": "Try another email",
+    "checkingInviteCode": "Checking..."
   },
   "onboarding": {
     "welcome": "Welcome to Larinova",

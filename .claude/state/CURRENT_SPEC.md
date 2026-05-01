@@ -1,39 +1,26 @@
 # Current Spec
 
 ## Goal
-Ship the India OPD platform end-to-end: booking → intake → AI-prepared consult → recorded consult → email wellness follow-up (SMS + WhatsApp follow-ups land in v1.1). Doctor pays via Razorpay Live; 5 pilot doctors whitelisted as alpha pro. Patient journey works over Email today; optional patient portal at `patient.larinova.com`. Indonesia ships the same OPD landing in parallel; Indonesia *app* (Xendit, Deepgram tuning, ID patient portal) deferred.
+Audit and improve production performance for `app.larinova.com` starting 2026-05-01, covering every reachable app page, API route timing, and browser route fluidity.
 
 ## Decided
-- **2026-04-28 hotfix:** Onboarding StepMagic must use Sarvam's raw WebSocket message shape (`audio.data/sample_rate/encoding`) and explicit `flush_signal=true` so Stop finalizes the transcript before SOAP generation. First-time onboarding doctor profile reads must tolerate a missing `larinova_doctors` row without surfacing Supabase 406 noise.
-- **2026-04-28 login gate:** `/` and protected routes should take unauthenticated users to email sign-in first. Invite codes gate new signup only; existing doctors can log in without visiting `/access`.
-- **Tiering:** Free = 20 consultations/month; Pro = unlimited. Whitelist array in `lib/subscription.ts` upgrades emails on login.
-- **Pilot:** 5 doctors whitelisted pro from day one; receive alpha welcome banner + email.
-- **Pricing:** IN ₹999/mo + ₹9,990/yr (save ₹1,998); ID IDR 299k/mo + IDR 2.99M/yr (display-only); default USD $20/$200.
-- **Queue / orchestration:** Inngest (event-driven, durable, TypeScript-first). `pg_cron` only for trivial periodic jobs.
-- **Agents:** three new — Pre-consult Intake AI, Post-consult Dispatcher, Wellness Follow-up (conversational, 1d/3d/7d).
-- **Notifications stack — v1 truth:** Resend (email) is shipping. MSG91 (SMS) and Meta WhatsApp Business Cloud API direct (WhatsApp) are deferred to v1.1. **Gupshup BSP rejected** — going direct to Meta avoids markup, lock-in, and a vendor dependency. Deferral is paperwork-bound (Meta Business Verification, ~1–2 weeks), not engineering-bound.
-- **Patient portal:** `patient.larinova.com`, separate Vercel project, shared Supabase DB, magic-link auth, 5 routes.
-- **Billing provider:** Razorpay Live for India (single Pro tier, no 4-tier split yet). Xendit for Indonesia deferred.
-- **AI inference:** Claude Service (`claude.fierypools.fun`) per global rule — no direct Anthropic calls.
-- **PWA:** `app.larinova.com` has manifest + icons + service worker. Verified 2026-04-26 — SW activates correctly on second load (`controller: true`); offline fallback page wired via Serwist.
-- **Landing:** OPD reframe applied to BOTH `/in` and `/id` (Indonesia parity decided 2026-04-26). Hero headline = "The most advanced OPD assistant for Indian doctors" (Bahasa equivalent for `/id`). Trust section refactored from 4-grid → alternating left-right rows with inline proof visuals. Hero video placeholder slot wired in `HeroIndia.tsx` for the upcoming Higgsfield loop.
-- **Sign-in honesty:** "Continue with Phone" button disabled with "Soon" pill until SMS is live.
-- **Promo / hero videos:** Two videos (hero loop + full promo) generated via Higgsfield AI, anchored on real app screenshots. Public release of the videos GATED on SMS being live (so on-screen flow is honest). Tracked as a separate Track 2 spec (forthcoming).
-- **Spec doc:** `docs/superpowers/specs/2026-04-23-india-opd-platform-design.md` (committed e26ea90).
+- Measure before changing code: route inventory, live production page loads, browser navigation timings, and API timing samples.
+- Prioritize visible user latency in the protected doctor app before micro-optimizing isolated code.
+- Use existing Larinova performance learnings as a map, but remeasure current production because timings and deployments can drift.
+- Keep unrelated dirty worktree changes out of any performance patch.
 
 ## Open
-- Razorpay dashboard login deferred (user will provide keys/plan IDs later)
-- MSG91 DLT template approvals need to be filed (for v1.1 SMS)
-- Meta WhatsApp Business Verification — paperwork to file (GST cert, business registration), gates v1.1 WhatsApp
-- 5 pilot doctor emails to be added to `PRO_WHITELIST`
-- Higgsfield video generation plan (Track 2 spec to be written after polish lands)
+- Which protected routes are reachable with the currently saved production session.
+- Which API routes can be safely sampled as GET/HEAD without mutating production data.
+- Whether the worst latency is network, auth/proxy, database, route render, client bundle, or global provider work.
 
-## Out of scope (v1)
-- SMS (MSG91) and WhatsApp (Meta direct) — deferred to v1.1
-- Indonesia *app* work: Xendit, Deepgram tuning, `id` patient portal — landing parity is in scope; app parity is not
-- 4-tier Starter/Basic/Pro/Business pricing (future)
-- Multi-doctor clinic / reception role, ABDM, drug interactions, offline recording, push notifications, analytics dashboard
-- Public release of the hero loop / full promo videos (gated on SMS being live)
+## Out of scope
+- Do not run mutating production API requests just to benchmark them.
+- Do not change product behavior, copy, or UI unless required to remove measured latency.
+- Do not deploy without build/test checks and live verification.
 
-## Definition of done
-See §15 of the spec doc. v1 ships email-only notifications; SMS + WhatsApp + video public-release land in v1.1. PWA Lighthouse ≥ 90, patient portal live, all three agents running on email channel, Razorpay Live end-to-end, Playwright suite green, Inngest dashboard clean. Indonesia OPD landing live and visually identical to India OPD landing.
+## Done-when
+- Page and API inventories are documented with timing evidence.
+- The slowest reproducible paths have root causes identified and focused fixes applied where safe.
+- Local regression checks pass for affected code.
+- Production is verified after deployment with representative page and API timing samples.

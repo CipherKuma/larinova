@@ -12,7 +12,13 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 
-type Step = "email" | "verify-email-otp" | "phone" | "buttons";
+type Step = "email" | "verify-email-otp" | "invite-code";
+type EmailError = null | "not_recognized" | "generic";
+type InviteCodeError =
+  | null
+  | "invalid_or_used_code"
+  | "invalid_input"
+  | "unknown";
 const EMAIL_OTP_STATE_KEY = "larinova.emailOtpSignIn";
 const EMAIL_OTP_STATE_TTL_MS = 10 * 60 * 1000;
 
@@ -20,15 +26,19 @@ export default function SignInPage() {
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState<Step>("email");
   const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState<string[]>(Array(6).fill(""));
   const [resendTimer, setResendTimer] = useState(0);
+  const [emailError, setEmailError] = useState<EmailError>(null);
+  const [emailErrorMessage, setEmailErrorMessage] = useState<string>("");
+  const [inviteCode, setInviteCode] = useState("");
+  const [inviteCodeError, setInviteCodeError] = useState<InviteCodeError>(null);
   const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
   const router = useRouter();
   const params = useParams();
   const locale = params.locale as string;
   const t = useTranslations("auth");
   const tc = useTranslations("common");
+  const tAccess = useTranslations("access");
   const supabase = createClient();
 
   useEffect(() => {
@@ -98,10 +108,12 @@ export default function SignInPage() {
   // Step 1: User enters email → always send email OTP. Passwords are no
   // longer used; OAuth (Google) sits next to this on the same screen.
   const handleEmailContinue = async () => {
+    setEmailError(null);
+    setEmailErrorMessage("");
+
     if (!email || !email.includes("@")) {
-      toast.error(t("invalidEmailTitle"), {
-        description: t("pleaseEnterValidEmail"),
-      });
+      setEmailError("generic");
+      setEmailErrorMessage(t("pleaseEnterValidEmail"));
       return;
     }
 
@@ -109,12 +121,26 @@ export default function SignInPage() {
     try {
       await sendMagicLink();
     } catch {
-      toast.error(t("unexpectedError"), {
-        description: t("unexpectedErrorOccurred"),
-      });
+      setEmailError("generic");
+      setEmailErrorMessage(t("unexpectedErrorOccurred"));
     } finally {
       setLoading(false);
     }
+  };
+
+  // Supabase signals "user not in auth.users" via either
+  // err.code === "otp_disabled" or a message containing
+  // "Signups not allowed" / "User not found". Treat those as the
+  // invite-required branch so we can route the doctor to the access flow
+  // instead of surfacing raw Supabase noise.
+  const isUnknownUserError = (err: { code?: string; message?: string }) => {
+    if (err.code === "otp_disabled") return true;
+    const msg = (err.message ?? "").toLowerCase();
+    return (
+      msg.includes("signups not allowed") ||
+      msg.includes("user not found") ||
+      msg.includes("not allowed for otp")
+    );
   };
 
   const sendMagicLink = async () => {
@@ -127,9 +153,13 @@ export default function SignInPage() {
     });
 
     if (error) {
-      toast.error(t("failedToSendLink"), {
-        description: error.message,
-      });
+      if (isUnknownUserError(error)) {
+        setEmailError("not_recognized");
+        setEmailErrorMessage("");
+      } else {
+        setEmailError("generic");
+        setEmailErrorMessage(error.message);
+      }
       return;
     }
 
@@ -138,6 +168,44 @@ export default function SignInPage() {
     setStep("verify-email-otp");
     saveEmailOtpState(email);
     setTimeout(() => otpRefs.current[0]?.focus(), 100);
+  };
+
+  // Step alt: User redeems an invite code on the same screen instead of
+  // navigating to /access. On success we route to /sign-up where the
+  // invite cookie pre-fills first name / last name / email.
+  const handleInviteCodeSubmit = async () => {
+    setInviteCodeError(null);
+    setLoading(true);
+    try {
+      const res = await fetch("/api/invite/validate", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ code: inviteCode.trim().toUpperCase() }),
+      });
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok || !body?.ok) {
+        setInviteCodeError((body?.error as InviteCodeError) ?? "unknown");
+        setLoading(false);
+        return;
+      }
+      router.push(`/sign-up`);
+    } catch {
+      setInviteCodeError("unknown");
+      setLoading(false);
+    }
+  };
+
+  const inviteCodeErrorText = (e: InviteCodeError): string => {
+    switch (e) {
+      case "invalid_or_used_code":
+        return tAccess("errorInvalid");
+      case "invalid_input":
+        return tAccess("errorMalformed");
+      case "unknown":
+        return tAccess("errorUnknown");
+      default:
+        return "";
+    }
   };
 
   const handleOtpChange = (index: number, value: string) => {
@@ -224,41 +292,6 @@ export default function SignInPage() {
     }
   };
 
-  // Phone OTP
-  const handlePhoneSubmit = async () => {
-    if (!/^[6-9]\d{9}$/.test(phone)) {
-      toast.error(t("invalidEmailTitle"), {
-        description: t("pleaseEnterValidEmail"),
-      });
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const { error } = await supabase.auth.signInWithOtp({
-        phone: `+91${phone}`,
-      });
-
-      if (error) {
-        toast.error(t("failedToSendOtp"), {
-          description: error.message,
-        });
-        setLoading(false);
-        return;
-      }
-
-      toast.success(t("otpSent"), {
-        description: t("checkPhoneForCode"),
-      });
-      router.push(`/verify-otp?phone=${phone}`);
-    } catch {
-      toast.error(t("failedToSendOtp"), {
-        description: t("unexpectedErrorOccurred"),
-      });
-      setLoading(false);
-    }
-  };
-
   return (
     <div>
       {/* Logo */}
@@ -283,12 +316,16 @@ export default function SignInPage() {
         <h2 className="text-2xl font-bold text-foreground mb-2">
           {step === "verify-email-otp"
             ? t("checkYourEmail")
-            : t("getStartedShort")}
+            : step === "invite-code"
+              ? t("haveInviteCodeTitle")
+              : t("signInTitle")}
         </h2>
         <p className="text-muted-foreground text-sm">
           {step === "verify-email-otp"
             ? t("weSentCodeTo", { email })
-            : t("aiPoweredTagline")}
+            : step === "invite-code"
+              ? t("haveInviteCodeSubtitle")
+              : t("signInSubtitle")}
         </p>
       </div>
 
@@ -303,19 +340,73 @@ export default function SignInPage() {
               type="email"
               placeholder="doctor@example.com"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                if (emailError) setEmailError(null);
+              }}
               onKeyDown={(e) => e.key === "Enter" && handleEmailContinue()}
+              aria-invalid={emailError !== null}
               autoFocus
             />
+            {emailError === "generic" && emailErrorMessage && (
+              <p
+                className="mt-1.5 text-xs text-destructive"
+                role="alert"
+                aria-live="polite"
+              >
+                {emailErrorMessage}
+              </p>
+            )}
           </div>
-          <Button
-            onClick={handleEmailContinue}
-            disabled={loading || !email}
-            className="w-full"
-            size="lg"
-          >
-            {loading ? t("checking") : tc("continue")}
-          </Button>
+
+          {emailError === "not_recognized" ? (
+            <div
+              className="rounded-lg border border-destructive/30 bg-destructive/5 p-3 space-y-2"
+              role="alert"
+              aria-live="polite"
+            >
+              <p className="text-sm font-medium text-foreground">
+                {t("emailNotRecognizedTitle")}
+              </p>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                {t("emailNotRecognizedHint")}
+              </p>
+              <div className="flex flex-col sm:flex-row gap-2 pt-1">
+                <Button
+                  onClick={() => {
+                    setStep("invite-code");
+                    setEmailError(null);
+                    setEmailErrorMessage("");
+                  }}
+                  size="sm"
+                  className="flex-1"
+                >
+                  {t("useInviteCodeAction")}
+                </Button>
+                <Button
+                  onClick={() => {
+                    setEmail("");
+                    setEmailError(null);
+                    setEmailErrorMessage("");
+                  }}
+                  variant="outline"
+                  size="sm"
+                  className="flex-1"
+                >
+                  {t("tryDifferentEmailAction")}
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <Button
+              onClick={handleEmailContinue}
+              disabled={loading || !email}
+              className="w-full"
+              size="lg"
+            >
+              {loading ? t("checking") : tc("continue")}
+            </Button>
+          )}
 
           {/* Divider */}
           <div className="relative my-2">
@@ -358,30 +449,86 @@ export default function SignInPage() {
             {t("continueWithGoogle")}
           </Button>
 
-          {/* Phone — disabled until SMS provider (MSG91) is live */}
-          <Button
-            disabled
-            variant="outline"
-            size="lg"
-            className="w-full h-12 text-sm font-medium opacity-60 cursor-not-allowed"
-            title="Phone sign-in coming soon"
-          >
-            <svg
-              className="w-5 h-5 mr-2"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+          {/* Don't have an account? — invite-only branch */}
+          <div className="pt-2 text-center text-sm text-muted-foreground">
+            {t("dontHaveAccountQ")}{" "}
+            <button
+              type="button"
+              onClick={() => {
+                setStep("invite-code");
+                setEmailError(null);
+                setEmailErrorMessage("");
+              }}
+              className="font-medium text-primary hover:underline"
             >
-              <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z" />
-            </svg>
-            <span>{t("continueWithPhone")}</span>
-            <span className="ml-2 rounded-full border border-border bg-background/40 px-2 py-0.5 text-[10px] uppercase tracking-wider text-muted-foreground">
-              Soon
-            </span>
+              {t("enterInviteCode")}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Invite Code Step */}
+      {step === "invite-code" && (
+        <div className="space-y-4">
+          <div>
+            <label
+              htmlFor="invite-code"
+              className="text-sm font-medium mb-1.5 block"
+            >
+              {t("inviteCodeLabel")}
+            </label>
+            <Input
+              id="invite-code"
+              name="invite-code"
+              type="text"
+              autoComplete="off"
+              autoCapitalize="characters"
+              spellCheck={false}
+              placeholder={t("inviteCodePlaceholder")}
+              value={inviteCode}
+              onChange={(e) => {
+                setInviteCode(e.target.value);
+                if (inviteCodeError) setInviteCodeError(null);
+              }}
+              onKeyDown={(e) =>
+                e.key === "Enter" &&
+                inviteCode.trim().length >= 6 &&
+                handleInviteCodeSubmit()
+              }
+              autoFocus
+            />
+            {inviteCodeError && (
+              <p
+                className="mt-1.5 text-xs text-destructive"
+                role="alert"
+                aria-live="polite"
+              >
+                {inviteCodeErrorText(inviteCodeError)}
+              </p>
+            )}
+          </div>
+          <Button
+            onClick={handleInviteCodeSubmit}
+            disabled={loading || inviteCode.trim().length < 6}
+            className="w-full"
+            size="lg"
+          >
+            {loading ? t("checkingInviteCode") : tc("continue")}
           </Button>
+
+          <div className="pt-2 text-center text-sm text-muted-foreground">
+            {t("alreadyHaveAccountQ")}{" "}
+            <button
+              type="button"
+              onClick={() => {
+                setStep("email");
+                setInviteCodeError(null);
+              }}
+              className="font-medium text-primary hover:underline"
+            >
+              {t("signInLink")}
+            </button>
+          </div>
         </div>
       )}
 
@@ -474,48 +621,6 @@ export default function SignInPage() {
               </button>
             )}
           </div>
-        </div>
-      )}
-
-      {/* Phone Step */}
-      {step === "phone" && (
-        <div className="space-y-4">
-          <div>
-            <label className="text-sm font-medium mb-1.5 block">
-              {t("phoneNumber")}
-            </label>
-            <div className="flex gap-2">
-              <div className="flex items-center justify-center rounded-lg border border-border/60 bg-background/50 px-3 text-sm text-muted-foreground h-10">
-                +91
-              </div>
-              <Input
-                type="text"
-                inputMode="tel"
-                placeholder="9876543210"
-                value={phone}
-                onChange={(e) => {
-                  const v = e.target.value.replace(/[^0-9]/g, "");
-                  setPhone(v.slice(0, 10));
-                }}
-                onKeyDown={(e) => e.key === "Enter" && handlePhoneSubmit()}
-                autoFocus
-              />
-            </div>
-          </div>
-          <Button
-            onClick={handlePhoneSubmit}
-            disabled={loading || phone.length !== 10}
-            className="w-full"
-            size="lg"
-          >
-            {loading ? t("sendingOtp") : t("sendOtp")}
-          </Button>
-          <button
-            onClick={() => setStep("email")}
-            className="w-full text-xs text-muted-foreground hover:text-foreground transition-colors"
-          >
-            {t("backToOtherOptions")}
-          </button>
         </div>
       )}
 

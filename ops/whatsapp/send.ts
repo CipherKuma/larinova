@@ -6,17 +6,19 @@
  *   npm run send -- --to=919884009228@c.us --text="hello"
  *   npm run send -- --group="xaviour" --text="team update"
  *   npm run send -- --to=919884009228@c.us --file=/tmp/doc.pdf --caption="FYI"
+ *   npm run send -- --to=919884009228@c.us --files=/tmp/a.pdf,/tmp/b.pdf
  *
  * Flags:
  *   --to=<jid>         Target JID, e.g. 919884009228@c.us (note: @c.us suffix)
  *   --group=<match>    Case-insensitive substring match against group names
  *   --text=<string>    Text message body
  *   --file=<path>      Attachment path (image, pdf, etc.)
+ *   --files=<paths>    Comma-separated attachment paths
  *   --caption=<string> Optional caption for media
  *   --as-document      Force file to attach as document (not inline image)
  */
 
-import { AUTH_DIR, CLIENT_ID, PUPPETEER_OPTS } from "./config";
+import { AUTH_DIR, CLIENT_ID, PUPPETEER_OPTS, USER_AGENT } from "./config";
 
 type Args = Record<string, string | boolean>;
 const args: Args = {};
@@ -34,15 +36,25 @@ const to = args.to as string | undefined;
 const groupMatch = args.group as string | undefined;
 const text = args.text as string | undefined;
 const file = args.file as string | undefined;
+const files = args.files as string | undefined;
 const caption = args.caption as string | undefined;
 const asDocument = args["as-document"] === true;
+const filePaths = [
+  ...(file ? [file] : []),
+  ...(files
+    ? files
+        .split(",")
+        .map((path) => path.trim())
+        .filter(Boolean)
+    : []),
+];
 
 if (!to && !groupMatch) {
   console.error("Need --to=<jid> or --group=<match>");
   process.exit(1);
 }
-if (!text && !file) {
-  console.error("Need --text=<string> or --file=<path>");
+if (!text && filePaths.length === 0) {
+  console.error("Need --text=<string>, --file=<path>, or --files=<paths>");
   process.exit(1);
 }
 
@@ -52,6 +64,7 @@ const { Client, LocalAuth, MessageMedia } = wwebjs.default ?? wwebjs;
 const client = new Client({
   authStrategy: new LocalAuth({ clientId: CLIENT_ID, dataPath: AUTH_DIR }),
   puppeteer: PUPPETEER_OPTS,
+  userAgent: USER_AGENT,
 });
 
 client.on("qr", () => {
@@ -84,16 +97,17 @@ client.on("ready", async () => {
       console.log(`→ Resolved group "${match.name}" → ${target}`);
     }
 
-    if (file) {
-      const media = MessageMedia.fromFilePath(file);
-      await client.sendMessage(target!, media, {
-        caption: caption ?? text,
-        sendMediaAsDocument: asDocument,
-      });
-      console.log(`✓ Sent ${file} to ${target}`);
-    } else {
+    if (text) {
       await client.sendMessage(target!, text!);
       console.log(`✓ Sent text to ${target}`);
+    }
+    for (const filePath of filePaths) {
+      const media = MessageMedia.fromFilePath(filePath);
+      await client.sendMessage(target!, media, {
+        caption: caption && filePaths.length === 1 ? caption : undefined,
+        sendMediaAsDocument: asDocument,
+      });
+      console.log(`✓ Sent ${filePath} to ${target}`);
     }
   } catch (err) {
     console.error(`✗ Failed: ${(err as Error).message}`);

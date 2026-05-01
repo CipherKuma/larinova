@@ -166,7 +166,22 @@
     "failedToSendOtp": "Gagal mengirim OTP",
     "firstNameRequired": "Nama depan wajib diisi",
     "lastNameRequired": "Nama belakang wajib diisi",
-    "emailRequired": "Email wajib diisi"
+    "emailRequired": "Email wajib diisi",
+    "signInTitle": "Selamat datang kembali",
+    "signInSubtitle": "Masuk untuk melanjutkan ke Larinova",
+    "dontHaveAccountQ": "Belum punya akun?",
+    "enterInviteCode": "Masukkan kode undangan",
+    "haveInviteCodeTitle": "Punya kode undangan?",
+    "haveInviteCodeSubtitle": "Larinova hanya tersedia melalui undangan selama alpha. Tempel kode dari email undangan Anda, atau klik tautan di email untuk melewati langkah ini.",
+    "inviteCodeLabel": "Kode undangan",
+    "inviteCodePlaceholder": "LARINOVA-XXXXX",
+    "alreadyHaveAccountQ": "Sudah punya akun?",
+    "signInLink": "Masuk",
+    "emailNotRecognizedTitle": "Email ini belum terdaftar",
+    "emailNotRecognizedHint": "Larinova hanya tersedia melalui undangan saat ini. Jika Anda punya undangan, masukkan kode untuk membuat akun.",
+    "useInviteCodeAction": "Gunakan kode undangan",
+    "tryDifferentEmailAction": "Coba email lain",
+    "checkingInviteCode": "Memeriksa..."
   },
   "onboarding": {
     "welcome": "Selamat datang di Larinova",

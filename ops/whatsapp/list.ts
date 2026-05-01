@@ -10,7 +10,7 @@
  *   npm run list -- --search=xaviour
  */
 
-import { AUTH_DIR, CLIENT_ID, PUPPETEER_OPTS } from "./config";
+import { AUTH_DIR, CLIENT_ID, PUPPETEER_OPTS, USER_AGENT } from "./config";
 
 type Args = Record<string, string | boolean>;
 const args: Args = {};
@@ -31,6 +31,7 @@ const { Client, LocalAuth } = wwebjs.default ?? wwebjs;
 const client = new Client({
   authStrategy: new LocalAuth({ clientId: CLIENT_ID, dataPath: AUTH_DIR }),
   puppeteer: PUPPETEER_OPTS,
+  userAgent: USER_AGENT,
 });
 
 client.on("qr", () => {

@@ -10,6 +10,7 @@ Maintain with: /maintain-agents-md
 -->
 
 ## Installed CLIs
+
 - `gh` — GitHub CLI. Use for PRs, issues, workflow runs. Prefer over GitHub MCP.
 - `vercel` — Deployment CLI. Larinova deploys to Vercel. Use `vercel ls`, `vercel logs`, `vercel env`.
 - `supabase` — Supabase CLI. Migrations, local DB, RLS testing. Prefer over Supabase MCP for routine work.
@@ -23,6 +24,7 @@ Maintain with: /maintain-agents-md
 ## Project scripts
 
 ### `app/` (product, `pnpm`)
+
 - `pnpm dev` — Next.js dev server
 - `pnpm build` — Production build
 - `pnpm start` — Serve production build
@@ -33,20 +35,25 @@ Maintain with: /maintain-agents-md
 - `pnpm test:e2e:report` — Upload test results to Notion via `tests/e2e/helpers/notion-report.ts`
 
 ### `landing/` (marketing, `npm`)
+
 - `npm run dev` — Next.js dev server
 - `npm run build` — Production build
 - `npm run start` — Serve production build
 - `npm run lint` — ESLint
 
 ## Preferred shell patterns
+
 - **Playwright auth:** always pass `--session=<name>` — never launch a raw browser just to test authed flows. See testing-rules.md.
 - **Env vars:** run `~/.claude/vault/inject.sh get <VAR> --dir <subdir>` — do not hand-edit `.env.local` beyond what vault writes.
 - **Vercel verify:** after push, `vercel ls larinova-app` / `vercel ls larinova-landing` to check Ready. A fix is only done when verified on the live URL, impersonated as a non-admin user.
 - **Supabase migrations:** use `supabase db push` from the `app/` directory. The `APPLY_MIGRATIONS.sql` is a staging file, not authoritative.
 - **Shadcn components:** use the `shadcn` skill. New components go via the CLI, not hand-written.
 - **Locale copy edits:** `landing/` copy → `src/data/locale-content.ts` (both `in` + `id` entries). `app/` copy → `messages/in.json` or `messages/id.json`.
+- **WhatsApp send verification:** after any WhatsApp send, verify the target chat itself before claiming success. For Marty/personal sends, query `~/Library/Group Containers/group.net.whatsapp.WhatsApp.shared/ChatStorage.sqlite` and, for browser fallback, capture a WhatsApp Web screenshot. `whatsapp-web.js` can report progress while a UI fallback still failed; do not trust an intermediate log alone.
+- **WhatsApp Web current UA:** if `ops/whatsapp` hangs before `ready` or shows "WhatsApp works with Google Chrome 85+", set/use a modern Chrome user agent from `ops/whatsapp/config.ts`; the old `whatsapp-web.js` default Chrome 101 UA is unreliable in this environment.
 
 ## Things to avoid
+
 - Do **not** install Playwright MCP or Chrome DevTools MCP. `playwright-cli-sessions` covers both. See `~/Documents/infra/playwright-cli-sessions/docs/DEVTOOLS-PARITY-PROPOSAL.md` for the extension plan if coverage gaps emerge.
 - Do **not** read `.env.master` directly — always go through `inject.sh`.
 - Do **not** commit anything under `.next/`, `node_modules/`, `test-results/`, or any `*.tsbuildinfo`.
@@ -55,82 +62,85 @@ Maintain with: /maintain-agents-md
 - Do **not** add stat-card dashboards — lead with the primary action. See ui-rules.md.
 - Do **not** modify migrations that have already shipped to prod. Create a new forward migration instead.
 - Do **not** hardcode copy — always pull from `locale-content.ts` (landing) or `messages/*.json` (app).
-
+- Do **not** address Balachandar Seeman casually ("bro"). He is an elder goodwill advisor for Larinova; use "Seeman Sir" and keep WhatsApp follow-ups concise, respectful, and context-aware.
+- Do **not** assume Mac WhatsApp `@lid` chat IDs work cleanly with `whatsapp-web.js` sends. If a `@lid` recipient hangs, use WhatsApp Web search by contact name and verify the sent message in the chat.
 
 <claude-mem-context>
 # Memory Context
 
-# [larinova] recent context, 2026-04-28 4:41pm GMT+5:30
+# [larinova] recent context, 2026-05-01 3:25pm GMT+5:30
 
 Legend: 🎯session 🔴bugfix 🟣feature 🔄refactor ✅change 🔵discovery ⚖️decision
 Format: ID TIME TYPE TITLE
 Fetch details: get_observations([IDs]) | Search: mem-search skill
 
-Stats: 50 obs (20,135t read) | 762,076t work | 97% savings
+Stats: 50 obs (21,350t read) | 1,231,086t work | 98% savings
 
 ### Apr 26, 2026
-S176 Larinova India OPD Landing Hero — WarpField canvas animation added and visually verified (Apr 26 at 2:50 PM)
-S179 Larinova India OPD Landing — WarpField lifted to page level + hero layout fine-tuning (Apr 26 at 3:01 PM)
-S182 Larinova Admin Issues UI — List, Detail, Status Updates, and Reply Chat (Apr 26 at 3:12 PM)
 S183 Larinova Landing — Migrate all CTAs to survey-gated access model, fix build errors, push to GitHub, verify Vercel deployment (Apr 26 at 3:24 PM)
 S252 Send a follow-up email to Gabriel's dad regarding company documents and action items from a previously sent email (Apr 26 at 3:25 PM)
 ### Apr 27, 2026
 S501 Sarvam AI Streaming WebSocket API — Critical Gaps in Official Documentation (Apr 27 at 1:28 PM)
-963 1:32p 🔵 Gmail API Access — Larinova OAuth Credentials Work as `gog` CLI Fallback
 ### Apr 28, 2026
-1376 10:39a 🔵 Larinova Audio Transcription Pipeline — Codebase Architecture Mapped
-1377 10:40a 🔵 Larinova Transcription — Inconsistent Noise Suppression Across getUserMedia Call Sites
-1378 10:41a 🔵 Doctor Signup Flow — Slow API Performance and Redundant Email Verification Identified
-1379 10:42a 🔵 Larinova App — Auth and Signup Route Architecture Mapped
-1380 " 🔵 Doctor Signup Flow — Dual UX Defects Identified
-1381 10:43a 🔵 Sarvam AI STT Docs — Index Page Only, Full Spec at llms-full.txt
-1385 10:44a 🔵 Doctor Signup — Slow API Latency and Redundant Email Verification Flow Identified
-1390 10:45a 🔵 Doctor Signup Flow — Slow API Response and Redundant Email Verification UX Bugs Identified
-1391 " 🔵 Sarvam AI Streaming WebSocket API — Critical Gaps in Official Documentation
-1392 " 🔵 Sarvam AI Saaras V3 — Benchmarks, Capabilities, and Streaming Modes Documented
 S503 Doctor Signup — Dual UX Defects Identified: 20s Latency + Redundant Email Verification (Apr 28 at 10:45 AM)
-1399 10:49a 🟣 Larinova STT — saaras:v3 Hot Fix Shipped (Step 1 of 3)
-1400 " ⚖️ Larinova STT — Three-Step Upgrade Plan Decided
-1402 10:50a 🔵 Larinova — Legacy AssemblyAI Realtime Route Still Present Alongside Sarvam Path
-1403 " 🔵 Doctor Signup — Dual UX Defects Identified: 20s Latency + Redundant Email Verification
 S507 User asked whether all problems are properly solved — confidence check on Larinova signup/invite fixes (Apr 28 at 10:50 AM)
-1412 10:56a 🟣 Larinova — stt-proxy WebSocket Service Created at infra/stt-proxy
-1413 10:57a 🔵 Sarvam WebSocket Wire Protocol — Audio Sent as Base64 JSON, Not Binary Frames
-1414 10:58a 🔵 Sarvam Streaming STT — Confirmed Wire Format and Event Shapes
-1415 " 🔵 Larinova App — No JWT Library Available, Only Supabase Crypto
-1416 10:59a 🟣 Larinova — STT Proxy JWT Token Issuer Created (lib/stt/issue-token.ts)
-1418 11:00a 🟣 Larinova — useSarvamStreamingSTT Hook Created with Full WebSocket + AudioWorklet Pipeline
-1419 11:02a 🟣 Larinova — Streaming STT Feature Flag Added to TranscriptionViewStreaming
-1420 " 🔵 Larinova Diarize Route — LLM-Based Speaker Labeling, Not Sarvam Batch API
-1423 11:04a 🟣 Larinova STT Step 2 — Build Verified Clean, stt-token Route Confirmed Built
-1429 11:06a 🟣 Larinova STT Step 2 — Shipped to main (commit ff9f1ab)
-1433 11:10a 🔵 Password Field Shows Generic "Invalid input" Error Instead of Specific Validation Feedback
-1435 " 🔵 Zod v4 Default Error Messages — Root Cause of "Invalid input" on Password Field
-1437 11:11a 🔵 Larinova Auth — Validation i18n Keys Exist But Not Wired to Zod Schema; Missing Keys Added
-1438 11:12a 🔴 Larinova Sign-Up Form — Generic "Invalid input" Replaced with Specific Validation Messages
-1441 11:13a 🔴 Larinova Sign-Up Validation Fix Deployed to Production on Vercel
-1443 11:14a 🔴 Larinova Auth — Invite Code Not Claimed on Pre-Verified Signup; Session Missing After admin.createUser
-1444 11:15a 🔴 Larinova Invite Claim Fix Deployed to Production — Vercel Ready in 45s
-1446 11:17a 🔵 Larinova Vault Supabase URL Points to Wrong Project (Rax Instance)
-1447 " 🔵 Larinova Supabase — Correct Project ID afitpprgfsidrnrrhvzs, Doctor Row State, and Missing sent_at Column
-1448 11:18a 🔴 Larinova — Stale Auth User and Doctor Row Deleted, Invite Code Reset for 1inchunitedefi@gmail.com
 S509 Larinova Auth Migration — Remove passwords entirely, implement OTP-only for email login and direct OAuth for Google/providers (Apr 28 at 11:19 AM)
-1449 11:23a ⚖️ Larinova Auth — Passwordless-Only Login Strategy Proposed
-1451 11:47a 🔵 Hero Loop Video — Session Search Results in Larinova Project
-1452 11:49a ⚖️ Password Flow Removal — Complete Elimination Decided
-1453 11:52a ⚖️ Auth Flow Design Confirmed — OTP for Email, Direct OAuth for Gmail/Providers
-1454 " 🔄 Larinova Signup Route Refactored — Password Auth Removed, OTP-Only Flow
-1455 11:53a ✅ Sign-Up Page Form Schema Updated — Password Field Removed from Type and Zod Schema
-1456 11:54a 🟣 Larinova Sign-Up Flow Fully Converted to OTP — Password Field Removed End-to-End
-1457 " 🔄 Sign-In Page Step Type Simplified — Password and Set-Password Steps Removed
-1458 11:55a 🔄 Sign-In Page — Password Auth Logic Fully Removed, Email Always Triggers OTP
-1459 12:07p 🟣 verify-otp Page Upgraded — Dual-Mode Support for Email OTP and SMS OTP
-1460 " 🟣 Larinova Passwordless Auth — Shipped to Production (commit deed255)
-1461 12:08p 🟣 Larinova Passwordless Auth — Deployed and Verified on Production
-1543 4:12p ⚖️ Demo Video Strategy — Planning Initiated for App Promo Video
-1544 4:13p 🔵 Skills Registry — Promo Video Skills Discovered via `npx skills find`
-S518 Mobile App Strategy — How to make the existing desktop web app available as a native iOS/Android app for doctors (Apr 28 at 4:14 PM)
-1548 4:23p ✅ Global Tool Rules Updated — Skill Discovery Enforcement Added for Fast-Moving Platforms
+S518 Mobile App Strategy — How to make the existing desktop web app available as a native iOS/Android app for doctors (Apr 28 at 12:08 PM)
+S554 Gmail OAuth Tokens Found in Larinova Ops — Two Accounts Authenticated (Apr 28 at 4:14 PM)
+### Apr 30, 2026
+S563 WhatsApp SQLite Mirror — Balachandar Seeman Conversation Accessible (Apr 30 at 10:10 AM)
+1902 3:28p 🔴 Larinova E2E auth.ts — expires_at Fallback + Cookie Clear Before Inject
+1903 " 🟣 Bala-06 — E2E Test: Today's Confirmed Appointment Surfaces on Dashboard and Consultations
+1906 3:30p 🔵 Bala-03 Root Cause — Missing Consultation Detail Route Blocks Prescription CTA
+1907 " 🔴 Larinova playwright.config.ts — webServer Port Mismatch Fixed
+1908 " ✅ Larinova — Vitest Unit Tests Pass for app/lib/appointments/schedule.ts (2/2)
+1909 3:31p 🔴 Bala-06 E2E — dashboard.spec.ts getByText Hidden Element Fix
+1911 3:33p 🟣 Bala-04 Structured Sick Leave Certificate Form Implemented and Shipped
+1912 " 🔵 Production Larinova Session Expired — Magic Link Auth Flow Required for QA Verification
+1913 " ✅ ops/whatsapp — Modern Chrome UA Config, Multi-File Send, @lid Caveat, Verification Requirements
+1914 " ✅ AGENTS.md — WhatsApp Operational Rules + Balachandar Seeman Etiquette Added
+1917 3:35p 🟣 Bala-06 — Commit 986f158: "fix(app): surface scheduled appointments" Pushed to Main
+1918 " 🔵 Larinova app/ — app/lib/appointments/schedule.ts Architecture: appointmentToScheduleEntry + sortScheduleEntries
+1919 " 🔵 Larinova app/ — prettier Not Installed; pnpm lint Broken with Missing Directory Error
+1921 3:36p 🔴 Bala-03 Prescription Workflow Fix — Production Verified on app.larinova.com
+1922 " ✅ Playwright Config — Port-Aware webServer Command + Auth Cookie Clear Fix
+1923 3:37p ⚖️ Bala-04 Certificate Form Workstream Relaunched After cmux Crash
+1926 3:38p 🔵 Bala-04 Production E2E Setup — QA Doctor/Patient Created via Supabase Admin API
+1927 " 🔵 SickLeaveCertificate DatePicker — Three Playwright Selector Bugs on Mobile Viewport
+1928 " 🔴 DatePicker Popover — avoidCollisions Replaced with collisionPadding for Mobile
+1929 " ✅ Bala-04 Unit Test Passing — sick-leave-certificate.test.ts Green
+1930 3:39p 🟣 Larinova — Scheduled Appointments Surface on Dashboard and Consultations
+1931 " ✅ Bala-04 DatePicker Fix Shipped — Amended into Production Commit and Force-Pushed
+1932 " 🔵 Bala-04 Feature Was Already Complete Before cmux Crash — Commit b3d96f5
+1933 3:41p 🔵 Vercel Inspect Status Polling — awk Pattern Fails to Parse Status Field
+1934 " 🔵 Bala-04 Certificate Created Successfully — Document Title Appears in Two DOM Elements
+1935 " 🔵 Vercel Deploy READY — Bala-04 DatePicker Fix Live in Production (47s Build)
+1936 " 🔵 DatePicker Calendar data-day Selector Ambiguity — Two Calendars Mounted Simultaneously
+1955 3:57p 🔄 Larinova ops/ Directory Reorganized and Gitignore Rules Hardened
+1963 4:00p 🔵 Larinova Investor Pitch Deck Session Found — Codex ID 019ddd77
+1967 4:02p 🔵 Larinova PWA Icon Wiring — SVG Geometric Placeholder Used Instead of Brand Logo
+1968 " 🔵 Larinova Full Brand Asset Inventory — All Image Files Mapped Across Monorepo
+S584 Larinova sign-in page UX redesign — handle invite-only access clearly for both returning doctors and new users needing invite codes (Apr 30 at 4:13 PM)
+1994 4:14p 🟣 Larinova Sign-In Page — Invite-Only Onboarding UX Redesign
+2000 4:18p 🔵 Larinova App Build Clean After Sign-In Redesign
+2001 4:20p 🔵 M2 Worker Can Access M4 Dev Server via Tailscale IP for Visual Testing
+2002 4:30p 🔵 Logo Audit Finder Open — `tr` and `cp` Not Found in Shell PATH
+### May 1, 2026
+2031 3:12p 🔵 Inbox Check — SunDAO Ventures Investor Speed Dating Event Requires Action
+2032 3:13p ⚖️ Indian Startup Banking — Switching from HDFC to ICICI iStartup Plan
+2033 " 🔵 Larinova Private Limited — Full Incorporation Facts Mapped
+2034 3:14p 🔵 Larinova Compliance TODO — Bank Recommendation Already Favors ICICI or Kotak (Not HDFC)
+2035 3:15p ⚖️ Indian Startup Registration — Banking Switch from HDFC to ICICI iStartup Plan
+2036 3:21p ⚖️ Indian Startup Registration — Bank Selection Switched from HDFC to ICICI iStartup Plan
+2037 " 🔵 Larinova Company Docs — Incorporation Document Inventory at ops/company-docs/
+2038 " 🔵 Playwright Attached Chrome on M2 Worker Was DEAD — Restarted Successfully
+2039 3:22p 🔵 inbox-monitor Skill Architecture — Gmail/X/LinkedIn Unified Scanner
+2040 " 🔵 gog CLI v0.11.0 Available — Google Workspace Swiss Army Knife
+2041 3:23p 🔵 ICICI Online Current Account Portal — Private Ltd Supported, Document Checklist Extracted
+2042 " 🔵 Larinova Pvt Ltd — Company Identifiers and Critical Post-Incorporation Deadlines
+2043 3:24p 🔵 Larinova ops/company-docs — Full Directory Structure Mapped
+2044 3:25p 🔵 ICICI CaOnline Portal — Angular Form Resists Playwright selectOption; Field IDs Fully Mapped
+2045 " 🔵 Larinova Admin Allowlist and Doctor Access Architecture Mapped
 
-Access 762k tokens of past work via get_observations([IDs]) or mem-search skill.
+Access 1231k tokens of past work via get_observations([IDs]) or mem-search skill.
 </claude-mem-context>
