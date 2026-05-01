@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Outfit, IBM_Plex_Mono, Cairo } from "next/font/google";
+import { PwaLaunchSplash } from "@/components/pwa/launch-splash";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
@@ -82,6 +83,7 @@ export default function RootLayout({
         <meta name="mobile-web-app-capable" content="yes" />
       </head>
       <body className={inter.className}>
+        <PwaLaunchSplash />
         {children}
         <Toaster />
       </body>
