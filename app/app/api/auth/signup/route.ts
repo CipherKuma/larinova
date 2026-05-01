@@ -1,5 +1,6 @@
 import { createClient as createServiceClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 
 // Error types for better error handling
 type SignupErrorType =
@@ -41,6 +42,43 @@ export async function POST(request: Request) {
       { auth: { autoRefreshToken: false, persistSession: false } },
     );
 
+    const cookieStore = await cookies();
+    const inviteCode = cookieStore
+      .get("larinova_invite_token")
+      ?.value.trim()
+      .toUpperCase();
+
+    if (!inviteCode) {
+      return NextResponse.json(
+        {
+          error: "Invite code required. Please use Get Started from your invite email or enter your invite code.",
+          errorType: "VALIDATION_ERROR" as SignupErrorType,
+        },
+        { status: 403 },
+      );
+    }
+
+    const { data: invite, error: inviteError } = await serviceClient
+      .from("larinova_invite_codes")
+      .select("code, email, consumed_at")
+      .eq("code", inviteCode)
+      .maybeSingle();
+
+    if (
+      inviteError ||
+      !invite ||
+      invite.consumed_at ||
+      invite.email?.toLowerCase() !== String(email).trim().toLowerCase()
+    ) {
+      return NextResponse.json(
+        {
+          error: "This invite code does not match the email on this signup.",
+          errorType: "VALIDATION_ERROR" as SignupErrorType,
+        },
+        { status: 403 },
+      );
+    }
+
     // Create the auth user with no password. email_confirm: true skips
     // Supabase's confirmation email — for invite-gated signup the email is
     // already proven (admin sent the invite; doctor clicked through). For
@@ -77,7 +115,8 @@ export async function POST(request: Request) {
       lastName ??
       (fullName ? fullName.split(/\s+/).slice(1).join(" ") || null : null);
 
-    const { error: profileError } = await serviceClient
+    const claimedAt = new Date().toISOString();
+    const { data: doctorRow, error: profileError } = await serviceClient
       .from("larinova_doctors")
       .insert({
         user_id: created.user.id,
@@ -88,8 +127,11 @@ export async function POST(request: Request) {
         specialization: "Not Specified",
         locale: "in",
         onboarding_completed: false,
+        invite_code_claimed_at: claimedAt,
         ...(phoneNumber ? { phone: phoneNumber } : {}),
-      });
+      })
+      .select("id")
+      .single();
 
     if (profileError) {
       return NextResponse.json(
@@ -102,17 +144,41 @@ export async function POST(request: Request) {
       );
     }
 
-    // Note: invite claim happens AFTER the doctor verifies their OTP, in the
-    // /verify-otp post-verify handler (which calls /api/invite/claim under
-    // the now-authenticated session). It can't run here — the user has no
-    // session yet, and claim_invite_code requires auth.uid().
-    return NextResponse.json({
+    await serviceClient
+      .from("larinova_invite_codes")
+      .update({
+        claimed_at: claimedAt,
+        claimed_by_user_id: created.user.id,
+        redeemed_at: claimedAt,
+        redeemed_by: created.user.id,
+      })
+      .eq("code", inviteCode)
+      .is("consumed_at", null);
+
+    if (doctorRow?.id) {
+      await serviceClient
+        .from("larinova_subscriptions")
+        .update({
+          plan: "pro",
+          status: "active",
+          current_period_end: new Date(
+            Date.now() + 30 * 24 * 60 * 60 * 1000,
+          ).toISOString(),
+          updated_at: claimedAt,
+        })
+        .eq("doctor_id", doctorRow.id)
+        .eq("plan", "free");
+    }
+
+    const response = NextResponse.json({
       success: true,
       user: {
         id: created.user.id,
         email: created.user.email,
       },
     });
+    response.cookies.set("larinova_invite_token", "", { path: "/", maxAge: 0 });
+    return response;
   } catch (error) {
     return NextResponse.json(
       {

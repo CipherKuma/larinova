@@ -429,30 +429,82 @@ export default function SignInPage() {
                     </a>
                   </Button>
                 )}
-                <Button
-                  onClick={() => {
-                    setStep("invite-code");
-                    setEmailError(null);
-                    setEmailErrorMessage("");
-                  }}
-                  size="sm"
-                  variant="secondary"
-                  className="w-full"
-                >
-                  {t("enterInviteCodeAction")}
-                </Button>
-                <Button
-                  onClick={() => {
-                    setEmail("");
-                    setEmailError(null);
-                    setEmailErrorMessage("");
-                  }}
-                  variant="outline"
-                  size="sm"
-                  className="w-full"
-                >
-                  {t("tryDifferentEmailAction")}
-                </Button>
+                {emailError === "pending_invite" ? (
+                  <div className="space-y-2">
+                    <label
+                      htmlFor="pending-invite-code"
+                      className="text-sm font-medium text-foreground"
+                    >
+                      {t("inviteCodeLabel")}
+                    </label>
+                    <Input
+                      id="pending-invite-code"
+                      name="pending-invite-code"
+                      type="text"
+                      autoComplete="off"
+                      autoCapitalize="characters"
+                      spellCheck={false}
+                      placeholder={t("inviteCodePlaceholder")}
+                      value={inviteCode}
+                      onChange={(e) => {
+                        setInviteCode(e.target.value);
+                        if (inviteCodeError) setInviteCodeError(null);
+                      }}
+                      onKeyDown={(e) =>
+                        e.key === "Enter" &&
+                        inviteCode.trim().length >= 6 &&
+                        handleInviteCodeSubmit()
+                      }
+                    />
+                    <p className="text-xs leading-relaxed text-muted-foreground">
+                      {t("inviteCodeNotOtpHint")}
+                    </p>
+                    {inviteCodeError && (
+                      <p
+                        className="text-xs text-destructive"
+                        role="alert"
+                        aria-live="polite"
+                      >
+                        {inviteCodeErrorText(inviteCodeError)}
+                      </p>
+                    )}
+                    <Button
+                      onClick={handleInviteCodeSubmit}
+                      disabled={loading || inviteCode.trim().length < 6}
+                      size="sm"
+                      className="w-full"
+                    >
+                      {loading ? t("checkingInviteCode") : tc("continue")}
+                    </Button>
+                  </div>
+                ) : (
+                  <Button
+                    onClick={() => {
+                      setStep("invite-code");
+                      setEmailError(null);
+                      setEmailErrorMessage("");
+                    }}
+                    size="sm"
+                    variant="secondary"
+                    className="w-full"
+                  >
+                    {t("enterInviteCodeAction")}
+                  </Button>
+                )}
+                {emailError !== "pending_invite" && (
+                  <Button
+                    onClick={() => {
+                      setEmail("");
+                      setEmailError(null);
+                      setEmailErrorMessage("");
+                    }}
+                    variant="outline"
+                    size="sm"
+                    className="w-full"
+                  >
+                    {t("tryDifferentEmailAction")}
+                  </Button>
+                )}
               </div>
             </div>
           ) : (

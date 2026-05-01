@@ -39,6 +39,10 @@ export default function AuthCallbackPage() {
         return;
       }
 
+      // If this callback came from invite signup, claim first while the invite
+      // cookie is still present. Then read the doctor row.
+      await fetch("/api/invite/claim", { method: "POST" }).catch(() => {});
+
       // Check if doctor profile exists
       const { data: doctor } = await supabase
         .from("larinova_doctors")
@@ -56,11 +60,6 @@ export default function AuthCallbackPage() {
         router.push(`/${locale}/sign-in`);
         return;
       }
-
-      // Claim the invite code now that we're authenticated. Best-effort —
-      // the proxy will bounce the user to /access on the next nav if this
-      // fails (e.g. cookie expired between code entry and OTP verify).
-      await fetch("/api/invite/claim", { method: "POST" }).catch(() => {});
 
       if (!doctor || !doctor.onboarding_completed) {
         router.push(`/${locale}/onboarding`);

@@ -54,6 +54,11 @@ export default function VerifyOtpPage() {
     } = await supabase.auth.getUser();
     if (!user) return;
 
+    // If this OTP came from invite signup, claim first while the invite cookie
+    // is still present. Then read the doctor row. Older code checked the claim
+    // before claiming, which left valid invite signups stuck as "pending".
+    await fetch("/api/invite/claim", { method: "POST" }).catch(() => {});
+
     const { data: doctor } = await supabase
       .from("larinova_doctors")
       .select(
@@ -70,9 +75,6 @@ export default function VerifyOtpPage() {
       router.push("/sign-in");
       return;
     }
-
-    // Best-effort invite claim. Cookie set on /access; ignored if absent.
-    await fetch("/api/invite/claim", { method: "POST" }).catch(() => {});
 
     if (!doctor || !doctor.onboarding_completed) {
       router.push("/onboarding");

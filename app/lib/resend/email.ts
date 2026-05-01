@@ -611,6 +611,16 @@ function generateAlphaWelcomeHtml({
               </tr>
             </table>
 
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="dm-panel" style="background:#f8fafc; border:1px solid #e4e9ef; border-radius:10px; margin:0 0 28px;">
+              <tr>
+                <td style="padding:18px 20px; text-align:center;">
+                  <div class="dm-text-muted" style="font-size:12px; color:#6a7681; margin-bottom:8px;">If the button opens in your browser instead of the installed app, open Larinova from your home screen and enter this invite code:</div>
+                  <div class="dm-text-strong" style="display:inline-block; padding:10px 16px; border-radius:8px; background:#0a1224; color:#ffffff; font-size:18px; font-weight:700; letter-spacing:1.5px;">${escHtml(code.toUpperCase())}</div>
+                  <div class="dm-text-muted" style="font-size:12px; color:#6a7681; margin-top:8px;">This is your invite code, not the 6-digit login OTP.</div>
+                </td>
+              </tr>
+            </table>
+
             <!-- personal hello note above the video -->
             <p class="dm-text" style="margin:8px 0 14px; font-size:14px; color:#3d4f56; line-height:1.6; text-align:center;">
               I recorded a quick hello — 40 seconds, just me saying thanks and what to try first.
