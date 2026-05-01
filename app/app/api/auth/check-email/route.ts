@@ -29,15 +29,28 @@ export async function POST(request: NextRequest) {
       doctor?.invite_code_claimed_at || doctor?.invite_code_redeemed_at,
     );
 
+    const { data: pendingInvite } = await supabase
+      .from("larinova_invite_codes")
+      .select("code")
+      .eq("email", normalizedEmail)
+      .is("claimed_at", null)
+      .is("redeemed_at", null)
+      .is("consumed_at", null)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
     return NextResponse.json({
       exists: hasAlphaDoctorAccess,
       hasDoctorProfile: !!doctor,
+      hasPendingInvite: !!pendingInvite,
       isAdmin: isAdminEmail(normalizedEmail),
       onboardingCompleted: doctor?.onboarding_completed ?? false,
     });
   } catch {
     return NextResponse.json({
       exists: false,
+      hasPendingInvite: false,
       isAdmin: false,
       onboardingCompleted: false,
     });

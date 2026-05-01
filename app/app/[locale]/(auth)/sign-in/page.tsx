@@ -13,7 +13,7 @@ import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 
 type Step = "email" | "verify-email-otp" | "invite-code";
-type EmailError = null | "not_recognized" | "generic";
+type EmailError = null | "not_recognized" | "pending_invite" | "generic";
 type InviteCodeError =
   | null
   | "invalid_or_used_code"
@@ -131,6 +131,12 @@ export default function SignInPage() {
 
       if (access?.isAdmin && !access?.exists) {
         window.location.assign("/admin/sign-in");
+        return;
+      }
+
+      if (access?.hasPendingInvite && !access?.exists) {
+        setEmailError("pending_invite");
+        setEmailErrorMessage("");
         return;
       }
 
@@ -381,37 +387,48 @@ export default function SignInPage() {
             )}
           </div>
 
-          {emailError === "not_recognized" ? (
+          {emailError === "not_recognized" ||
+          emailError === "pending_invite" ? (
             <div
               className="rounded-lg border border-destructive/30 bg-destructive/5 p-4 space-y-3"
               role="alert"
               aria-live="polite"
             >
               <p className="text-base font-semibold text-foreground">
-                {t("emailNotRecognizedTitle")}
+                {emailError === "pending_invite"
+                  ? t("emailPendingInviteTitle")
+                  : t("emailNotRecognizedTitle")}
               </p>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                {t("emailNotRecognizedHint")}
+                {emailError === "pending_invite"
+                  ? t("emailPendingInviteHint")
+                  : t("emailNotRecognizedHint")}
               </p>
+              {emailError === "not_recognized" && (
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {t("emailNotRecognizedRequest")}{" "}
+                  <a
+                    className="font-medium text-primary hover:underline"
+                    href="mailto:gabriel@larinova.com?subject=Larinova%20doctor%20alpha%20access"
+                  >
+                    gabriel@larinova.com
+                  </a>
+                  .
+                </p>
+              )}
               <p className="text-sm text-muted-foreground leading-relaxed">
-                {t("emailNotRecognizedRequest")}{" "}
-                <a
-                  className="font-medium text-primary hover:underline"
-                  href="mailto:gabriel@larinova.com?subject=Larinova%20doctor%20alpha%20access"
-                >
-                  gabriel@larinova.com
-                </a>
-                .
-              </p>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                {t("emailNotRecognizedExistingAccess")}
+                {emailError === "pending_invite"
+                  ? t("emailPendingInviteExistingAccess")
+                  : t("emailNotRecognizedExistingAccess")}
               </p>
               <div className="flex flex-col gap-2 pt-1">
-                <Button asChild size="sm" className="w-full">
-                  <a href="mailto:gabriel@larinova.com?subject=Larinova%20doctor%20alpha%20access">
-                    {t("requestAccessAction")}
-                  </a>
-                </Button>
+                {emailError === "not_recognized" && (
+                  <Button asChild size="sm" className="w-full">
+                    <a href="mailto:gabriel@larinova.com?subject=Larinova%20doctor%20alpha%20access">
+                      {t("requestAccessAction")}
+                    </a>
+                  </Button>
+                )}
                 <Button
                   onClick={() => {
                     setStep("invite-code");
@@ -449,7 +466,8 @@ export default function SignInPage() {
             </Button>
           )}
 
-          {emailError !== "not_recognized" && (
+          {emailError !== "not_recognized" &&
+            emailError !== "pending_invite" && (
             <>
               {/* Divider */}
               <div className="relative my-2">
@@ -494,7 +512,8 @@ export default function SignInPage() {
             </>
           )}
 
-          {emailError !== "not_recognized" && (
+          {emailError !== "not_recognized" &&
+            emailError !== "pending_invite" && (
             <div className="pt-2 text-center text-sm text-muted-foreground">
               {t("dontHaveAccountQ")}{" "}
               <button
