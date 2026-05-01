@@ -65,6 +65,19 @@ const generatedBrandFiles = [
   "patient-portal/app/favicon.ico",
 ];
 
+const generatedBrandHashes = {
+  "app/app/icon.png":
+    "7944c954de6050d9e52130c7c633a0b850af94e2e8db366ab0a2c21319eaa6b4",
+  "app/public/icons/apple-touch-icon-180.png":
+    "a08aa93e8d29accb4386ab0f572eda152d3475d3ff4f8fc56cb5c176ef3a458d",
+  "app/public/icons/icon-192.png":
+    "0d704750d042e26988d9b19db20397acb6931183051a5cf0c378f726d8a5377c",
+  "app/public/icons/icon-512.png":
+    "7944c954de6050d9e52130c7c633a0b850af94e2e8db366ab0a2c21319eaa6b4",
+  "app/public/icons/icon-maskable-512.png":
+    "7944c954de6050d9e52130c7c633a0b850af94e2e8db366ab0a2c21319eaa6b4",
+};
+
 const forbiddenPaths = [
   "app/app/icon.svg",
   "landing/src/app/icon.svg",
@@ -162,6 +175,14 @@ for (const relativePath of forbiddenPaths) {
 for (const relativePath of generatedBrandFiles) {
   if (!existsSync(fullPath(relativePath))) {
     fail(`Missing generated brand file: ${relativePath}`);
+  }
+}
+
+for (const [relativePath, expected] of Object.entries(generatedBrandHashes)) {
+  if (!existsSync(fullPath(relativePath))) continue;
+  const actual = sha256(relativePath);
+  if (actual !== expected) {
+    fail(`${relativePath} does not match the approved generated app icon`);
   }
 }
 

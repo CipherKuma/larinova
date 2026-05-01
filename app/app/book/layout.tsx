@@ -33,7 +33,7 @@ export default function BookLayout({
       <head>
         <link
           rel="apple-touch-icon"
-          href="/icons/apple-touch-icon-180.png?v=20260430"
+          href="/icons/apple-touch-icon-180.png?v=20260501"
         />
         <meta name="theme-color" content="#0b0b0f" />
       </head>

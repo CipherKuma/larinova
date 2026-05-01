@@ -46,7 +46,7 @@ export function PwaLaunchSplash() {
           className="pwa-launch-splash__icon"
           height={104}
           priority
-          src="/shared/larinova-icon.png"
+          src="/shared/dark-mode-icon-only.png"
           width={104}
         />
       </div>
