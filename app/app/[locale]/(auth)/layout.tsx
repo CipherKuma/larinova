@@ -26,10 +26,10 @@ export default function AuthLayout({
   const { headline, subtitle } = slogans[locale] ?? slogans.en;
 
   return (
-    <div className="relative min-h-screen grid grid-cols-1 lg:grid-cols-2">
+    <div className="relative min-h-dvh grid grid-cols-1 lg:grid-cols-2 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]">
       <ParticleDust />
       {/* Left — Form */}
-      <div className="relative z-10 flex flex-col min-h-screen">
+      <div className="relative z-10 flex flex-col min-h-dvh">
         <div className="flex-1 flex items-center justify-center lg:justify-start p-8 lg:p-16 xl:p-24">
           <div className="w-full max-w-md">{children}</div>
         </div>

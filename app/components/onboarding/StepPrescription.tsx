@@ -254,6 +254,12 @@ export function StepPrescription({
 
   const handlePrintPDF = async () => {
     setIsPrinting(true);
+    // Open the destination tab synchronously inside the user-gesture handler;
+    // mobile Safari blocks window.open() called later from an async callback,
+    // which previously navigated the onboarding page away to the PDF and lost
+    // local state when the user hit back.
+    const previewWindow =
+      typeof window !== "undefined" ? window.open("", "_blank") : null;
     try {
       const html2pdf = (await import("html2pdf.js")).default;
 
@@ -295,7 +301,7 @@ export function StepPrescription({
       container.innerHTML = html;
       document.body.appendChild(container);
 
-      await html2pdf()
+      const worker = html2pdf()
         .set({
           margin: [10, 10, 10, 10] as [number, number, number, number],
           filename: `Sample_Prescription_Dr_${doctorName.replace(/\s+/g, "_")}.pdf`,
@@ -307,12 +313,20 @@ export function StepPrescription({
             orientation: "portrait" as const,
           },
         })
-        .from(container.firstElementChild as HTMLElement)
-        .save();
+        .from(container.firstElementChild as HTMLElement);
+
+      if (previewWindow) {
+        const blobUrl: string = await worker.outputPdf("bloburl");
+        previewWindow.location.href = blobUrl;
+      } else {
+        // Popup blocked or SSR — fall back to a direct download so the user
+        // still gets the file. The current page stays where it is.
+        await worker.save();
+      }
 
       document.body.removeChild(container);
     } catch {
-      // silent fail for onboarding sample
+      previewWindow?.close();
     } finally {
       setIsPrinting(false);
     }

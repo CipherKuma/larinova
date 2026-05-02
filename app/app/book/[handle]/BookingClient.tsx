@@ -79,7 +79,7 @@ export function BookingClient({ handle, doctor }: Props) {
         : "Note: This doctor is based in India. In-person visits require travel to India.";
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-dvh bg-background flex flex-col pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]">
       {/* Cross-region warning */}
       {showCrossRegionWarning && (
         <div className="bg-amber-50 border-b border-amber-200 px-4 py-3 flex items-center gap-3">

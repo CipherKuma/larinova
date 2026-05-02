@@ -165,8 +165,15 @@ html {
 
 .larinova-pwa-launch .pwa-launch-splash {
   display: grid;
-  animation: larinova-splash-exit 1450ms cubic-bezier(0.22, 1, 0.36, 1)
-    forwards;
+  opacity: 1;
+  transition:
+    opacity 360ms cubic-bezier(0.22, 1, 0.36, 1),
+    visibility 0s linear 360ms;
+}
+
+.larinova-pwa-launch--exiting .pwa-launch-splash {
+  opacity: 0;
+  visibility: hidden;
 }
 
 .pwa-launch-splash__mark {

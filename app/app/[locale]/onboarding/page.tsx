@@ -3,6 +3,57 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
+
+// Persist onboarding progress to localStorage so closing/reopening the app
+// (or accidental navigation away — e.g. opening the sample PDF on mobile)
+// resumes from the same step instead of resetting to step 1.
+type OnboardingProgress = {
+  step: number;
+  specialty: string;
+  regData: {
+    degrees?: string;
+    registrationNumber?: string;
+    registrationCouncil?: string;
+    clinicName?: string;
+  };
+  doctorName?: string;
+  soapTranscript?: string;
+  soapNote?: Record<string, string> | null;
+};
+
+const ONBOARDING_STORAGE_KEY = "larinova:onboarding-progress";
+
+function progressKeyFor(userId: string) {
+  return `${ONBOARDING_STORAGE_KEY}:${userId}`;
+}
+
+function readProgress(userId: string): OnboardingProgress | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = window.localStorage.getItem(progressKeyFor(userId));
+    if (!raw) return null;
+    return JSON.parse(raw) as OnboardingProgress;
+  } catch {
+    return null;
+  }
+}
+
+function writeProgress(userId: string, progress: OnboardingProgress) {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(
+      progressKeyFor(userId),
+      JSON.stringify(progress),
+    );
+  } catch {}
+}
+
+function clearProgress(userId: string) {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.removeItem(progressKeyFor(userId));
+  } catch {}
+}
 import { ParticleDust } from "@/components/onboarding/ParticleDust";
 import { ProgressBar } from "@/components/onboarding/ProgressBar";
 import { StepName } from "@/components/onboarding/StepName";
@@ -28,6 +79,8 @@ export default function OnboardingPage() {
   const [doctorName, setDoctorName] = useState("Doctor");
   const [soapTranscript, setSoapTranscript] = useState("");
   const [soapNote, setSoapNote] = useState<Record<string, string> | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [hydrated, setHydrated] = useState(false);
   const savingRef = useRef(false);
   const locale = useLocale();
   const asset = useLocaleAsset();
@@ -90,15 +143,55 @@ export default function OnboardingPage() {
         return;
       }
 
-      setDoctorName(
+      const resolvedName =
         doctor.full_name ||
-          [doctor.first_name, doctor.last_name].filter(Boolean).join(" ") ||
-          user.email?.split("@")[0] ||
-          "Doctor",
-      );
+        [doctor.first_name, doctor.last_name].filter(Boolean).join(" ") ||
+        user.email?.split("@")[0] ||
+        "Doctor";
+
+      // Hydrate any saved progress before painting the form so the user
+      // resumes from the same step they were on.
+      const saved = readProgress(user.id);
+      if (saved) {
+        if (saved.step >= 1 && saved.step <= totalSteps) setStep(saved.step);
+        if (saved.specialty) setSpecialty(saved.specialty);
+        if (saved.regData) setRegData(saved.regData);
+        if (saved.soapTranscript) setSoapTranscript(saved.soapTranscript);
+        if (saved.soapNote) setSoapNote(saved.soapNote);
+        setDoctorName(saved.doctorName || resolvedName);
+      } else {
+        setDoctorName(resolvedName);
+      }
+
+      setUserId(user.id);
+      setHydrated(true);
     };
     fetchUser();
   }, [locale]);
+
+  // Persist onboarding progress whenever the user advances or edits a field.
+  // We only start writing after hydration so we don't overwrite saved state
+  // with the initial `step: 1` defaults.
+  useEffect(() => {
+    if (!hydrated || !userId) return;
+    writeProgress(userId, {
+      step,
+      specialty,
+      regData,
+      doctorName,
+      soapTranscript,
+      soapNote,
+    });
+  }, [
+    hydrated,
+    userId,
+    step,
+    specialty,
+    regData,
+    doctorName,
+    soapTranscript,
+    soapNote,
+  ]);
 
   const handleFinish = useCallback(async () => {
     if (savingRef.current) return;
@@ -189,6 +282,7 @@ export default function OnboardingPage() {
         return;
       }
 
+      clearProgress(user.id);
       window.location.href = `/${locale}`;
     } catch (error) {
       console.error("Error completing onboarding:", error);

@@ -34,7 +34,7 @@ export default async function RedeemPage({
   }
 
   return (
-    <main className="min-h-dvh flex items-center justify-center bg-background p-6">
+    <main className="min-h-dvh flex items-center justify-center bg-background p-6 pt-[max(1.5rem,env(safe-area-inset-top))] pb-[max(1.5rem,env(safe-area-inset-bottom))]">
       <div className="w-full max-w-md">
         <RedeemForm locale={locale} />
       </div>
