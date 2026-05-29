@@ -1,10 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import {
-  HelenaChatRequest,
-  DocumentType,
-  DOCUMENT_TYPES,
-} from "@/types/helena";
+import { HelenaChatRequest, DOCUMENT_TYPES } from "@/types/helena";
 import { checkAIUsage, recordAIUsage } from "@/lib/subscription";
 import { buildHelenaSystemPrompt } from "@/lib/helena/prompts";
 import { chatSyncMessages, type SarvamMessage } from "@/lib/ai/sarvam";
@@ -171,7 +167,7 @@ export async function POST(req: Request) {
 - Date of Birth: ${patient.date_of_birth || "Unknown"}
 - Gender: ${patient.gender || "Unknown"}
 - Patient Code: ${patient.patient_code || "N/A"}
-- Blood Type: ${patient.blood_type || "Unknown"}
+- Blood Type: ${patient.blood_group || "Unknown"}
 - Allergies: ${patient.allergies || "None reported"}
 - Chronic Conditions: ${patient.chronic_conditions || "None reported"}`;
 

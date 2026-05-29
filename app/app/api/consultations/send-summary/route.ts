@@ -14,6 +14,20 @@ export async function POST(req: NextRequest) {
     }
 
     const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    const { data: doctorRow } = await supabase
+      .from("larinova_doctors")
+      .select("id")
+      .eq("user_id", user.id)
+      .single();
+    if (!doctorRow) {
+      return NextResponse.json({ error: "Doctor not found" }, { status: 404 });
+    }
 
     // Fetch consultation details with all related data
     const { data: consultation, error: consultationError } = await supabase
@@ -37,6 +51,11 @@ export async function POST(req: NextRequest) {
         { error: "Consultation not found" },
         { status: 404 },
       );
+    }
+
+    // Authorization: the requesting doctor must own this consultation.
+    if (consultation.doctor_id !== doctorRow.id) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     // Validate required data
