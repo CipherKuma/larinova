@@ -30,7 +30,6 @@ export async function POST(request: NextRequest) {
     const {
       consultationId,
       patientId,
-      doctorId,
       doctorNotes,
       diagnosis,
       allergyWarnings,
@@ -38,13 +37,7 @@ export async function POST(request: NextRequest) {
       medicines,
     } = body;
 
-    if (
-      !consultationId ||
-      !patientId ||
-      !doctorId ||
-      !medicines ||
-      medicines.length === 0
-    ) {
+    if (!consultationId || !patientId || !medicines || medicines.length === 0) {
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 },
@@ -52,14 +45,44 @@ export async function POST(request: NextRequest) {
     }
 
     const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // Derive the doctor from the session — never trust a body-supplied doctorId.
+    const { data: doctor } = await supabase
+      .from("larinova_doctors")
+      .select("id")
+      .eq("user_id", user.id)
+      .single();
+    if (!doctor) {
+      return NextResponse.json({ error: "Doctor not found" }, { status: 404 });
+    }
+
+    // Verify the doctor owns the target consultation before writing a prescription.
+    const { data: consultation } = await supabase
+      .from("larinova_consultations")
+      .select("id, doctor_id, patient_id")
+      .eq("id", consultationId)
+      .single();
+    if (!consultation || consultation.doctor_id !== doctor.id) {
+      return NextResponse.json(
+        { error: "Consultation not found" },
+        { status: 404 },
+      );
+    }
+    const resolvedPatientId = consultation.patient_id ?? patientId;
 
     // Create prescription with enhanced fields
     const { data: prescription, error: prescriptionError } = await supabase
       .from("larinova_prescriptions")
       .insert({
         consultation_id: consultationId,
-        patient_id: patientId,
-        doctor_id: doctorId,
+        patient_id: resolvedPatientId,
+        doctor_id: doctor.id,
         doctor_notes: doctorNotes,
         diagnosis: diagnosis || null,
         allergy_warnings: allergyWarnings || null,
