@@ -70,7 +70,11 @@
     "documents": "Documents",
     "calendar": "Calendar",
     "settings": "Settings",
-    "billing": "Billing"
+    "billing": "Billing",
+    "issues": "Issues",
+    "more": "More",
+    "primary": "Primary",
+    "switchRegionTo": "Switch region to {region}"
   },
   "auth": {
     "signIn": "Sign In",
@@ -351,7 +355,12 @@
     "consultation": "consultation",
     "consultations": "consultations",
     "document": "document",
-    "documents": "documents"
+    "documents": "documents",
+    "noMorePatientsToday": "No more patients scheduled today. Take a breath.",
+    "nextPatient": "Next patient",
+    "nextPatientFallback": "Next patient",
+    "prepBriefReady": "Prep Brief ready",
+    "startConsult": "Start consult"
   },
   "tasks": {
     "title": "Tasks",
@@ -489,7 +498,15 @@
     "followUpDate": "Follow-up Date:",
     "medications": "Medications",
     "dosage": "Dosage:",
-    "forDuration": "for"
+    "forDuration": "for",
+    "aiPatientSummary": "AI patient summary",
+    "lastSeen": "Last seen {date}",
+    "askAiAboutPatient": "Ask AI about this patient",
+    "askAi": "Ask AI",
+    "aPatient": "a patient",
+    "flaggedFromFollowUp": "{name} flagged from follow-up",
+    "flaggedWithOthers": "{name} + {count, plural, one {# other} other {# others}} flagged",
+    "reviewTranscriptReachOut": "Review the transcript and reach out if needed."
   },
   "consultations": {
     "title": "Consultations",
@@ -957,6 +974,53 @@
     "upgradeYearly": "Upgrade — {label} (save {savings})",
     "cancelAnytime": "Cancel anytime. Secure payment via Razorpay."
   },
+  "freeTierModal": {
+    "title": "You've reached your free tier limit",
+    "description": "You've completed {used} of {limit} consultations this month on the free plan. Upgrade to Pro for unlimited consultations.",
+    "upgradeLater": "I'll upgrade later",
+    "upgradeToPro": "Upgrade to Pro"
+  },
+  "intakeBuilder": {
+    "loadingTemplate": "Loading template…",
+    "formTitle": "Form title",
+    "formDescription": "Form description",
+    "addField": "Add field",
+    "savedHint": "Saved templates become the default intake shown on your booking page.",
+    "saved": "Saved.",
+    "saveFailed": "Save failed",
+    "saving": "Saving…",
+    "saveTemplate": "Save template",
+    "label": "Label",
+    "type": "Type",
+    "placeholderOptional": "Placeholder (optional)",
+    "required": "Required",
+    "options": "Options",
+    "addOption": "Add option",
+    "moveUp": "Move up",
+    "moveDown": "Move down",
+    "removeField": "Remove field",
+    "removeOption": "Remove option",
+    "defaultTitle": "Pre-consult intake",
+    "defaultDescription": "Tell us what's going on so your doctor can prepare.",
+    "newField": "New field",
+    "fieldTypes": {
+      "short_text": "Short text",
+      "long_text": "Long text",
+      "single_select": "Single select",
+      "multi_select": "Multi select",
+      "number": "Number",
+      "date": "Date",
+      "yes_no": "Yes / No",
+      "file": "File upload"
+    },
+    "defaults": {
+      "chiefComplaint": "Chief complaint",
+      "chiefComplaintPlaceholder": "What brings you in today?",
+      "duration": "Duration of symptoms",
+      "durationPlaceholder": "e.g. 3 days",
+      "allergies": "Do you have any known allergies?"
+    }
+  },
   "consultation": {
     "generatingDocumentation": "Generating Documentation",
     "recordingComplete": "Recording complete",
@@ -964,7 +1028,17 @@
     "formattingTranscript": "Formatting transcript",
     "generatingAiSummary": "Generating AI Summary",
     "generatingMedCodes": "Generating Medical Codes",
-    "generatingSoap": "Generating SOAP Note"
+    "generatingSoap": "Generating SOAP Note",
+    "selectLanguages": "Select Languages",
+    "doctorLanguage": "Doctor Language",
+    "patientLanguage": "Patient Language",
+    "english": "English",
+    "bahasaIndonesia": "Bahasa Indonesia",
+    "sameLanguageMode": "Same language mode:",
+    "sameLanguageModeDescription": "Both speaking {speaking} with {subtitles} subtitles",
+    "bilingualMode": "Bilingual mode:",
+    "bilingualModeDescription": "Enhanced speaker detection using language as a cue",
+    "startConsultation": "Start Consultation"
   },
   "summaryPage": {
     "consultationComplete": "Consultation Complete!",
@@ -1061,6 +1135,10 @@
     "ph": "Ph"
   },
   "calendar": {
+    "title": "Calendar",
+    "copyLink": "Copy link",
+    "copied": "Copied!",
+    "viewBookingPage": "View booking page",
     "tabs": {
       "calendar": "Calendar",
       "availability": "Availability",
@@ -1098,7 +1176,12 @@
       "handle": "Booking handle",
       "handleTaken": "This handle is already taken",
       "handleAvailable": "Handle is available",
-      "saveHandle": "Save handle"
+      "saveHandle": "Save handle",
+      "checking": "Checking...",
+      "handlePlaceholder": "dr-your-name",
+      "pagePreview": "Booking page preview",
+      "failedToSaveHandle": "Failed to save handle",
+      "handleUpdated": "Booking handle updated"
     },
     "analytics": {
       "title": "Analytics",

@@ -13,6 +13,8 @@ import {
   CheckCircle,
   Send,
   Plus,
+  PenLine,
+  Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -33,6 +35,7 @@ import { DocumentsList } from "@/components/documents/DocumentsList";
 import { DocumentPrintPreview } from "@/components/documents/DocumentPrintPreview";
 import { EditableField } from "@/components/documents/EditableField";
 import { SickLeaveCertificateDialog } from "@/components/documents/SickLeaveCertificateDialog";
+import { SignatureCaptureDialog } from "@/components/documents/SignatureCaptureDialog";
 
 export default function DocumentsPage() {
   const [documents, setDocuments] = useState<DocumentWithPatient[]>([]);
@@ -49,6 +52,9 @@ export default function DocumentsPage() {
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [showSickLeaveForm, setShowSickLeaveForm] = useState(false);
+  const [showSignatureDialog, setShowSignatureDialog] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [sendError, setSendError] = useState<string | null>(null);
   const printableRef = useRef<HTMLDivElement>(null);
 
   const params = useParams();
@@ -203,6 +209,100 @@ export default function DocumentsPage() {
     }
   };
 
+  // Renders the current printable preview to a base64-encoded PDF for emailing.
+  const renderPdfBase64 = async (): Promise<{
+    base64: string;
+    filename: string;
+  } | null> => {
+    if (!selectedDocument || !printableRef.current) return null;
+    const html2pdf = (await import("html2pdf.js")).default;
+    const filename = `${selectedDocument.title.replace(/[^a-zA-Z0-9]/g, "_")}.pdf`;
+    const opt = {
+      margin: [10, 10, 10, 10] as [number, number, number, number],
+      filename,
+      image: { type: "jpeg" as const, quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true },
+      jsPDF: {
+        unit: "mm" as const,
+        format: "a4" as const,
+        orientation: "portrait" as const,
+      },
+    };
+    const dataUri: string = await html2pdf()
+      .set(opt)
+      .from(printableRef.current)
+      .outputPdf("datauristring");
+    const base64 = dataUri.includes(",") ? dataUri.split(",")[1] : dataUri;
+    return { base64, filename };
+  };
+
+  const handleSaveSignature = async (dataUrl: string) => {
+    const response = await fetch("/api/doctor/signature", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ signature_image_url: dataUrl }),
+    });
+    if (!response.ok) throw new Error("signature_save_failed");
+    // Reflect the new signature in the open preview immediately.
+    setSelectedDocument((prev) => {
+      if (!prev?.doctor) return prev;
+      const doctor = {
+        ...prev.doctor,
+        signature_image_url: dataUrl,
+      } as DocumentWithPatient["doctor"];
+      return { ...prev, doctor };
+    });
+  };
+
+  const handleSendToPatient = async () => {
+    if (!selectedDocument || sending) return;
+    setSending(true);
+    setSendError(null);
+    try {
+      const pdf = await renderPdfBase64();
+      const response = await fetch(
+        `/api/documents/${selectedDocument.id}/send`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(
+            pdf ? { pdfBase64: pdf.base64, pdfFilename: pdf.filename } : {},
+          ),
+        },
+      );
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        setSendError(
+          data.code === "no_email"
+            ? "Patient has no email on file."
+            : "Failed to send. Please try again.",
+        );
+        return;
+      }
+      if (data.document) {
+        setSelectedDocument((prev) =>
+          prev ? { ...prev, ...data.document } : prev,
+        );
+      } else {
+        setSelectedDocument((prev) =>
+          prev
+            ? {
+                ...prev,
+                status: "sent",
+                sent_at: data.sent_at ?? prev.sent_at,
+                sent_to: data.sent_to ?? prev.sent_to,
+              }
+            : prev,
+        );
+      }
+      loadDocuments();
+    } catch {
+      setSendError("Failed to send. Please try again.");
+    } finally {
+      setSending(false);
+    }
+  };
+
   const folderLabel =
     selectedFolder === "all"
       ? td("allDocuments")
@@ -329,6 +429,15 @@ export default function DocumentsPage() {
               <Button
                 variant="ghost"
                 size="icon"
+                className="h-8 w-8"
+                onClick={() => setShowSignatureDialog(true)}
+                title="Manage signature"
+              >
+                <PenLine className="w-4 h-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
                 className="h-8 w-8 text-destructive hover:text-destructive"
                 onClick={() => handleDeleteDocument(selectedDocument.id)}
               >
@@ -356,7 +465,7 @@ export default function DocumentsPage() {
 
           {/* Status actions */}
           <div className="flex-shrink-0 p-3 border-t border-border">
-            <div className="flex gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               {selectedDocument.status === "draft" && (
                 <Button
                   size="sm"
@@ -368,27 +477,51 @@ export default function DocumentsPage() {
               )}
               {selectedDocument.status === "finalized" && (
                 <>
-                  <Button size="sm" onClick={() => handleStatusChange("sent")}>
-                    <Send className="w-3 h-3 mr-1" />
-                    {td("markAsSent")}
+                  <Button size="sm" onClick={handleSendToPatient} disabled={sending}>
+                    {sending ? (
+                      <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+                    ) : (
+                      <Send className="w-3 h-3 mr-1" />
+                    )}
+                    {sending ? "Sending..." : "Send to patient"}
                   </Button>
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={() => handleStatusChange("draft")}
+                    disabled={sending}
                   >
                     {td("revertToDraft")}
                   </Button>
                 </>
               )}
               {selectedDocument.status === "sent" && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleStatusChange("finalized")}
-                >
-                  {td("revertToFinalized")}
-                </Button>
+                <>
+                  <Button size="sm" onClick={handleSendToPatient} disabled={sending}>
+                    {sending ? (
+                      <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+                    ) : (
+                      <Send className="w-3 h-3 mr-1" />
+                    )}
+                    {sending ? "Sending..." : "Resend"}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleStatusChange("finalized")}
+                    disabled={sending}
+                  >
+                    {td("revertToFinalized")}
+                  </Button>
+                </>
+              )}
+              {selectedDocument.sent_to && (
+                <span className="text-xs text-muted-foreground">
+                  Sent to {selectedDocument.sent_to}
+                </span>
+              )}
+              {sendError && (
+                <span className="text-xs text-destructive">{sendError}</span>
               )}
             </div>
           </div>
@@ -438,6 +571,12 @@ export default function DocumentsPage() {
           });
           setSelectedDocument(document);
         }}
+      />
+      <SignatureCaptureDialog
+        open={showSignatureDialog}
+        onOpenChange={setShowSignatureDialog}
+        doctorName={selectedDocument?.doctor?.full_name}
+        onSave={handleSaveSignature}
       />
     </div>
   );

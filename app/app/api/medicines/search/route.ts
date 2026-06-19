@@ -18,9 +18,7 @@ export async function GET(request: NextRequest) {
     // Return in legacy format expected by existing callers
     return NextResponse.json({ medicines: results });
   } catch (err) {
-    return NextResponse.json(
-      { error: err instanceof Error ? err.message : "Search failed" },
-      { status: 500 },
-    );
+    console.error("[medicines/search] failed:", err);
+    return NextResponse.json({ error: "Search failed" }, { status: 500 });
   }
 }

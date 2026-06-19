@@ -1,7 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import {
+  AlertCircle,
+  ChevronLeft,
+  ChevronRight,
+  RefreshCw,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface SlotPickerProps {
@@ -54,21 +59,38 @@ export function SlotPicker({
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [slots, setSlots] = useState<string[]>([]);
   const [loadingSlots, setLoadingSlots] = useState(false);
+  const [slotsError, setSlotsError] = useState(false);
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
 
   const days = locale === "id" ? DAYS_ID : DAYS_EN;
   const months = locale === "id" ? MONTHS_ID : MONTHS_EN;
 
+  const loadSlots = useCallback(
+    async (date: string) => {
+      setLoadingSlots(true);
+      setSlotsError(false);
+      setSelectedSlot(null);
+      try {
+        const res = await fetch(`/api/booking/${handle}/slots?date=${date}`);
+        if (!res.ok) throw new Error(`Request failed (${res.status})`);
+        const d = await res.json();
+        setSlots(d.slots ?? []);
+      } catch {
+        // Distinguish a real failure from a genuinely empty day so we don't
+        // show "no slots" when the request actually errored.
+        setSlots([]);
+        setSlotsError(true);
+      } finally {
+        setLoadingSlots(false);
+      }
+    },
+    [handle],
+  );
+
   useEffect(() => {
     if (!selectedDate) return;
-    setLoadingSlots(true);
-    setSelectedSlot(null);
-    fetch(`/api/booking/${handle}/slots?date=${selectedDate}`)
-      .then((r) => r.json())
-      .then((d) => setSlots(d.slots ?? []))
-      .catch(() => setSlots([]))
-      .finally(() => setLoadingSlots(false));
-  }, [selectedDate, handle]);
+    loadSlots(selectedDate);
+  }, [selectedDate, loadSlots]);
 
   const year = viewDate.getFullYear();
   const month = viewDate.getMonth();
@@ -100,6 +122,13 @@ export function SlotPicker({
     locale === "id"
       ? "Tidak ada slot tersedia pada tanggal ini"
       : "No available slots on this date";
+
+  const errorMsg =
+    locale === "id"
+      ? "Tidak dapat memuat slot. Silakan coba lagi."
+      : "Couldn't load slots. Please try again.";
+
+  const retryLabel = locale === "id" ? "Coba lagi" : "Retry";
 
   return (
     <div className="flex flex-col gap-4">
@@ -163,6 +192,21 @@ export function SlotPicker({
                     className="h-9 bg-muted animate-pulse rounded-lg"
                   />
                 ))}
+            </div>
+          ) : slotsError ? (
+            <div className="flex flex-col items-start gap-2 rounded-lg border-l-4 border-destructive bg-destructive/10 p-3">
+              <div className="flex items-center gap-2 text-sm text-destructive">
+                <AlertCircle className="w-4 h-4 shrink-0" />
+                <span>{errorMsg}</span>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => selectedDate && loadSlots(selectedDate)}
+              >
+                <RefreshCw className="w-4 h-4 mr-2" />
+                {retryLabel}
+              </Button>
             </div>
           ) : slots.length === 0 ? (
             <p className="text-sm text-muted-foreground">{noSlotMsg}</p>

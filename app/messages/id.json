@@ -70,7 +70,11 @@
     "documents": "Dokumen",
     "calendar": "Kalender",
     "settings": "Pengaturan",
-    "billing": "Tagihan"
+    "billing": "Tagihan",
+    "issues": "Masalah",
+    "more": "Lainnya",
+    "primary": "Utama",
+    "switchRegionTo": "Ganti wilayah ke {region}"
   },
   "auth": {
     "signIn": "Masuk",
@@ -351,7 +355,12 @@
     "consultation": "konsultasi",
     "consultations": "konsultasi",
     "document": "dokumen",
-    "documents": "dokumen"
+    "documents": "dokumen",
+    "noMorePatientsToday": "Tidak ada pasien lagi yang dijadwalkan hari ini. Tarik napas sejenak.",
+    "nextPatient": "Pasien berikutnya",
+    "nextPatientFallback": "Pasien berikutnya",
+    "prepBriefReady": "Ringkasan Persiapan siap",
+    "startConsult": "Mulai konsultasi"
   },
   "tasks": {
     "title": "Tugas",
@@ -489,7 +498,15 @@
     "followUpDate": "Tanggal Tindak Lanjut:",
     "medications": "Obat-obatan",
     "dosage": "Dosis:",
-    "forDuration": "selama"
+    "forDuration": "selama",
+    "aiPatientSummary": "Ringkasan pasien AI",
+    "lastSeen": "Terakhir ditemui {date}",
+    "askAiAboutPatient": "Tanya AI tentang pasien ini",
+    "askAi": "Tanya AI",
+    "aPatient": "seorang pasien",
+    "flaggedFromFollowUp": "{name} ditandai dari tindak lanjut",
+    "flaggedWithOthers": "{name} + {count, plural, one {# lainnya} other {# lainnya}} ditandai",
+    "reviewTranscriptReachOut": "Tinjau transkrip dan hubungi pasien jika diperlukan."
   },
   "consultations": {
     "title": "Konsultasi",
@@ -957,6 +974,53 @@
     "upgradeYearly": "Tingkatkan — {label} (hemat {savings})",
     "cancelAnytime": "Batalkan kapan saja. Pembayaran aman melalui Razorpay."
   },
+  "freeTierModal": {
+    "title": "Anda telah mencapai batas paket gratis",
+    "description": "Anda telah menyelesaikan {used} dari {limit} konsultasi bulan ini pada paket gratis. Tingkatkan ke Pro untuk konsultasi tanpa batas.",
+    "upgradeLater": "Saya akan tingkatkan nanti",
+    "upgradeToPro": "Tingkatkan ke Pro"
+  },
+  "intakeBuilder": {
+    "loadingTemplate": "Memuat templat…",
+    "formTitle": "Judul formulir",
+    "formDescription": "Deskripsi formulir",
+    "addField": "Tambah kolom",
+    "savedHint": "Templat yang disimpan menjadi formulir asupan default yang ditampilkan di halaman booking Anda.",
+    "saved": "Tersimpan.",
+    "saveFailed": "Gagal menyimpan",
+    "saving": "Menyimpan…",
+    "saveTemplate": "Simpan templat",
+    "label": "Label",
+    "type": "Tipe",
+    "placeholderOptional": "Placeholder (opsional)",
+    "required": "Wajib",
+    "options": "Opsi",
+    "addOption": "Tambah opsi",
+    "moveUp": "Pindah ke atas",
+    "moveDown": "Pindah ke bawah",
+    "removeField": "Hapus kolom",
+    "removeOption": "Hapus opsi",
+    "defaultTitle": "Asupan pra-konsultasi",
+    "defaultDescription": "Beri tahu kami keluhan Anda agar dokter dapat mempersiapkan diri.",
+    "newField": "Kolom baru",
+    "fieldTypes": {
+      "short_text": "Teks pendek",
+      "long_text": "Teks panjang",
+      "single_select": "Pilihan tunggal",
+      "multi_select": "Pilihan ganda",
+      "number": "Angka",
+      "date": "Tanggal",
+      "yes_no": "Ya / Tidak",
+      "file": "Unggah berkas"
+    },
+    "defaults": {
+      "chiefComplaint": "Keluhan utama",
+      "chiefComplaintPlaceholder": "Apa yang membuat Anda datang hari ini?",
+      "duration": "Durasi gejala",
+      "durationPlaceholder": "mis. 3 hari",
+      "allergies": "Apakah Anda memiliki alergi yang diketahui?"
+    }
+  },
   "consultation": {
     "generatingDocumentation": "Membuat Dokumentasi",
     "recordingComplete": "Perekaman selesai",
@@ -964,7 +1028,17 @@
     "formattingTranscript": "Memformat transkrip",
     "generatingAiSummary": "Membuat Ringkasan AI",
     "generatingMedCodes": "Membuat Kode Medis",
-    "generatingSoap": "Membuat Catatan SOAP"
+    "generatingSoap": "Membuat Catatan SOAP",
+    "selectLanguages": "Pilih Bahasa",
+    "doctorLanguage": "Bahasa Dokter",
+    "patientLanguage": "Bahasa Pasien",
+    "english": "Bahasa Inggris",
+    "bahasaIndonesia": "Bahasa Indonesia",
+    "sameLanguageMode": "Mode bahasa sama:",
+    "sameLanguageModeDescription": "Keduanya berbicara dalam {speaking} dengan subtitel {subtitles}",
+    "bilingualMode": "Mode dwibahasa:",
+    "bilingualModeDescription": "Deteksi pembicara yang ditingkatkan menggunakan bahasa sebagai petunjuk",
+    "startConsultation": "Mulai Konsultasi"
   },
   "summaryPage": {
     "consultationComplete": "Konsultasi Selesai!",
@@ -1061,6 +1135,10 @@
     "ph": "Telp"
   },
   "calendar": {
+    "title": "Kalender",
+    "copyLink": "Salin link",
+    "copied": "Tersalin!",
+    "viewBookingPage": "Lihat halaman booking",
     "tabs": {
       "calendar": "Kalender",
       "availability": "Ketersediaan",
@@ -1098,7 +1176,12 @@
       "handle": "Handle booking",
       "handleTaken": "Handle ini sudah digunakan",
       "handleAvailable": "Handle tersedia",
-      "saveHandle": "Simpan handle"
+      "saveHandle": "Simpan handle",
+      "checking": "Memeriksa...",
+      "handlePlaceholder": "dr-nama-anda",
+      "pagePreview": "Pratinjau halaman booking",
+      "failedToSaveHandle": "Gagal menyimpan handle",
+      "handleUpdated": "Handle booking diperbarui"
     },
     "analytics": {
       "title": "Analitik",

@@ -17,11 +17,27 @@ export async function POST(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    // Resolve the doctor for the authenticated user (defense-in-depth
+    // ownership check — must hold even if RLS regresses).
+    const { data: doctor } = await supabase
+      .from("larinova_doctors")
+      .select("id")
+      .eq("user_id", user.id)
+      .single();
+
+    if (!doctor) {
+      return NextResponse.json(
+        { error: "Doctor profile not found", code: "doctor_not_found" },
+        { status: 404 },
+      );
+    }
+
     // Get the request body with optional summary, soapNote, medicalCodes
     const body = await req.json().catch(() => ({}));
     const { summary, soapNote, medicalCodes } = body;
 
-    // Fetch consultation details
+    // Fetch consultation details — scoped to the authenticated doctor so a
+    // doctor can never generate documents against another doctor's consult.
     const { data: consultation, error: consultationError } = await supabase
       .from("larinova_consultations")
       .select(
@@ -32,11 +48,12 @@ export async function POST(
       `,
       )
       .eq("id", consultationId)
+      .eq("doctor_id", doctor.id)
       .single();
 
     if (consultationError || !consultation) {
       return NextResponse.json(
-        { error: "Consultation not found" },
+        { error: "Consultation not found", code: "consultation_not_found" },
         { status: 404 },
       );
     }

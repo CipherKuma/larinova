@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
 import { useParams } from "next/navigation";
+import { AlertCircle, Loader2, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 type Issue = {
@@ -33,11 +34,24 @@ export default function AdminIssueDetail() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [draft, setDraft] = useState("");
   const [sending, setSending] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   const load = useCallback(async () => {
-    const r = await fetch(`/api/admin/issues/${id}`).then((r) => r.json());
-    setIssue(r.issue);
-    setMessages(r.messages);
+    setLoading(true);
+    setError(false);
+    try {
+      const res = await fetch(`/api/admin/issues/${id}`);
+      if (!res.ok) throw new Error(`Request failed (${res.status})`);
+      const r = await res.json();
+      setIssue(r.issue);
+      setMessages(r.messages ?? []);
+    } catch (e) {
+      console.error("Error loading issue:", e);
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
   }, [id]);
 
   useEffect(() => {
@@ -66,7 +80,33 @@ export default function AdminIssueDetail() {
     await load();
   }
 
-  if (!issue) return <div>Loading…</div>;
+  if (loading) {
+    return (
+      <div className="flex items-center gap-2 text-sm text-muted-foreground py-12">
+        <Loader2 className="w-4 h-4 animate-spin" />
+        Loading…
+      </div>
+    );
+  }
+
+  if (error || !issue) {
+    return (
+      <div className="flex flex-col items-center justify-center py-16 text-center">
+        <AlertCircle className="w-8 h-8 text-destructive mb-3" />
+        <div className="text-sm font-medium text-foreground mb-1">
+          Couldn&rsquo;t load this issue
+        </div>
+        <div className="text-xs text-muted-foreground mb-4">
+          The request failed or you may not have access. Please try again.
+        </div>
+        <Button variant="outline" size="sm" onClick={load}>
+          <RefreshCw className="w-4 h-4 mr-2" />
+          Retry
+        </Button>
+      </div>
+    );
+  }
+
   const d = doctorOf(issue);
 
   return (

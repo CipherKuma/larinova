@@ -152,14 +152,24 @@ export async function POST(req: Request) {
     // Build locale-aware system prompt
     const systemPrompt = buildHelenaSystemPrompt(conversationLocale);
 
-    // Get patient info if patient_id provided
+    // Get patient info if patient_id provided. Scope to this doctor's own
+    // patients so another doctor's PHI is never injected into the LLM context
+    // (defense-in-depth — must hold even if RLS regresses).
     let patientContext = "";
     if (patient_id) {
       const { data: patient } = await supabase
         .from("larinova_patients")
         .select("*")
         .eq("id", patient_id)
+        .eq("created_by_doctor_id", doctor.id)
         .single();
+
+      if (!patient) {
+        return NextResponse.json(
+          { error: "Patient not found", code: "patient_not_found" },
+          { status: 404 },
+        );
+      }
 
       if (patient) {
         patientContext = `\n\nPatient Information:
@@ -171,11 +181,12 @@ export async function POST(req: Request) {
 - Allergies: ${patient.allergies || "None reported"}
 - Chronic Conditions: ${patient.chronic_conditions || "None reported"}`;
 
-        // Get recent consultations for this patient
+        // Get recent consultations for this patient, scoped to this doctor.
         const { data: consultations } = await supabase
           .from("larinova_consultations")
           .select("*")
           .eq("patient_id", patient_id)
+          .eq("doctor_id", doctor.id)
           .order("created_at", { ascending: false })
           .limit(3);
 

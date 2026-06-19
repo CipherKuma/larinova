@@ -1,15 +1,14 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import {
   ArrowLeft,
   Edit2,
-  Save,
-  X,
   Send,
   Printer,
+  Download,
   CheckCircle,
   Clock,
   User,
@@ -17,10 +16,7 @@ import {
   FileText,
   Trash2,
 } from "lucide-react";
-import ReactMarkdown from "react-markdown";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
@@ -30,31 +26,17 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { DocumentType, DOCUMENT_TYPES, HelenaDocument } from "@/types/helena";
-
-interface DocumentWithDetails extends HelenaDocument {
-  patient?: {
-    id: string;
-    full_name: string;
-    patient_code: string;
-    date_of_birth: string;
-    gender: string;
-  } | null;
-  doctor?: {
-    id: string;
-    full_name: string;
-    specialization: string;
-    license_number: string;
-  } | null;
-}
+import {
+  DocumentType,
+  DOCUMENT_TYPES,
+  DocumentWithPatient,
+} from "@/types/helena";
+import { DocumentPrintPreview } from "@/components/documents/DocumentPrintPreview";
 
 export default function DocumentDetailPage() {
-  const [document, setDocument] = useState<DocumentWithDetails | null>(null);
+  const [document, setDocument] = useState<DocumentWithPatient | null>(null);
   const [loading, setLoading] = useState(true);
-  const [isEditing, setIsEditing] = useState(false);
-  const [editedTitle, setEditedTitle] = useState("");
-  const [editedContent, setEditedContent] = useState("");
-  const [saving, setSaving] = useState(false);
+  const [downloading, setDownloading] = useState(false);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const printableRef = useRef<HTMLDivElement>(null);
@@ -77,8 +59,6 @@ export default function DocumentDetailPage() {
       if (response.ok) {
         const data = await response.json();
         setDocument(data.document);
-        setEditedTitle(data.document.title);
-        setEditedContent(data.document.content);
       } else {
         router.push(`/${locale}/documents`);
       }
@@ -90,31 +70,19 @@ export default function DocumentDetailPage() {
     }
   };
 
-  const handleSave = async () => {
-    if (!document) return;
-    setSaving(true);
-
-    try {
+  const handleSave = useCallback(
+    async (patch: { title?: string; content?: string }) => {
       const response = await fetch(`/api/documents/${documentId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title: editedTitle,
-          content: editedContent,
-        }),
+        body: JSON.stringify(patch),
       });
-
-      if (response.ok) {
-        const data = await response.json();
-        setDocument({ ...document, ...data.document });
-        setIsEditing(false);
-      }
-    } catch (error) {
-      console.error("Failed to save document:", error);
-    } finally {
-      setSaving(false);
-    }
-  };
+      if (!response.ok) throw new Error("Save failed");
+      const data = await response.json();
+      setDocument((prev) => (prev ? { ...prev, ...data.document } : prev));
+    },
+    [documentId],
+  );
 
   const handleStatusChange = async (status: "draft" | "finalized" | "sent") => {
     if (!document) return;
@@ -159,72 +127,47 @@ export default function DocumentDetailPage() {
 
   const handlePrint = () => {
     if (!printableRef.current || !document) return;
-
     const printWindow = window.open("", "_blank");
     if (!printWindow) return;
-
-    const docInfo = DOCUMENT_TYPES[document.document_type as DocumentType];
-
     printWindow.document.write(`
       <!DOCTYPE html>
       <html>
         <head>
           <title>${document.title}</title>
           <style>
-            body {
-              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-              padding: 40px;
-              max-width: 800px;
-              margin: 0 auto;
-              color: #1a1a1a;
-              line-height: 1.6;
-            }
-            .header {
-              border-bottom: 2px solid #e5e5e5;
-              padding-bottom: 20px;
-              margin-bottom: 30px;
-            }
-            .title {
-              font-size: 24px;
-              font-weight: bold;
-              margin: 0 0 10px 0;
-            }
-            .meta {
-              color: #666;
-              font-size: 14px;
-            }
-            .content h1, .content h2, .content h3 {
-              margin-top: 24px;
-              margin-bottom: 12px;
-            }
-            .content p {
-              margin-bottom: 12px;
-            }
-            .content ul, .content ol {
-              margin-bottom: 12px;
-              padding-left: 24px;
-            }
-            .content li {
-              margin-bottom: 6px;
-            }
-            @media print {
-              body { padding: 20px; }
-            }
+            body { margin: 0; padding: 20px; }
+            @media print { body { padding: 0; } }
           </style>
         </head>
-        <body>
-          <div class="header">
-            <h1 class="title">${document.title}</h1>
-            <p class="meta">${docInfo?.label || "Document"} • Created: ${new Date(document.created_at).toLocaleDateString()}</p>
-          </div>
-          <div class="content">
-            ${printableRef.current.innerHTML}
-          </div>
-        </body>
+        <body>${printableRef.current.outerHTML}</body>
       </html>
     `);
     printWindow.document.close();
     printWindow.print();
+  };
+
+  const handleDownload = async () => {
+    if (!document || !printableRef.current) return;
+    setDownloading(true);
+    try {
+      const html2pdf = (await import("html2pdf.js")).default;
+      const opt = {
+        margin: [10, 10, 10, 10] as [number, number, number, number],
+        filename: `${document.title.replace(/[^a-zA-Z0-9]/g, "_")}.pdf`,
+        image: { type: "jpeg" as const, quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: {
+          unit: "mm" as const,
+          format: "a4" as const,
+          orientation: "portrait" as const,
+        },
+      };
+      await html2pdf().set(opt).from(printableRef.current).save();
+    } catch (error) {
+      console.error("Failed to generate PDF:", error);
+    } finally {
+      setDownloading(false);
+    }
   };
 
   const formatDate = (dateString: string) => {
@@ -316,17 +259,9 @@ export default function DocumentDetailPage() {
                   const Icon = docInfo?.icon || FileText;
                   return <Icon className="w-7 h-7 text-muted-foreground" />;
                 })()}
-                {isEditing ? (
-                  <Input
-                    value={editedTitle}
-                    onChange={(e) => setEditedTitle(e.target.value)}
-                    className="text-2xl font-bold h-auto py-1"
-                  />
-                ) : (
-                  <h1 className="text-2xl font-bold text-foreground">
-                    {document.title}
-                  </h1>
-                )}
+                <h1 className="text-2xl font-bold text-foreground">
+                  {document.title}
+                </h1>
               </div>
 
               <div className="flex items-center gap-4 text-sm text-muted-foreground">
@@ -344,66 +279,35 @@ export default function DocumentDetailPage() {
           </div>
 
           <div className="flex items-center gap-2">
-            {isEditing ? (
-              <>
-                <Button variant="outline" onClick={() => setIsEditing(false)}>
-                  <X className="w-4 h-4 mr-2" />
-                  {t("common.cancel")}
-                </Button>
-                <Button onClick={handleSave} disabled={saving}>
-                  <Save className="w-4 h-4 mr-2" />
-                  {saving ? td("saving") : td("save")}
-                </Button>
-              </>
-            ) : (
-              <>
-                <Button variant="outline" onClick={() => setIsEditing(true)}>
-                  <Edit2 className="w-4 h-4 mr-2" />
-                  {t("common.edit")}
-                </Button>
-                <Button variant="outline" onClick={handlePrint}>
-                  <Printer className="w-4 h-4 mr-2" />
-                  {td("print")}
-                </Button>
-                <Button
-                  variant="destructive"
-                  size="icon"
-                  onClick={handleDelete}
-                >
-                  <Trash2 className="w-4 h-4" />
-                </Button>
-              </>
-            )}
+            <Button variant="outline" onClick={handlePrint}>
+              <Printer className="w-4 h-4 mr-2" />
+              {td("print")}
+            </Button>
+            <Button
+              variant="outline"
+              onClick={handleDownload}
+              disabled={downloading}
+            >
+              <Download className="w-4 h-4 mr-2" />
+              {downloading ? "..." : "PDF"}
+            </Button>
+            <Button variant="destructive" size="icon" onClick={handleDelete}>
+              <Trash2 className="w-4 h-4" />
+            </Button>
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-6">
-        {/* Document Content */}
-        <div className="col-span-2">
-          <div className="glass-card p-6">
-            <h2 className="text-lg font-semibold text-foreground mb-4">
-              {td("documentContent")}
-            </h2>
-
-            {isEditing ? (
-              <Textarea
-                value={editedContent}
-                onChange={(e) => setEditedContent(e.target.value)}
-                className="min-h-[500px] font-mono text-sm"
-                placeholder="Document content..."
-              />
-            ) : (
-              <div className="bg-background border-2 border-border rounded-xl p-6 min-h-[500px]">
-                <div
-                  ref={printableRef}
-                  className="prose prose-sm max-w-none dark:prose-invert prose-headings:text-foreground prose-p:text-foreground prose-strong:text-foreground prose-li:text-foreground"
-                >
-                  <ReactMarkdown>{document.content}</ReactMarkdown>
-                </div>
-              </div>
-            )}
-          </div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Document Content — identical renderer to the documents list panel */}
+        <div className="lg:col-span-2">
+          <DocumentPrintPreview
+            key={document.id}
+            document={document}
+            locale={locale}
+            onSave={handleSave}
+            printableRef={printableRef}
+          />
         </div>
 
         {/* Sidebar */}

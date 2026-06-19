@@ -14,8 +14,9 @@ export async function GET(req: Request) {
     const results = await searchFormulary(locale, query);
     return NextResponse.json({ results });
   } catch (err) {
+    console.error("[formulary/search] failed:", err);
     return NextResponse.json(
-      { error: err instanceof Error ? err.message : "Formulary search failed" },
+      { error: "Formulary search failed" },
       { status: 500 },
     );
   }

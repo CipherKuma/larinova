@@ -58,7 +58,7 @@ export function Footer({ locale }: FooterProps) {
             <ul className="space-y-2 text-sm text-foreground/60">
               <li>
                 <a
-                  href="#features"
+                  href={`/${locale}#features`}
                   className="transition-colors hover:text-foreground"
                 >
                   {c.links.features}
@@ -66,7 +66,7 @@ export function Footer({ locale }: FooterProps) {
               </li>
               <li>
                 <a
-                  href="#pricing"
+                  href={`/${locale}#pricing`}
                   className="transition-colors hover:text-foreground"
                 >
                   {c.links.pricing}
@@ -74,7 +74,7 @@ export function Footer({ locale }: FooterProps) {
               </li>
               <li>
                 <a
-                  href="#how-it-works"
+                  href={`/${locale}#how-it-works`}
                   className="transition-colors hover:text-foreground"
                 >
                   {c.links.howItWorks}
@@ -122,10 +122,18 @@ export function Footer({ locale }: FooterProps) {
               </li>
               <li>
                 <Link
-                  href="/privacy"
+                  href={`/${locale}/privacy`}
                   className="transition-colors hover:text-foreground"
                 >
                   {c.links.privacy}
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href={`/${locale}/terms`}
+                  className="transition-colors hover:text-foreground"
+                >
+                  {locale === "id" ? "Ketentuan Layanan" : "Terms of Service"}
                 </Link>
               </li>
             </ul>

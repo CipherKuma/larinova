@@ -23,8 +23,10 @@ export async function GET(req: Request) {
     .select("ts, event_type")
     .gte("ts", since);
 
-  if (error)
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) {
+    console.error("[admin/analytics/timeseries] query failed:", error);
+    return NextResponse.json({ error: "query_failed" }, { status: 500 });
+  }
 
   const buckets = new Map<
     string,

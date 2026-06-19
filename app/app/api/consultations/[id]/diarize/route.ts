@@ -190,12 +190,12 @@ async function replaceTranscriptsWithDiarized(
   roleByspeakerId: Record<string, "doctor" | "patient">,
 ) {
   // Audio diarization replaces the transcript timeline with the higher-quality
-  // batch transcription. Wipe the per-chunk live transcripts and insert the
-  // diarized segments instead.
-  await supabase
-    .from("larinova_transcripts")
-    .delete()
-    .eq("consultation_id", consultationId);
+  // batch transcription. This is a destructive replace, so order matters: we
+  // INSERT the diarized rows FIRST and only DELETE the prior live rows once the
+  // insert is confirmed persisted. If diarization yields nothing usable, we
+  // keep the live transcript untouched — never trade a real transcript for an
+  // empty one. (The Supabase JS client has no client-side multi-statement
+  // transaction, so we sequence carefully and delete only the captured old ids.)
 
   const rows = entries
     .filter((e) => e.transcript && e.transcript.trim())
@@ -209,16 +209,60 @@ async function replaceTranscriptsWithDiarized(
       timestamp_end: e.end_time_seconds || 0,
     }));
 
-  if (rows.length > 0) {
-    const { error: insertError } = await supabase
+  // No usable diarized rows → do NOT delete the existing live transcript.
+  if (rows.length === 0) {
+    console.warn(
+      "[diarize] no usable diarized rows; keeping existing live transcript",
+    );
+    return NextResponse.json(
+      { error: "Diarization produced no usable segments" },
+      { status: 502 },
+    );
+  }
+
+  // Capture the ids of the existing live rows BEFORE inserting, so we can
+  // delete exactly those (and not the diarized rows we're about to insert).
+  const { data: existingRows } = await supabase
+    .from("larinova_transcripts")
+    .select("id")
+    .eq("consultation_id", consultationId);
+  const oldIds: string[] = (existingRows || []).map(
+    (r: { id: string }) => r.id,
+  );
+
+  // 1. Insert the diarized rows first and confirm they actually persisted
+  // (no error AND rows returned).
+  const { data: insertedRows, error: insertError } = await supabase
+    .from("larinova_transcripts")
+    .insert(rows)
+    .select("id");
+  if (insertError || !insertedRows || insertedRows.length === 0) {
+    console.error(
+      "[diarize] insert error; keeping existing live transcript:",
+      insertError,
+    );
+    // Best-effort rollback of any partial insert so we don't leave duplicate
+    // diarized rows alongside the preserved live transcript.
+    if (insertedRows && insertedRows.length > 0) {
+      const newIds = insertedRows.map((r: { id: string }) => r.id);
+      await supabase.from("larinova_transcripts").delete().in("id", newIds);
+    }
+    return NextResponse.json(
+      { error: "Failed to save diarized transcripts" },
+      { status: 500 },
+    );
+  }
+
+  // 2. Insert confirmed persisted → now safe to delete the prior live rows.
+  if (oldIds.length > 0) {
+    const { error: deleteError } = await supabase
       .from("larinova_transcripts")
-      .insert(rows);
-    if (insertError) {
-      console.error("[diarize] insert error:", insertError);
-      return NextResponse.json(
-        { error: "Failed to save diarized transcripts" },
-        { status: 500 },
-      );
+      .delete()
+      .in("id", oldIds);
+    if (deleteError) {
+      // The diarized rows are saved; we just couldn't remove the old ones.
+      // Surface it, but the transcript data is not lost.
+      console.error("[diarize] delete of old transcripts failed:", deleteError);
     }
   }
 

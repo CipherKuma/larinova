@@ -195,7 +195,7 @@ export function Sidebar() {
         <SidebarNavLink
           href="/issues"
           icon={<HelpCircle className="w-5 h-5 flex-shrink-0" />}
-          label="Issues"
+          label={t("navigation.issues")}
           active={isActive("/issues") || pathname.includes("/issues")}
           open={open}
         />

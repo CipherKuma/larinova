@@ -39,12 +39,10 @@ describe("buildSickLeaveCertificateContent", () => {
       },
     });
 
-    expect(content).toContain("Name: Raghu Kumar");
-    expect(content).toContain("Age/Sex: 31/Male");
-    expect(content).toContain("Address: Casa Blanca, Koramangala, Bengaluru");
+    // The certifying statement still references the patient by name.
+    expect(content).toContain("Mr./Ms. Raghu Kumar");
     expect(content).toContain("Patient signature/thumb impression: Signature collected in clinic");
     expect(content).toContain("Identification mark 1: Mole on left cheek");
-    expect(content).toContain("Registration No.: 61089 (Karnataka Medical Council)");
     expect(content).toContain("after careful examination on 30 Apr 2026");
     expect(content).toContain("is suffering from Acute viral fever");
     expect(content).toContain("Antipyretics, hydration, and rest");
@@ -52,6 +50,13 @@ describe("buildSickLeaveCertificateContent", () => {
     expect(content).toContain("Brief Case Resume");
     expect(content).not.toContain("[Patient Full Name]");
     expect(content).not.toContain("[Age]");
+    // Regression guard for the de-duplication fix: the doctor letterhead, the
+    // patient demographic row, and the signature line are now rendered exactly
+    // once by DocumentPrintPreview and must NOT be embedded in the body too.
+    expect(content).not.toContain("Name: Raghu Kumar");
+    expect(content).not.toContain("Age/Sex:");
+    expect(content).not.toContain("Registration No.:");
+    expect(content).not.toContain("Signature and seal");
   });
 
   it("supports work-from-home certificate wording from the same structured flow", () => {
@@ -88,6 +93,7 @@ describe("buildSickLeaveCertificateContent", () => {
     expect(content).toContain("Work From Home Certificate");
     expect(content).toContain("advised to work from home for 3 days");
     expect(content).toContain("from 05 May 2026 to 07 May 2026");
-    expect(content).toContain("Signature and seal of Registered Medical Practitioner");
+    // Signature is rendered once by DocumentPrintPreview, not embedded here.
+    expect(content).not.toContain("Signature and seal");
   });
 });

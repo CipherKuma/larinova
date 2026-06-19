@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Sparkles } from "lucide-react";
 
 interface NarrativePayload {
@@ -10,6 +11,7 @@ interface NarrativePayload {
 }
 
 export function PatientNarrativeCard({ patientId }: { patientId: string }) {
+  const t = useTranslations("patients");
   const [data, setData] = useState<NarrativePayload | null>(null);
 
   useEffect(() => {
@@ -41,11 +43,13 @@ export function PatientNarrativeCard({ patientId }: { patientId: string }) {
         <div className="flex-1 space-y-2">
           <div className="flex items-center justify-between gap-3">
             <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-              AI patient summary
+              {t("aiPatientSummary")}
             </div>
             {data.lastSeen ? (
               <div className="text-[10px] text-muted-foreground">
-                Last seen {new Date(data.lastSeen).toLocaleDateString()}
+                {t("lastSeen", {
+                  date: new Date(data.lastSeen).toLocaleDateString(),
+                })}
               </div>
             ) : null}
           </div>

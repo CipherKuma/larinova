@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Link } from "@/src/i18n/routing";
 import { AlertTriangle, ArrowRight } from "lucide-react";
 
@@ -16,6 +17,7 @@ export function FlaggedFollowUpAlert({
 }: {
   initialThreads?: FlaggedThread[];
 }) {
+  const t = useTranslations("patients");
   const [threads, setThreads] = useState<FlaggedThread[]>(
     initialThreads ?? [],
   );
@@ -42,7 +44,7 @@ export function FlaggedFollowUpAlert({
   if (!threads.length) return null;
 
   const firstName =
-    threads[0].larinova_patients?.full_name?.split(" ")[0] ?? "a patient";
+    threads[0].larinova_patients?.full_name?.split(" ")[0] ?? t("aPatient");
   const more = threads.length - 1;
 
   return (
@@ -55,11 +57,11 @@ export function FlaggedFollowUpAlert({
         <div className="text-sm">
           <div className="font-semibold text-foreground">
             {threads.length === 1
-              ? `${firstName} flagged from follow-up`
-              : `${firstName} + ${more} other${more > 1 ? "s" : ""} flagged`}
+              ? t("flaggedFromFollowUp", { name: firstName })
+              : t("flaggedWithOthers", { name: firstName, count: more })}
           </div>
           <div className="text-xs text-muted-foreground">
-            Review the transcript and reach out if needed.
+            {t("reviewTranscriptReachOut")}
           </div>
         </div>
       </div>

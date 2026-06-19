@@ -7,9 +7,7 @@ export async function POST(req: Request) {
     const result = await lookupKki(registrationNumber);
     return NextResponse.json(result);
   } catch (err) {
-    return NextResponse.json(
-      { error: err instanceof Error ? err.message : "KKI lookup failed" },
-      { status: 400 },
-    );
+    console.error("[kki/lookup] failed:", err);
+    return NextResponse.json({ error: "KKI lookup failed" }, { status: 400 });
   }
 }

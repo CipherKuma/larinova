@@ -4,7 +4,13 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Loader2, Search, CheckCircle2, Clock } from "lucide-react";
+import {
+  Loader2,
+  Search,
+  CheckCircle2,
+  Clock,
+  AlertCircle,
+} from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 
 interface NMCDoctor {
@@ -21,6 +27,23 @@ interface NMCDoctor {
 interface KKIResult {
   registrationNumber: string;
   verified: "pending" | "verified" | "failed";
+}
+
+/**
+ * Client-side format check for an Indonesian STR/KKI number. Mirrors
+ * `isValidKkiFormat` in `lib/integrations/kki.ts` so we can reject obvious
+ * garbage before hitting the API and give honest inline feedback. The server
+ * remains the source of truth and re-validates.
+ */
+function isValidKkiFormat(raw: string): boolean {
+  const normalized = raw
+    .trim()
+    .replace(/[\s/.\-]+/g, "")
+    .toUpperCase();
+  if (!/^[A-Z0-9]+$/.test(normalized)) return false;
+  if (/^\d{10,18}$/.test(normalized)) return true;
+  if (/^[A-Z]{1,2}\d{12,16}$/.test(normalized)) return true;
+  return false;
 }
 
 interface StepRegistrationProps {
@@ -54,6 +77,7 @@ export function StepRegistration({
   const [doctors, setDoctors] = useState<NMCDoctor[]>([]);
   const [selectedDoctor, setSelectedDoctor] = useState<NMCDoctor | null>(null);
   const [kkiResult, setKkiResult] = useState<KKIResult | null>(null);
+  const [kkiError, setKkiError] = useState<string | null>(null);
   const [searchDone, setSearchDone] = useState(false);
   const [detailLoading, setDetailLoading] = useState(false);
 
@@ -61,38 +85,69 @@ export function StepRegistration({
 
   const handleLookup = async () => {
     if (!regNumber.trim()) return;
-    setLoading(true);
     setDoctors([]);
     setSelectedDoctor(null);
     setKkiResult(null);
-    setSearchDone(false);
+    setKkiError(null);
 
-    try {
-      if (isIndonesia) {
-        // KKI — manual entry stub
+    if (isIndonesia) {
+      // KKI — no public verification API exists, so we validate the STR
+      // number's FORMAT and accept it for manual review. Never auto-verify.
+      // This branch only runs for the Indonesian locale, so copy is `id`.
+      const invalidFormatMsg =
+        "Itu tidak terlihat seperti nomor STR yang valid. Masukkan nomor persis seperti tertera pada STR Anda (mis. 16 digit, atau 2 huruf diikuti angka).";
+
+      if (!isValidKkiFormat(regNumber)) {
+        setKkiError(invalidFormatMsg);
+        setSearchDone(true);
+        return;
+      }
+
+      setLoading(true);
+      setSearchDone(false);
+      try {
         const res = await fetch("/api/kki/lookup", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ registrationNumber: regNumber.trim() }),
         });
         const data = await res.json();
-        if (res.ok) {
-          setKkiResult(data);
+        if (res.ok && data?.registrationNumber) {
+          // Stored status is always "pending" — manual review by the team.
+          setKkiResult({
+            registrationNumber: data.registrationNumber,
+            verified: "pending",
+          });
+        } else {
+          setKkiError(
+            typeof data?.error === "string" ? data.error : invalidFormatMsg,
+          );
         }
-      } else {
-        // NMC — India
-        const res = await fetch(
-          `/api/nmc/lookup?regNo=${encodeURIComponent(regNumber.trim())}&council=`,
-        );
-        const data = await res.json();
+      } catch {
+        setKkiError("Gagal memproses nomor STR. Coba lagi.");
+      } finally {
+        setLoading(false);
+        setSearchDone(true);
+      }
+      return;
+    }
 
-        if (data.found && data.doctor) {
-          setSelectedDoctor(data.doctor);
-          if (data.doctor.degree) setDegrees(data.doctor.degree);
-          setDoctors(data.doctors || []);
-        } else if (data.found && data.doctors?.length > 0) {
-          setDoctors(data.doctors);
-        }
+    // NMC — India (real verification against the Indian Medical Register).
+    setLoading(true);
+    setSearchDone(false);
+
+    try {
+      const res = await fetch(
+        `/api/nmc/lookup?regNo=${encodeURIComponent(regNumber.trim())}&council=`,
+      );
+      const data = await res.json();
+
+      if (data.found && data.doctor) {
+        setSelectedDoctor(data.doctor);
+        if (data.doctor.degree) setDegrees(data.doctor.degree);
+        setDoctors(data.doctors || []);
+      } else if (data.found && data.doctors?.length > 0) {
+        setDoctors(data.doctors);
       }
 
       setSearchDone(true);
@@ -196,7 +251,10 @@ export function StepRegistration({
                 isIndonesia ? t("kkiPlaceholder") : t("nmcPlaceholder")
               }
               value={regNumber}
-              onChange={(e) => setRegNumber(e.target.value)}
+              onChange={(e) => {
+                setRegNumber(e.target.value);
+                if (kkiError) setKkiError(null);
+              }}
               onKeyDown={(e) => e.key === "Enter" && handleLookup()}
               autoFocus
             />
@@ -223,6 +281,26 @@ export function StepRegistration({
         </motion.div>
 
         <AnimatePresence mode="wait">
+          {/* KKI — invalid STR format error */}
+          {isIndonesia && kkiError && !kkiResult && (
+            <motion.div
+              key="kki-error"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="mb-6"
+            >
+              <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-4">
+                <div className="flex items-start gap-2.5">
+                  <AlertCircle className="w-4 h-4 text-destructive mt-0.5 flex-shrink-0" />
+                  <p className="text-sm text-destructive leading-relaxed">
+                    {kkiError}
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
           {/* KKI — pending verification card */}
           {isIndonesia && kkiResult && (
             <motion.div
@@ -249,9 +327,15 @@ export function StepRegistration({
                     </span>
                   </div>
                 </div>
+                <p className="text-xs text-amber-600/90 dark:text-amber-400/80 mt-3 leading-relaxed">
+                  {isIndonesia
+                    ? "Nomor STR Anda belum dapat diverifikasi otomatis — tidak ada sumber data KKI publik. Tim Larinova akan meninjau dan memverifikasinya secara manual. Anda dapat melanjutkan sekarang; status Anda tetap “menunggu verifikasi” sampai peninjauan selesai."
+                    : "We can’t verify your STR number automatically — there is no public KKI data source. The Larinova team will review and verify it manually. You can continue now; your status stays “pending verification” until the review is complete."}
+                </p>
                 <button
                   onClick={() => {
                     setKkiResult(null);
+                    setKkiError(null);
                     setSearchDone(false);
                   }}
                   className="text-xs text-muted-foreground hover:text-foreground mt-3 transition-colors"

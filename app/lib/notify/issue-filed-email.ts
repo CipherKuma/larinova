@@ -1,6 +1,6 @@
 import { Resend } from "resend";
 
-const FROM = process.env.EMAIL_FROM ?? "larinova@contact.raxgbc.co.in";
+const FROM = process.env.EMAIL_FROM ?? "hello@larinova.com";
 const ADMIN_TO = "gabrielantony56@gmail.com";
 
 function esc(s: string): string {

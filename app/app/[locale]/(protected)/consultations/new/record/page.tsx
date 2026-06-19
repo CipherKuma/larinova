@@ -18,9 +18,19 @@ import {
 import { TranscriptionView } from "@/components/consultation/TranscriptionView";
 import { ConsultationResults } from "@/components/consultation/ConsultationResults";
 import FreeTierExhaustedModal from "@/components/free-tier-exhausted-modal";
-import { CheckCircle, Loader2, UserPlus } from "lucide-react";
+import {
+  AlertCircle,
+  CheckCircle,
+  Loader2,
+  RefreshCw,
+  UserPlus,
+} from "lucide-react";
 
 type Phase = "patient-info" | "recording" | "generating" | "results";
+
+// Tri-state per generation step. A failed clinical generation must NEVER be
+// shown as "done" — the doctor would receive a silently-empty document.
+type StepStatus = "pending" | "done" | "error";
 
 interface Consultation {
   id: string;
@@ -42,13 +52,22 @@ interface Transcript {
 }
 
 interface GenerationSteps {
-  recording: boolean;
-  diarization: boolean;
-  transcript: boolean;
-  summary: boolean;
-  codes: boolean;
-  soap: boolean;
+  recording: StepStatus;
+  diarization: StepStatus;
+  transcript: StepStatus;
+  summary: StepStatus;
+  codes: StepStatus;
+  soap: StepStatus;
 }
+
+const INITIAL_GENERATION_STEPS: GenerationSteps = {
+  recording: "pending",
+  diarization: "pending",
+  transcript: "pending",
+  summary: "pending",
+  codes: "pending",
+  soap: "pending",
+};
 
 interface Results {
   transcripts: Transcript[];
@@ -73,6 +92,10 @@ export default function NewPatientConsultationPage() {
 
   const [phase, setPhase] = useState<Phase>("patient-info");
   const [consultation, setConsultation] = useState<Consultation | null>(null);
+  // Held so a failed generation can be retried without re-recording.
+  const [activeConsultationId, setActiveConsultationId] = useState<
+    string | null
+  >(null);
   const [patientName, setPatientName] = useState("");
   const [transcripts, setTranscripts] = useState<Transcript[]>([]);
   const [isRecording, setIsRecording] = useState(false);
@@ -83,14 +106,12 @@ export default function NewPatientConsultationPage() {
     limit: number;
   } | null>(null);
 
-  const [generationSteps, setGenerationSteps] = useState<GenerationSteps>({
-    recording: false,
-    diarization: false,
-    transcript: false,
-    summary: false,
-    codes: false,
-    soap: false,
-  });
+  const [generationSteps, setGenerationSteps] = useState<GenerationSteps>(
+    INITIAL_GENERATION_STEPS,
+  );
+  // True once generation has finished if any clinical step failed.
+  const [generationFailed, setGenerationFailed] = useState(false);
+  const [retrying, setRetrying] = useState(false);
   const [results, setResults] = useState<Results | null>(null);
 
   const [form, setForm] = useState<PatientForm>({
@@ -144,69 +165,83 @@ export default function NewPatientConsultationPage() {
     }
   };
 
-  const handleDiarizationComplete = async (consultationId: string) => {
-    setPhase("generating");
-    setGenerationSteps((prev) => ({
-      ...prev,
-      recording: true,
-      diarization: true,
-    }));
+  // A fetch that throws on a non-2xx response, so an API-level failure (500,
+  // 4xx) is treated as a failed clinical step rather than a "successful" empty
+  // document.
+  const fetchOk = async (input: string, init?: RequestInit) => {
+    const res = await fetch(input, init);
+    if (!res.ok) {
+      throw new Error(`Request failed (${res.status})`);
+    }
+    return res.json();
+  };
 
-    const transcriptPromise = fetch(
+  const runGeneration = async (consultationId: string) => {
+    // Reset to a clean slate so a retry doesn't keep stale error/done marks.
+    setGenerationSteps({
+      ...INITIAL_GENERATION_STEPS,
+      recording: "done",
+      diarization: "done",
+    });
+    setGenerationFailed(false);
+    setPhase("generating");
+
+    const failures: string[] = [];
+
+    const transcriptPromise = fetchOk(
       `/api/consultations/${consultationId}/transcripts`,
     )
-      .then((r) => r.json())
       .then((data) => {
-        setGenerationSteps((prev) => ({ ...prev, transcript: true }));
+        setGenerationSteps((prev) => ({ ...prev, transcript: "done" }));
         return data;
       })
       .catch(() => {
+        failures.push("transcript");
+        setGenerationSteps((prev) => ({ ...prev, transcript: "error" }));
         return { transcripts: [] };
       });
 
-    const summaryPromise = fetch(
+    const summaryPromise = fetchOk(
       `/api/consultations/${consultationId}/summary`,
       { method: "POST" },
     )
-      .then((r) => r.json())
       .then((data) => {
-        setGenerationSteps((prev) => ({ ...prev, summary: true }));
+        setGenerationSteps((prev) => ({ ...prev, summary: "done" }));
         return data;
       })
       .catch(() => {
+        failures.push("summary");
+        setGenerationSteps((prev) => ({ ...prev, summary: "error" }));
         return { summary: null };
       });
 
-    const soapPromise = fetch(
+    const soapPromise = fetchOk(
       `/api/consultations/${consultationId}/soap-note`,
       { method: "POST" },
     )
-      .then((r) => r.json())
       .then((data) => {
-        setGenerationSteps((prev) => ({ ...prev, soap: true }));
+        setGenerationSteps((prev) => ({ ...prev, soap: "done" }));
         return data;
       })
       .catch(() => {
+        failures.push("soap");
+        setGenerationSteps((prev) => ({ ...prev, soap: "error" }));
         return { soapNote: null };
       });
 
-    const [transcriptRes, summaryRes, soapRes] = await Promise.allSettled([
+    const [transcriptRes, summaryRes, soapRes] = await Promise.all([
       transcriptPromise,
       summaryPromise,
       soapPromise,
     ]);
 
-    const soapNote =
-      soapRes.status === "fulfilled" ? soapRes.value.soapNote || null : null;
-    const fetchedTranscripts =
-      transcriptRes.status === "fulfilled"
-        ? transcriptRes.value.transcripts || []
-        : [];
+    const soapNote = soapRes.soapNote || null;
+    const fetchedTranscripts = transcriptRes.transcripts || [];
 
     let codesResult: any = { medicalCodes: null };
     if (soapNote) {
       try {
-        const codesRes = await fetch(
+        codesResult = await fetchOk(
           `/api/consultations/${consultationId}/medical-codes`,
           {
             method: "POST",
@@ -214,21 +249,23 @@ export default function NewPatientConsultationPage() {
             body: JSON.stringify({ soapNote }),
           },
         );
-        codesResult = await codesRes.json();
-        setGenerationSteps((prev) => ({ ...prev, codes: true }));
+        setGenerationSteps((prev) => ({ ...prev, codes: "done" }));
       } catch {
-        setGenerationSteps((prev) => ({ ...prev, codes: true }));
+        failures.push("codes");
+        setGenerationSteps((prev) => ({ ...prev, codes: "error" }));
       }
     } else {
-      setGenerationSteps((prev) => ({ ...prev, codes: true }));
+      // Codes depend on the SOAP note. If SOAP failed, codes can't run — mark
+      // them errored too (never "done") so the doctor sees they're missing.
+      setGenerationSteps((prev) => ({
+        ...prev,
+        codes: failures.includes("soap") ? "error" : "done",
+      }));
     }
 
     const finalResults: Results = {
       transcripts: fetchedTranscripts,
-      summary:
-        summaryRes.status === "fulfilled"
-          ? summaryRes.value.summary || null
-          : null,
+      summary: summaryRes.summary || null,
       medicalCodes: codesResult.medicalCodes || null,
       soapNote,
       patientId: consultation?.id ?? "",
@@ -282,6 +319,37 @@ export default function NewPatientConsultationPage() {
       /* non-critical */
     }
 
+    // If any clinical generation failed, hold the doctor on the generating
+    // screen with a clear error + retry instead of silently showing results
+    // that look complete but are empty.
+    if (failures.length > 0) {
+      setGenerationFailed(true);
+      return;
+    }
+
+    setPhase("results");
+  };
+
+  const handleDiarizationComplete = async (consultationId: string) => {
+    setActiveConsultationId(consultationId);
+    await runGeneration(consultationId);
+  };
+
+  const handleRetryGeneration = async () => {
+    if (!activeConsultationId || retrying) return;
+    setRetrying(true);
+    try {
+      await runGeneration(activeConsultationId);
+    } finally {
+      setRetrying(false);
+    }
+  };
+
+  // Proceed to results even though one or more steps failed. The failed
+  // sections are clearly marked as failed inside ConsultationResults' empty
+  // states — nothing failed is ever presented as a finished document.
+  const handleContinueWithPartial = () => {
+    setGenerationFailed(false);
     setPhase("results");
   };
 
@@ -594,24 +662,77 @@ export default function NewPatientConsultationPage() {
               },
               { key: "soap" as const, label: t("consultation.generatingSoap") },
             ] as const
-          ).map(({ key, label }) => (
-            <div key={key} className="flex items-center gap-3">
-              {generationSteps[key] ? (
-                <CheckCircle className="w-5 h-5 text-green-500" />
-              ) : (
-                <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
-              )}
-              <span
-                className={
-                  generationSteps[key]
-                    ? "text-foreground"
-                    : "text-muted-foreground"
-                }
-              >
-                {label}
-              </span>
+          ).map(({ key, label }) => {
+            const status = generationSteps[key];
+            return (
+              <div key={key} className="flex items-center gap-3">
+                {status === "done" ? (
+                  <CheckCircle className="w-5 h-5 text-green-500 shrink-0" />
+                ) : status === "error" ? (
+                  <AlertCircle className="w-5 h-5 text-destructive shrink-0" />
+                ) : (
+                  <Loader2 className="w-5 h-5 animate-spin text-muted-foreground shrink-0" />
+                )}
+                <span
+                  className={
+                    status === "done"
+                      ? "text-foreground"
+                      : status === "error"
+                        ? "text-destructive font-medium"
+                        : "text-muted-foreground"
+                  }
+                >
+                  {status === "error" ? `${label} — failed` : label}
+                </span>
+              </div>
+            );
+          })}
+
+          {/* Failure banner — never let a failed clinical generation pass as
+              "done". The doctor must explicitly retry or proceed knowing the
+              document is incomplete. */}
+          {generationFailed && (
+            <div className="mt-4 rounded-lg border-l-4 border-destructive bg-destructive/10 p-4">
+              <div className="flex items-start gap-3">
+                <AlertCircle className="w-5 h-5 text-destructive shrink-0 mt-0.5" />
+                <div className="flex-1">
+                  <p className="text-sm font-semibold text-destructive">
+                    Some clinical documentation could not be generated
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    The steps marked &ldquo;failed&rdquo; above were not
+                    produced. Do not treat them as complete clinical records.
+                    Retry generation, or continue and review the missing
+                    sections manually.
+                  </p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <Button
+                      type="button"
+                      size="sm"
+                      onClick={handleRetryGeneration}
+                      disabled={retrying}
+                    >
+                      {retrying ? (
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      ) : (
+                        <RefreshCw className="w-4 h-4 mr-2" />
+                      )}
+                      {t("consultations.retry")}
+                    </Button>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      onClick={handleContinueWithPartial}
+                      disabled={retrying}
+                    >
+                      Continue anyway
+                    </Button>
+                  </div>
+                </div>
+              </div>
             </div>
-          ))}
+          )}
         </div>
       )}
 

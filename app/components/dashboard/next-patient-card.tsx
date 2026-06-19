@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Link } from "@/src/i18n/routing";
 import { Stethoscope, Clock, ArrowRight, Sparkles } from "lucide-react";
 
@@ -24,6 +25,7 @@ export function NextPatientCard({
 }: {
   initialNext?: NextAppointment | null;
 }) {
+  const t = useTranslations("dashboard");
   const [next, setNext] = useState<NextAppointment | null>(initialNext ?? null);
   const [loading, setLoading] = useState(initialNext === undefined);
 
@@ -59,18 +61,17 @@ export function NextPatientCard({
       <div className="glass-card-strong p-6 border-l-4 border-muted">
         <div className="flex items-center gap-3 text-muted-foreground">
           <Stethoscope className="h-5 w-5" />
-          <div className="text-sm">
-            No more patients scheduled today. Take a breath.
-          </div>
+          <div className="text-sm">{t("noMorePatientsToday")}</div>
         </div>
       </div>
     );
   }
 
   const patientName =
-    next.larinova_patients?.full_name ?? next.booker_name ?? "Next patient";
+    next.larinova_patients?.full_name ??
+    next.booker_name ??
+    t("nextPatientFallback");
   const patientId = next.larinova_patients?.id ?? next.patient_id;
-  const consultHref = patientId ? `/patients/${patientId}/consultation` : "#";
   const hasPrep = Boolean(next.prep_brief);
 
   return (
@@ -78,7 +79,7 @@ export function NextPatientCard({
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1 space-y-3">
           <div className="text-[10px] font-semibold uppercase tracking-wider text-primary">
-            Next patient
+            {t("nextPatient")}
           </div>
           <div className="space-y-1">
             <h2 className="text-2xl font-bold text-foreground">
@@ -98,18 +99,29 @@ export function NextPatientCard({
           {hasPrep ? (
             <div className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
               <Sparkles className="h-3 w-3" />
-              Prep Brief ready
+              {t("prepBriefReady")}
             </div>
           ) : null}
         </div>
-        <Link
-          href={consultHref as any}
-          className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-sm hover:shadow-md transition-all"
-        >
-          <Stethoscope className="h-4 w-4" />
-          Start consult
-          <ArrowRight className="h-4 w-4" />
-        </Link>
+        {patientId ? (
+          <Link
+            href={`/patients/${patientId}/consultation` as any}
+            className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-sm hover:shadow-md transition-all"
+          >
+            <Stethoscope className="h-4 w-4" />
+            {t("startConsult")}
+            <ArrowRight className="h-4 w-4" />
+          </Link>
+        ) : (
+          <span
+            aria-disabled="true"
+            className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground/70 shadow-sm opacity-60 cursor-not-allowed"
+          >
+            <Stethoscope className="h-4 w-4" />
+            {t("startConsult")}
+            <ArrowRight className="h-4 w-4" />
+          </span>
+        )}
       </div>
     </div>
   );

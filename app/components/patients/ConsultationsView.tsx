@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useTranslations } from "next-intl";
+import { AlertCircle, RefreshCw } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface Consultation {
   id: string;
@@ -30,34 +32,38 @@ export default function ConsultationsView({
   const t = useTranslations("patients");
   const [consultations, setConsultations] = useState<Consultation[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
-  useEffect(() => {
-    async function fetchConsultations() {
-      const supabase = createClient();
-      const { data, error } = await supabase
-        .from("larinova_consultations")
-        .select(
-          `
+  const fetchConsultations = useCallback(async () => {
+    setLoading(true);
+    setError(false);
+    const supabase = createClient();
+    const { data, error: fetchError } = await supabase
+      .from("larinova_consultations")
+      .select(
+        `
           *,
           doctor:larinova_doctors!doctor_id (
             full_name,
             specialization
           )
         `,
-        )
-        .eq("patient_id", patientId)
-        .order("start_time", { ascending: false });
+      )
+      .eq("patient_id", patientId)
+      .order("start_time", { ascending: false });
 
-      if (error) {
-        console.error("Error fetching consultations:", error);
-      } else {
-        setConsultations(data || []);
-      }
-      setLoading(false);
+    if (fetchError) {
+      console.error("Error fetching consultations:", fetchError);
+      setError(true);
+    } else {
+      setConsultations(data || []);
     }
-
-    fetchConsultations();
+    setLoading(false);
   }, [patientId]);
+
+  useEffect(() => {
+    fetchConsultations();
+  }, [fetchConsultations]);
 
   if (loading) {
     return (
@@ -65,6 +71,24 @@ export default function ConsultationsView({
         <div className="text-sm text-muted-foreground">
           {t("loadingConsultations")}
         </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center py-12 text-center">
+        <AlertCircle className="w-8 h-8 text-destructive mb-3" />
+        <div className="text-sm font-medium text-foreground mb-1">
+          Couldn&rsquo;t load consultations
+        </div>
+        <div className="text-xs text-muted-foreground mb-4">
+          Something went wrong while loading. Please try again.
+        </div>
+        <Button variant="outline" size="sm" onClick={fetchConsultations}>
+          <RefreshCw className="w-4 h-4 mr-2" />
+          Retry
+        </Button>
       </div>
     );
   }

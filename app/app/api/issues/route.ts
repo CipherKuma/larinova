@@ -43,11 +43,10 @@ export async function POST(req: Request) {
     })
     .select("id")
     .single();
-  if (error || !issue)
-    return NextResponse.json(
-      { error: error?.message ?? "insert_failed" },
-      { status: 500 },
-    );
+  if (error || !issue) {
+    console.error("[issues] insert failed:", error);
+    return NextResponse.json({ error: "insert_failed" }, { status: 500 });
+  }
 
   // fire-and-forget
   sendIssueFiledEmail({

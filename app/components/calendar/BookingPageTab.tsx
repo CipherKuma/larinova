@@ -56,12 +56,12 @@ export function BookingPageTab({ initialHandle, appUrl }: BookingPageTabProps) {
         body: JSON.stringify({ handle: editHandle }),
       });
       if (!res.ok) {
-        toast.error("Failed to save handle");
+        toast.error(t("failedToSaveHandle"));
         return;
       }
       setHandle(editHandle);
       setHandleStatus("idle");
-      toast.success("Booking handle updated");
+      toast.success(t("handleUpdated"));
     } finally {
       setSaving(false);
     }
@@ -99,7 +99,7 @@ export function BookingPageTab({ initialHandle, appUrl }: BookingPageTabProps) {
                   value={editHandle}
                   onChange={(e) => onHandleChange(e.target.value)}
                   className="text-xs"
-                  placeholder="dr-your-name"
+                  placeholder={t("handlePlaceholder")}
                 />
                 {handleStatus !== "idle" && (
                   <div
@@ -112,7 +112,7 @@ export function BookingPageTab({ initialHandle, appUrl }: BookingPageTabProps) {
                     }`}
                   >
                     {handleStatus === "checking"
-                      ? "Checking..."
+                      ? t("checking")
                       : handleStatus === "available"
                         ? t("handleAvailable")
                         : t("handleTaken")}
@@ -141,7 +141,7 @@ export function BookingPageTab({ initialHandle, appUrl }: BookingPageTabProps) {
           <iframe
             src={bookingUrl}
             className="w-full h-full"
-            title="Booking page preview"
+            title={t("pagePreview")}
             sandbox="allow-scripts allow-same-origin allow-forms"
           />
         </div>

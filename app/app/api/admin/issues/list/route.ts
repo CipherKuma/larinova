@@ -23,7 +23,9 @@ export async function GET(req: Request) {
     .limit(200);
   if (status) q = q.eq("status", status);
   const { data, error } = await q;
-  if (error)
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) {
+    console.error("[admin/issues/list] query failed:", error);
+    return NextResponse.json({ error: "list_failed" }, { status: 500 });
+  }
   return NextResponse.json({ issues: data ?? [] });
 }

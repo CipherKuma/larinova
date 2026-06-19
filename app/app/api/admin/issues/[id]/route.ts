@@ -61,7 +61,9 @@ export async function PATCH(
     .from("larinova_issues")
     .update(parsed)
     .eq("id", id);
-  if (error)
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) {
+    console.error("[admin/issues/:id] update failed:", error);
+    return NextResponse.json({ error: "update_failed" }, { status: 500 });
+  }
   return NextResponse.json({ ok: true });
 }

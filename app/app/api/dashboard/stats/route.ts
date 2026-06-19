@@ -32,10 +32,12 @@ export async function GET() {
       weekConsultationsResult,
       recentActivityResult,
     ] = await Promise.all([
-      // Total patients count
+      // Total patients count — scoped to this doctor's own patients so the
+      // dashboard never counts other doctors' patients (defense-in-depth).
       supabase
         .from("larinova_patients")
-        .select("id", { count: "exact", head: true }),
+        .select("id", { count: "exact", head: true })
+        .eq("created_by_doctor_id", doctor.id),
 
       // Today's consultations
       supabase

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Globe } from "lucide-react";
 
@@ -9,6 +10,7 @@ interface LanguageSelectorProps {
 }
 
 export function LanguageSelector({ onConfirm }: LanguageSelectorProps) {
+  const t = useTranslations("consultation");
   const [doctorLanguage, setDoctorLanguage] = useState<"en" | "id">("en");
   const [patientLanguage, setPatientLanguage] = useState<"en" | "id">("en");
 
@@ -16,12 +18,17 @@ export function LanguageSelector({ onConfirm }: LanguageSelectorProps) {
     onConfirm(doctorLanguage, patientLanguage);
   };
 
+  const sameLanguage = doctorLanguage === patientLanguage;
+  const speakingLabel = doctorLanguage === "en" ? t("english") : t("bahasaIndonesia");
+  const subtitlesLabel =
+    doctorLanguage === "en" ? t("bahasaIndonesia") : t("english");
+
   return (
     <div className="border border-border bg-card p-4 md:p-6">
       <div className="flex items-center gap-2 mb-4">
         <Globe className="w-5 h-5" />
         <h3 className="text-lg font-display uppercase font-bold">
-          SELECT LANGUAGES
+          {t("selectLanguages")}
         </h3>
       </div>
 
@@ -29,7 +36,7 @@ export function LanguageSelector({ onConfirm }: LanguageSelectorProps) {
         {/* Doctor Language */}
         <div>
           <label className="block text-xs uppercase text-muted-foreground mb-2 font-semibold">
-            Doctor Language
+            {t("doctorLanguage")}
           </label>
           <div className="grid grid-cols-2 gap-2">
             <button
@@ -40,7 +47,7 @@ export function LanguageSelector({ onConfirm }: LanguageSelectorProps) {
                   : "border-border hover:border-muted-foreground"
               }`}
             >
-              English
+              {t("english")}
             </button>
             <button
               onClick={() => setDoctorLanguage("id")}
@@ -50,7 +57,7 @@ export function LanguageSelector({ onConfirm }: LanguageSelectorProps) {
                   : "border-border hover:border-muted-foreground"
               }`}
             >
-              Bahasa Indonesia
+              {t("bahasaIndonesia")}
             </button>
           </div>
         </div>
@@ -58,7 +65,7 @@ export function LanguageSelector({ onConfirm }: LanguageSelectorProps) {
         {/* Patient Language */}
         <div>
           <label className="block text-xs uppercase text-muted-foreground mb-2 font-semibold">
-            Patient Language
+            {t("patientLanguage")}
           </label>
           <div className="grid grid-cols-2 gap-2">
             <button
@@ -69,7 +76,7 @@ export function LanguageSelector({ onConfirm }: LanguageSelectorProps) {
                   : "border-border hover:border-muted-foreground"
               }`}
             >
-              English
+              {t("english")}
             </button>
             <button
               onClick={() => setPatientLanguage("id")}
@@ -79,7 +86,7 @@ export function LanguageSelector({ onConfirm }: LanguageSelectorProps) {
                   : "border-border hover:border-muted-foreground"
               }`}
             >
-              Bahasa Indonesia
+              {t("bahasaIndonesia")}
             </button>
           </div>
         </div>
@@ -87,17 +94,18 @@ export function LanguageSelector({ onConfirm }: LanguageSelectorProps) {
         {/* Info */}
         <div className="bg-blue-500/10 border border-blue-500/20 p-3 text-xs">
           <p className="text-blue-400 uppercase">
-            {doctorLanguage === patientLanguage ? (
+            {sameLanguage ? (
               <>
-                <strong>SAME LANGUAGE MODE:</strong> Both speaking{" "}
-                {doctorLanguage === "en" ? "English" : "Bahasa Indonesia"} with{" "}
-                {doctorLanguage === "en" ? "Bahasa Indonesia" : "English"}{" "}
-                subtitles
+                <strong>{t("sameLanguageMode")}</strong>{" "}
+                {t("sameLanguageModeDescription", {
+                  speaking: speakingLabel,
+                  subtitles: subtitlesLabel,
+                })}
               </>
             ) : (
               <>
-                <strong>BILINGUAL MODE:</strong> Enhanced speaker detection
-                using language as a cue
+                <strong>{t("bilingualMode")}</strong>{" "}
+                {t("bilingualModeDescription")}
               </>
             )}
           </p>
@@ -108,7 +116,7 @@ export function LanguageSelector({ onConfirm }: LanguageSelectorProps) {
           onClick={handleConfirm}
           className="w-full h-12 text-sm uppercase font-semibold bg-primary text-primary-foreground hover:bg-primary/90"
         >
-          START CONSULTATION
+          {t("startConsultation")}
         </Button>
       </div>
     </div>

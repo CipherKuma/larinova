@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Trash2, Plus, GripVertical, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -41,46 +42,38 @@ interface IntakeTemplate {
   fields: IntakeField[];
 }
 
-const TYPE_LABELS: Record<FieldType, string> = {
-  short_text: "Short text",
-  long_text: "Long text",
-  single_select: "Single select",
-  multi_select: "Multi select",
-  number: "Number",
-  date: "Date",
-  yes_no: "Yes / No",
-  file: "File upload",
-};
-
-const DEFAULT_FIELDS: IntakeField[] = [
-  {
-    id: crypto.randomUUID(),
-    type: "long_text",
-    label: "Chief complaint",
-    required: true,
-    placeholder: "What brings you in today?",
-  },
-  {
-    id: crypto.randomUUID(),
-    type: "short_text",
-    label: "Duration of symptoms",
-    required: false,
-    placeholder: "e.g. 3 days",
-  },
-  {
-    id: crypto.randomUUID(),
-    type: "yes_no",
-    label: "Do you have any known allergies?",
-    required: false,
-  },
-];
-
 export function IntakeTemplateBuilder() {
-  const [template, setTemplate] = useState<IntakeTemplate>({
-    title: "Pre-consult intake",
-    description: "Tell us what's going on so your doctor can prepare.",
-    fields: DEFAULT_FIELDS,
-  });
+  const t = useTranslations("intakeBuilder");
+  const defaultFields = useMemo<IntakeField[]>(
+    () => [
+      {
+        id: crypto.randomUUID(),
+        type: "long_text",
+        label: t("defaults.chiefComplaint"),
+        required: true,
+        placeholder: t("defaults.chiefComplaintPlaceholder"),
+      },
+      {
+        id: crypto.randomUUID(),
+        type: "short_text",
+        label: t("defaults.duration"),
+        required: false,
+        placeholder: t("defaults.durationPlaceholder"),
+      },
+      {
+        id: crypto.randomUUID(),
+        type: "yes_no",
+        label: t("defaults.allergies"),
+        required: false,
+      },
+    ],
+    [t],
+  );
+  const [template, setTemplate] = useState<IntakeTemplate>(() => ({
+    title: t("defaultTitle"),
+    description: t("defaultDescription"),
+    fields: defaultFields,
+  }));
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
@@ -98,7 +91,7 @@ export function IntakeTemplateBuilder() {
             id: first.id,
             title: first.title,
             description: first.description,
-            fields: Array.isArray(first.fields) ? first.fields : DEFAULT_FIELDS,
+            fields: Array.isArray(first.fields) ? first.fields : defaultFields,
           });
         }
       } catch {
@@ -111,7 +104,7 @@ export function IntakeTemplateBuilder() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [defaultFields]);
 
   function addField() {
     setTemplate((prev) => ({
@@ -121,7 +114,7 @@ export function IntakeTemplateBuilder() {
         {
           id: crypto.randomUUID(),
           type: "short_text",
-          label: "New field",
+          label: t("newField"),
           required: false,
         },
       ],
@@ -174,9 +167,9 @@ export function IntakeTemplateBuilder() {
       }
       const json = await res.json();
       setTemplate((prev) => ({ ...prev, id: json.id }));
-      setToast("Saved.");
-    } catch (err) {
-      setToast(err instanceof Error ? err.message : "Save failed");
+      setToast(t("saved"));
+    } catch {
+      setToast(t("saveFailed"));
     } finally {
       setSaving(false);
       setTimeout(() => setToast(null), 3000);
@@ -187,7 +180,7 @@ export function IntakeTemplateBuilder() {
     return (
       <div className="flex items-center gap-2 text-sm text-muted-foreground">
         <Loader2 className="h-4 w-4 animate-spin" />
-        Loading template…
+        {t("loadingTemplate")}
       </div>
     );
   }
@@ -196,7 +189,7 @@ export function IntakeTemplateBuilder() {
     <div className="space-y-6">
       <div className="space-y-4 rounded-xl border border-border bg-card/50 p-6">
         <div className="space-y-2">
-          <Label htmlFor="template-title">Form title</Label>
+          <Label htmlFor="template-title">{t("formTitle")}</Label>
           <Input
             id="template-title"
             value={template.title}
@@ -207,7 +200,7 @@ export function IntakeTemplateBuilder() {
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="template-description">Form description</Label>
+          <Label htmlFor="template-description">{t("formDescription")}</Label>
           <Textarea
             id="template-description"
             value={template.description ?? ""}
@@ -238,23 +231,22 @@ export function IntakeTemplateBuilder() {
 
         <Button variant="outline" onClick={addField} type="button">
           <Plus className="mr-2 h-4 w-4" />
-          Add field
+          {t("addField")}
         </Button>
       </div>
 
       <div className="flex items-center justify-between">
         <div className="text-sm text-muted-foreground">
-          {toast ??
-            "Saved templates become the default intake shown on your booking page."}
+          {toast ?? t("savedHint")}
         </div>
         <Button onClick={save} disabled={saving}>
           {saving ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Saving…
+              {t("saving")}
             </>
           ) : (
-            "Save template"
+            t("saveTemplate")
           )}
         </Button>
       </div>
@@ -275,6 +267,17 @@ function FieldRow({
   onMoveUp?: () => void;
   onMoveDown?: () => void;
 }) {
+  const t = useTranslations("intakeBuilder");
+  const typeLabels: Record<FieldType, string> = {
+    short_text: t("fieldTypes.short_text"),
+    long_text: t("fieldTypes.long_text"),
+    single_select: t("fieldTypes.single_select"),
+    multi_select: t("fieldTypes.multi_select"),
+    number: t("fieldTypes.number"),
+    date: t("fieldTypes.date"),
+    yes_no: t("fieldTypes.yes_no"),
+    file: t("fieldTypes.file"),
+  };
   const showOptions =
     field.type === "single_select" || field.type === "multi_select";
 
@@ -287,7 +290,7 @@ function FieldRow({
             className="rounded p-1 hover:text-foreground disabled:opacity-30"
             onClick={onMoveUp}
             disabled={!onMoveUp}
-            aria-label="Move up"
+            aria-label={t("moveUp")}
           >
             <GripVertical className="h-4 w-4" />
           </button>
@@ -296,14 +299,14 @@ function FieldRow({
             className="rounded p-1 hover:text-foreground disabled:opacity-30"
             onClick={onMoveDown}
             disabled={!onMoveDown}
-            aria-label="Move down"
+            aria-label={t("moveDown")}
           >
             <GripVertical className="h-4 w-4 rotate-180" />
           </button>
         </div>
         <div className="grid flex-1 gap-3 md:grid-cols-2">
           <div className="space-y-1">
-            <Label>Label</Label>
+            <Label>{t("label")}</Label>
             <Input
               value={field.label}
               onChange={(e) => onChange({ label: e.target.value })}
@@ -311,7 +314,7 @@ function FieldRow({
             />
           </div>
           <div className="space-y-1">
-            <Label>Type</Label>
+            <Label>{t("type")}</Label>
             <Select
               value={field.type}
               onValueChange={(v) => onChange({ type: v as FieldType })}
@@ -320,16 +323,18 @@ function FieldRow({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {Object.entries(TYPE_LABELS).map(([value, label]) => (
-                  <SelectItem key={value} value={value}>
-                    {label}
-                  </SelectItem>
-                ))}
+                {(Object.entries(typeLabels) as [FieldType, string][]).map(
+                  ([value, label]) => (
+                    <SelectItem key={value} value={value}>
+                      {label}
+                    </SelectItem>
+                  ),
+                )}
               </SelectContent>
             </Select>
           </div>
           <div className="space-y-1">
-            <Label>Placeholder (optional)</Label>
+            <Label>{t("placeholderOptional")}</Label>
             <Input
               value={field.placeholder ?? ""}
               onChange={(e) =>
@@ -343,14 +348,14 @@ function FieldRow({
               checked={field.required}
               onCheckedChange={(checked) => onChange({ required: checked })}
             />
-            <span className="text-sm">Required</span>
+            <span className="text-sm">{t("required")}</span>
           </div>
         </div>
         <button
           type="button"
           onClick={onRemove}
           className="rounded p-2 text-muted-foreground hover:text-red-500"
-          aria-label="Remove field"
+          aria-label={t("removeField")}
         >
           <Trash2 className="h-4 w-4" />
         </button>
@@ -373,10 +378,11 @@ function OptionsEditor({
   options: string[];
   onChange: (next: string[]) => void;
 }) {
+  const t = useTranslations("intakeBuilder");
   return (
     <div className="space-y-2 rounded-lg border border-dashed border-border p-3">
       <Label className="text-xs uppercase tracking-wide text-muted-foreground">
-        Options
+        {t("options")}
       </Label>
       {options.map((opt, idx) => (
         <div key={idx} className="flex items-center gap-2">
@@ -393,7 +399,7 @@ function OptionsEditor({
             type="button"
             onClick={() => onChange(options.filter((_, i) => i !== idx))}
             className="rounded p-2 text-muted-foreground hover:text-red-500"
-            aria-label="Remove option"
+            aria-label={t("removeOption")}
           >
             <Trash2 className="h-4 w-4" />
           </button>
@@ -406,7 +412,7 @@ function OptionsEditor({
         type="button"
       >
         <Plus className="mr-1 h-3 w-3" />
-        Add option
+        {t("addOption")}
       </Button>
     </div>
   );

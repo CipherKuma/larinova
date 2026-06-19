@@ -10,6 +10,7 @@ import {
   DocumentWithPatient,
 } from "@/types/helena";
 import { EditableSection } from "./EditableSection";
+import { DoctorSignature } from "./DoctorSignature";
 import {
   parseSections,
   serializeSections,
@@ -216,12 +217,16 @@ export function DocumentPrintPreview({
           ))}
         </div>
 
-        {/* Signature */}
-        <div className="border-t border-gray-300 pt-4 mt-8 text-right">
-          <div className="w-32 border-b border-black mb-1 ml-auto h-6" />
-          <p className="text-sm font-medium">
-            Dr. {document.doctor?.full_name || "Doctor"}
-          </p>
+        {/* Signature — single source of the doctor signature for both the
+            on-screen preview and the html2pdf export. */}
+        <div className="border-t border-gray-300 pt-4 mt-8 flex justify-end">
+          <DoctorSignature
+            doctorName={document.doctor?.full_name}
+            signatureUrl={
+              (document.doctor as { signature_image_url?: string | null })
+                ?.signature_image_url ?? null
+            }
+          />
         </div>
 
         {/* Edit hint + save status */}

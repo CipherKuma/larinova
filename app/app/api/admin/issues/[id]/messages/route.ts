@@ -31,8 +31,10 @@ export async function POST(
     sender_user_id: admin.id,
     body: parsed.body,
   });
-  if (error)
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) {
+    console.error("[admin/issues/messages] insert failed:", error);
+    return NextResponse.json({ error: "insert_failed" }, { status: 500 });
+  }
 
   // touch updated_at on the issue
   await sb

@@ -2,6 +2,17 @@
 
 import { useRef, useState, useCallback, useEffect } from "react";
 
+// A single transcription request that hangs would otherwise pin processingRef
+// forever (zombie state: mic on, nothing transcribed). Abort it after this.
+const TRANSCRIBE_REQUEST_TIMEOUT_MS = 20000;
+// How many consecutive chunk failures we tolerate before surfacing a hard
+// error to the consumer. Transient blips (one dropped chunk) shouldn't kill the
+// session, but a sustained outage must not fail silently.
+const MAX_CONSECUTIVE_CHUNK_FAILURES = 4;
+// Base delay for exponential backoff between failing chunks (ms), capped in the
+// loop. Keeps the client from hammering a struggling transcription backend.
+const CHUNK_RETRY_BASE_DELAY_MS = 800;
+
 interface UseSarvamSTTOptions {
   languageCode?: string;
   locale?: string;
@@ -49,6 +60,7 @@ export function useSarvamSTT(options: UseSarvamSTTOptions = {}) {
   const mountedRef = useRef(true);
   const recordingRef = useRef(false);
   const processingRef = useRef(false);
+  const consecutiveFailuresRef = useRef(0);
   const intentionalStopRef = useRef(false);
   const languageCodeRef = useRef(languageCode);
   const localeRef = useRef(locale);
@@ -71,6 +83,8 @@ export function useSarvamSTT(options: UseSarvamSTTOptions = {}) {
 
   const cleanup = useCallback(() => {
     recordingRef.current = false;
+    processingRef.current = false;
+    consecutiveFailuresRef.current = 0;
 
     if (durationTimerRef.current) {
       clearInterval(durationTimerRef.current);
@@ -128,6 +142,28 @@ export function useSarvamSTT(options: UseSarvamSTTOptions = {}) {
     [cleanup, onError, onUnexpectedStop],
   );
 
+  // Called when a single transcription chunk fails (non-2xx, network, or
+  // timeout). Transient blips are surfaced softly and the record loop retries
+  // on the next chunk; a sustained streak escalates to a hard unexpected-stop
+  // so the doctor isn't left in a silent zombie state with audio being lost.
+  const handleChunkFailure = useCallback(
+    (message: string) => {
+      consecutiveFailuresRef.current += 1;
+      if (consecutiveFailuresRef.current >= MAX_CONSECUTIVE_CHUNK_FAILURES) {
+        reportUnexpectedStop(
+          "Transcription service is unavailable. Recording stopped to avoid losing audio — please check your connection and restart.",
+        );
+        return;
+      }
+      // Soft error: keep recording, but make the failure visible.
+      if (mountedRef.current) {
+        setState((s) => ({ ...s, interimText: "", error: message }));
+      }
+      onError?.(message);
+    },
+    [reportUnexpectedStop, onError],
+  );
+
   // Record a short clip, stop it, send the complete file
   const recordAndSend = useCallback(
     async (stream: MediaStream) => {
@@ -167,6 +203,14 @@ export function useSarvamSTT(options: UseSarvamSTTOptions = {}) {
             setState((s) => ({ ...s, interimText: "..." }));
           }
 
+          // Abort a hung request so processingRef can never stick `true`
+          // (the zombie-state root cause). The finally below always clears it.
+          const controller = new AbortController();
+          const timeoutId = setTimeout(
+            () => controller.abort(),
+            TRANSCRIBE_REQUEST_TIMEOUT_MS,
+          );
+
           try {
             const formData = new FormData();
             formData.append("file", blob, "audio.webm");
@@ -178,10 +222,14 @@ export function useSarvamSTT(options: UseSarvamSTTOptions = {}) {
             const res = await fetch("/api/consultation/transcribe", {
               method: "POST",
               body: formData,
+              signal: controller.signal,
             });
 
             if (res.ok) {
               const data = await res.json();
+              // A successful round-trip clears the failure streak even if this
+              // particular chunk was silence (empty transcript).
+              consecutiveFailuresRef.current = 0;
               if (data.transcript && data.transcript.trim()) {
                 const text = data.transcript.trim();
                 transcriptRef.current = transcriptRef.current
@@ -207,15 +255,23 @@ export function useSarvamSTT(options: UseSarvamSTTOptions = {}) {
                 }
               }
             } else {
-              if (mountedRef.current) {
-                setState((s) => ({ ...s, interimText: "" }));
-              }
+              // Non-2xx: count it as a failure. The record loop retries on the
+              // next chunk; we only escalate after a sustained streak.
+              handleChunkFailure(
+                `Transcription failed (${res.status}). Retrying…`,
+              );
             }
-          } catch {
-            if (mountedRef.current) {
-              setState((s) => ({ ...s, interimText: "" }));
-            }
+          } catch (err) {
+            // Network error or abort (timeout). Same escalation policy — never
+            // swallow silently.
+            const aborted = (err as Error)?.name === "AbortError";
+            handleChunkFailure(
+              aborted
+                ? "Transcription request timed out. Retrying…"
+                : "Transcription request failed. Retrying…",
+            );
           } finally {
+            clearTimeout(timeoutId);
             processingRef.current = false;
           }
 
@@ -232,12 +288,14 @@ export function useSarvamSTT(options: UseSarvamSTTOptions = {}) {
         }, chunkDurationMs);
       });
     },
-    [chunkDurationMs, onTranscript],
+    [chunkDurationMs, onTranscript, handleChunkFailure],
   );
 
   const start = useCallback(async () => {
     if (state.isRecording || state.isConnecting) return false;
     intentionalStopRef.current = false;
+    processingRef.current = false;
+    consecutiveFailuresRef.current = 0;
 
     setState((s) => ({
       ...s,
@@ -297,6 +355,17 @@ export function useSarvamSTT(options: UseSarvamSTTOptions = {}) {
       const recordLoop = async () => {
         while (recordingRef.current && streamRef.current?.active) {
           await recordAndSend(streamRef.current);
+          // Back off between chunks while the backend is failing so we don't
+          // hammer it; capped so recovery is still quick. Cleared to 0 on the
+          // next success. recordAndSend escalates to a hard stop at the cap.
+          const failures = consecutiveFailuresRef.current;
+          if (failures > 0 && recordingRef.current) {
+            const backoff = Math.min(
+              CHUNK_RETRY_BASE_DELAY_MS * Math.pow(2, failures - 1),
+              5000,
+            );
+            await new Promise((r) => setTimeout(r, backoff));
+          }
         }
         if (recordingRef.current && !intentionalStopRef.current) {
           reportUnexpectedStop(

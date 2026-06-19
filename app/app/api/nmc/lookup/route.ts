@@ -127,7 +127,8 @@ export async function GET(request: NextRequest) {
       doctors: filtered,
       total: searchData.recordsFiltered,
     });
-  } catch {
+  } catch (err) {
+    console.error("[nmc/lookup] GET failed:", err);
     return NextResponse.json(
       { error: "Failed to lookup doctor" },
       { status: 500 },
@@ -156,7 +157,8 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json({ found: true, doctor: detail });
-  } catch {
+  } catch (err) {
+    console.error("[nmc/lookup] POST failed:", err);
     return NextResponse.json(
       { error: "Failed to fetch doctor details" },
       { status: 500 },

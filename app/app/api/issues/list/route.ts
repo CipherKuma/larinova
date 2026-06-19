@@ -14,7 +14,9 @@ export async function GET() {
     .select("id, title, status, priority, created_at, updated_at")
     .order("updated_at", { ascending: false });
 
-  if (error)
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) {
+    console.error("[issues/list] query failed:", error);
+    return NextResponse.json({ error: "list_failed" }, { status: 500 });
+  }
   return NextResponse.json({ issues: data ?? [] });
 }

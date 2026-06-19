@@ -65,16 +65,18 @@ export async function POST(request: Request) {
     } | null = null;
 
     if (patient_id) {
-      // Existing patient
+      // Existing patient — scope to this doctor's own patients so a doctor
+      // can never attach another doctor's patient to a new consultation.
       const { data, error: patientError } = await supabase
         .from("larinova_patients")
         .select("id, full_name, date_of_birth, gender, phone, email")
         .eq("id", patient_id)
+        .eq("created_by_doctor_id", doctor.id)
         .single();
 
       if (patientError || !data) {
         return NextResponse.json(
-          { error: "Patient not found" },
+          { error: "Patient not found", code: "patient_not_found" },
           { status: 404 },
         );
       }

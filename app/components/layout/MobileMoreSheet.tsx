@@ -95,7 +95,7 @@ export function MobileMoreSheet({ open, onClose }: Props) {
   const items: { href: string; icon: LucideIcon; label: string }[] = [
     { href: "/patients", icon: Users, label: t("navigation.patients") },
     { href: "/documents", icon: FileText, label: t("navigation.documents") },
-    { href: "/issues", icon: HelpCircle, label: "Issues" },
+    { href: "/issues", icon: HelpCircle, label: t("navigation.issues") },
   ];
   if (locale !== "id") {
     items.push({
@@ -130,7 +130,7 @@ export function MobileMoreSheet({ open, onClose }: Props) {
             transition={{ type: "spring", damping: 32, stiffness: 320 }}
             role="dialog"
             aria-modal="true"
-            aria-label="More"
+            aria-label={t("navigation.more")}
           >
             <div className="flex items-center justify-between px-4 pt-3 pb-2">
               <div
@@ -138,12 +138,12 @@ export function MobileMoreSheet({ open, onClose }: Props) {
                 className="absolute left-1/2 top-2 -translate-x-1/2 h-1 w-10 rounded-full bg-muted"
               />
               <span className="font-display font-semibold text-base text-foreground">
-                More
+                {t("navigation.more")}
               </span>
               <button
                 type="button"
                 onClick={onClose}
-                aria-label="Close"
+                aria-label={t("common.close")}
                 className="-mr-2 h-10 w-10 inline-flex items-center justify-center rounded-full text-muted-foreground active:bg-muted/40"
               >
                 <X className="w-5 h-5" />
@@ -211,7 +211,9 @@ export function MobileMoreSheet({ open, onClose }: Props) {
                           ? "text-muted-foreground/80 font-medium"
                           : "text-muted-foreground/50 hover:text-muted-foreground/80"
                       }`}
-                      aria-label={`Switch region to ${r.label}`}
+                      aria-label={t("navigation.switchRegionTo", {
+                        region: r.label,
+                      })}
                       aria-pressed={active}
                     >
                       {r.label}

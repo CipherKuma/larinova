@@ -29,8 +29,10 @@ export async function POST(
     sender_user_id: user.id,
     body: parsed.body,
   });
-  if (error)
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) {
+    console.error("[issues/messages] insert failed:", error);
+    return NextResponse.json({ error: "insert_failed" }, { status: 500 });
+  }
 
   return NextResponse.json({ ok: true });
 }

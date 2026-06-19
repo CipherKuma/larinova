@@ -23,14 +23,37 @@ export async function POST(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Get doctor record to determine locale
+    // Get doctor record to determine locale + verify ownership
     const { data: doctor } = await supabase
       .from("larinova_doctors")
-      .select("locale")
+      .select("id, locale")
       .eq("user_id", user.id)
       .single();
 
-    const locale: Locale = (doctor?.locale as Locale) ?? "in";
+    if (!doctor) {
+      return NextResponse.json(
+        { error: "Doctor profile not found", code: "doctor_not_found" },
+        { status: 404 },
+      );
+    }
+
+    const locale: Locale = (doctor.locale as Locale) ?? "in";
+
+    // Verify the consultation belongs to this doctor (defense-in-depth —
+    // must hold even if RLS regresses) before generating any clinical note.
+    const { data: ownedConsultation } = await supabase
+      .from("larinova_consultations")
+      .select("id")
+      .eq("id", consultationId)
+      .eq("doctor_id", doctor.id)
+      .single();
+
+    if (!ownedConsultation) {
+      return NextResponse.json(
+        { error: "Consultation not found", code: "consultation_not_found" },
+        { status: 404 },
+      );
+    }
 
     // Fetch all transcripts for this consultation
     const { data: transcripts, error: transcriptsError } = await supabase
@@ -163,22 +186,37 @@ export async function GET(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    // Resolve the doctor so the SOAP note can be scoped to its owner.
+    const { data: doctor } = await supabase
+      .from("larinova_doctors")
+      .select("id")
+      .eq("user_id", user.id)
+      .single();
+
+    if (!doctor) {
+      return NextResponse.json(
+        { error: "Doctor profile not found", code: "doctor_not_found" },
+        { status: 404 },
+      );
+    }
+
     const { data: consultation, error } = await supabase
       .from("larinova_consultations")
       .select("soap_note, soap_note_locale")
       .eq("id", consultationId)
+      .eq("doctor_id", doctor.id)
       .single();
 
-    if (error) {
+    if (error || !consultation) {
       return NextResponse.json(
-        { error: "Failed to fetch SOAP note" },
-        { status: 500 },
+        { error: "Consultation not found", code: "consultation_not_found" },
+        { status: 404 },
       );
     }
 
     return NextResponse.json({
-      soapNote: consultation?.soap_note || null,
-      locale: consultation?.soap_note_locale || null,
+      soapNote: consultation.soap_note || null,
+      locale: consultation.soap_note_locale || null,
     });
   } catch {
     return NextResponse.json(

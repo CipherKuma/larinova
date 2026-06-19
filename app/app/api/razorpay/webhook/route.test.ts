@@ -59,16 +59,34 @@ function req(body: string) {
   });
 }
 
+type DoctorRow = {
+  id: string;
+  email: string | null;
+  full_name: string | null;
+  user_id?: string | null;
+};
+
 /**
  * Table-scoped chainable mock. Each test can observe calls via the returned `captures` object.
+ *
+ * The webhook route (route.ts) reads three tables:
+ *   - larinova_razorpay_events  (idempotency insert)
+ *   - larinova_subscriptions    (find row by razorpay_subscription_id, update status/plan)
+ *   - larinova_doctors          (resolve doctor for notify + analytics milestone grant)
+ * A `doctorRow` opt drives the larinova_doctors lookups so the activated /
+ * charged / payment-failed handlers run to completion instead of throwing.
  */
 function buildSupabase(opts: {
   subscriptionRow?: unknown;
   eventInsertError?: { code?: string } | null;
+  doctorRow?: DoctorRow | null;
 }) {
   const captures = {
     eventInserts: [] as unknown[],
     subscriptionUpdates: [] as { update: unknown; where: unknown }[],
+    // Every column-set the route selected from larinova_doctors, with the id
+    // it filtered on — lets tests assert the doctor-grant path was exercised.
+    doctorLookups: [] as { select: string; where: unknown }[],
   };
 
   mockFrom.mockImplementation((table: string) => {
@@ -101,6 +119,29 @@ function buildSupabase(opts: {
           };
         },
         _where: undefined as unknown,
+      };
+      return chain;
+    }
+
+    if (table === "larinova_doctors") {
+      const chain = {
+        _select: "" as string,
+        _where: undefined as unknown,
+        select: (cols: string) => {
+          chain._select = cols;
+          return chain;
+        },
+        eq: (_col: string, val: unknown) => {
+          chain._where = val;
+          return chain;
+        },
+        maybeSingle: async () => {
+          captures.doctorLookups.push({
+            select: chain._select,
+            where: chain._where,
+          });
+          return { data: opts.doctorRow ?? null, error: null };
+        },
       };
       return chain;
     }
@@ -157,7 +198,7 @@ describe("POST /api/razorpay/webhook", () => {
     expect(json.error).toBe("invalid_signature");
   });
 
-  it("handles subscription.activated — upserts plan=pro,status=active", async () => {
+  it("handles subscription.activated — upserts plan=pro,status=active and grants via doctor lookup", async () => {
     setEnv();
     const captures = buildSupabase({
       subscriptionRow: {
@@ -166,6 +207,12 @@ describe("POST /api/razorpay/webhook", () => {
         plan: "free",
         razorpay_subscription_id: "sub_1",
         doctor_id: "d1",
+      },
+      doctorRow: {
+        id: "d1",
+        email: "doc@example.com",
+        full_name: "Asha Rao",
+        user_id: "u1",
       },
     });
     const body = payload("subscription.activated", {
@@ -190,9 +237,20 @@ describe("POST /api/razorpay/webhook", () => {
     expect(update.status).toBe("active");
     expect(update.billing_interval).toBe("year");
     expect(update.razorpay_subscription_id).toBe("sub_1");
+
+    // Doctor-grant path: the route resolves the doctor (id, email, full_name)
+    // for the activation notice, then looks up its user_id for the milestone.
+    expect(captures.doctorLookups.length).toBeGreaterThan(0);
+    expect(captures.doctorLookups.every((l) => l.where === "d1")).toBe(true);
+    expect(captures.doctorLookups.some((l) => l.select.includes("email"))).toBe(
+      true,
+    );
+    expect(
+      captures.doctorLookups.some((l) => l.select.includes("user_id")),
+    ).toBe(true);
   });
 
-  it("handles subscription.charged — updates current_period_end", async () => {
+  it("handles subscription.charged — updates current_period_end and records milestone via doctor lookup", async () => {
     setEnv();
     const captures = buildSupabase({
       subscriptionRow: {
@@ -201,6 +259,12 @@ describe("POST /api/razorpay/webhook", () => {
         plan: "pro",
         razorpay_subscription_id: "sub_1",
         doctor_id: "d1",
+      },
+      doctorRow: {
+        id: "d1",
+        email: "doc@example.com",
+        full_name: "Asha Rao",
+        user_id: "u1",
       },
     });
     const body = payload("subscription.charged", { current_end: 1800000000 });
@@ -218,9 +282,15 @@ describe("POST /api/razorpay/webhook", () => {
     expect(u.current_period_end).toBe(
       new Date(1800000000 * 1000).toISOString(),
     );
+
+    // charged resolves the doctor and reads its user_id for the payment milestone.
+    expect(
+      captures.doctorLookups.some((l) => l.select.includes("user_id")),
+    ).toBe(true);
+    expect(captures.doctorLookups.every((l) => l.where === "d1")).toBe(true);
   });
 
-  it("handles subscription.halted — sets past_due", async () => {
+  it("handles payment.failed — sets past_due and resolves doctor for the dunning email", async () => {
     setEnv();
     const captures = buildSupabase({
       subscriptionRow: {
@@ -229,6 +299,12 @@ describe("POST /api/razorpay/webhook", () => {
         plan: "pro",
         razorpay_subscription_id: "sub_1",
         doctor_id: "d1",
+      },
+      doctorRow: {
+        id: "d1",
+        email: "doc@example.com",
+        full_name: "Asha Rao",
+        user_id: "u1",
       },
     });
     const body = payload("payment.failed");
@@ -240,6 +316,14 @@ describe("POST /api/razorpay/webhook", () => {
     expect(res.status).toBe(200);
     const u = captures.subscriptionUpdates[0].update as { status: string };
     expect(u.status).toBe("past_due");
+
+    // payment.failed resolves the doctor (id, email, full_name) to send the
+    // payment-failed notice.
+    expect(captures.doctorLookups.length).toBeGreaterThan(0);
+    expect(captures.doctorLookups.some((l) => l.select.includes("email"))).toBe(
+      true,
+    );
+    expect(captures.doctorLookups.every((l) => l.where === "d1")).toBe(true);
   });
 
   it("handles subscription.cancelled — sets canceled", async () => {

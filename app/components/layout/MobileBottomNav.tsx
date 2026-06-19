@@ -72,7 +72,7 @@ export function MobileBottomNav() {
           flex items-stretch
         "
         style={{ paddingBottom: "max(env(safe-area-inset-bottom), 8px)" }}
-        aria-label="Primary"
+        aria-label={t("navigation.primary")}
       >
         {items.map((item) => {
           const active = item.match(pathname, locale);
@@ -133,7 +133,7 @@ export function MobileBottomNav() {
                 : "text-muted-foreground"
             }`}
           >
-            More
+            {t("navigation.more")}
           </span>
         </button>
       </nav>

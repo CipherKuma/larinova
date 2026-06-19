@@ -22,7 +22,9 @@ export async function GET(
     .order("ts", { ascending: true })
     .limit(2000);
 
-  if (error)
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) {
+    console.error("[admin/analytics/sessions/:id] query failed:", error);
+    return NextResponse.json({ error: "query_failed" }, { status: 500 });
+  }
   return NextResponse.json({ session_id: id, events: data ?? [] });
 }

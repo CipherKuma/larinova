@@ -24,7 +24,7 @@ export async function GET(
         `
         *,
         patient:larinova_patients(id, full_name, patient_code, date_of_birth, gender, address),
-        doctor:larinova_doctors(id, full_name, specialization, license_number),
+        doctor:larinova_doctors(id, full_name, specialization, license_number, signature_image_url),
         consultation:larinova_consultations(id, consultation_code)
       `,
       )

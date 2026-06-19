@@ -46,6 +46,22 @@ export async function POST(
       );
     }
 
+    // Verify the consultation belongs to this doctor (defense-in-depth —
+    // must hold even if RLS regresses) before generating any summary.
+    const { data: ownedConsultation } = await supabase
+      .from("larinova_consultations")
+      .select("id")
+      .eq("id", consultationId)
+      .eq("doctor_id", doctor.id)
+      .single();
+
+    if (!ownedConsultation) {
+      return NextResponse.json(
+        { error: "Consultation not found", code: "consultation_not_found" },
+        { status: 404 },
+      );
+    }
+
     // Get all transcripts for this consultation (should be diarized by now)
     const { data: transcripts, error: transcriptsError } = await supabase
       .from("larinova_transcripts")
@@ -188,21 +204,36 @@ export async function GET(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    // Resolve the doctor so the summary can be scoped to its owner.
+    const { data: doctor } = await supabase
+      .from("larinova_doctors")
+      .select("id")
+      .eq("user_id", user.id)
+      .single();
+
+    if (!doctor) {
+      return NextResponse.json(
+        { error: "Doctor profile not found", code: "doctor_not_found" },
+        { status: 404 },
+      );
+    }
+
     const { data: consultation, error } = await supabase
       .from("larinova_consultations")
       .select("ai_summary")
       .eq("id", consultationId)
+      .eq("doctor_id", doctor.id)
       .single();
 
-    if (error) {
+    if (error || !consultation) {
       return NextResponse.json(
-        { error: "Failed to fetch summary" },
-        { status: 500 },
+        { error: "Consultation not found", code: "consultation_not_found" },
+        { status: 404 },
       );
     }
 
     return NextResponse.json({
-      summary: consultation?.ai_summary || null,
+      summary: consultation.ai_summary || null,
     });
   } catch {
     return NextResponse.json(

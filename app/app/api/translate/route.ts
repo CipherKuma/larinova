@@ -22,7 +22,9 @@ export async function POST(req: Request) {
       detectedLanguage: detectedLang,
       originalText: text,
     });
-  } catch {
+  } catch (err) {
+    // Log only the error — never the source text, which may contain PHI.
+    console.error("[translate] failed:", err);
     return NextResponse.json({ error: "Translation failed" }, { status: 500 });
   }
 }

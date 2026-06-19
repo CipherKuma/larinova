@@ -1,7 +1,16 @@
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
 const FROM = process.env.EMAIL_FROM || "hello@larinova.com";
+
+// Lazy/graceful client init. Instantiating `new Resend()` at module scope
+// crashes `next build` in any environment without RESEND_API_KEY (CI, preview,
+// fresh clone). Defer construction to call time and return null when the key is
+// missing so the module imports cleanly. Mirrors lib/notify/email.ts.
+function getResend(): Resend | null {
+  const key = process.env.RESEND_API_KEY;
+  if (!key) return null;
+  return new Resend(key);
+}
 
 // ─── Consultation Summary Email ──────────────────────────────────────────────
 
@@ -24,6 +33,11 @@ export async function sendConsultationSummary({
   prescriptions: any[];
   doctorNotes?: string;
 }) {
+  const resend = getResend();
+  if (!resend) {
+    console.warn("[email] RESEND_API_KEY missing — skipping summary send");
+    return { success: false, error: "email_not_configured" };
+  }
   try {
     const { data, error } = await resend.emails.send({
       from: FROM,
@@ -85,6 +99,11 @@ export async function sendPrescriptionEmail({
   allergyWarnings?: string | null;
   doctorNotes?: string | null;
 }) {
+  const resend = getResend();
+  if (!resend) {
+    console.warn("[email] RESEND_API_KEY missing — skipping prescription send");
+    return { success: false, error: "email_not_configured" };
+  }
   try {
     const { data, error } = await resend.emails.send({
       from: FROM,
@@ -431,6 +450,11 @@ export async function sendAlphaWelcomeEmail({
   code: string;
 }): Promise<boolean> {
   const first = firstNameFrom(fullName);
+  const resend = getResend();
+  if (!resend) {
+    console.warn("[email] RESEND_API_KEY missing — skipping alpha welcome send");
+    return false;
+  }
   try {
     const { error } = await resend.emails.send({
       from: FROM,
@@ -699,6 +723,14 @@ export async function sendAppointmentConfirmation({
   videoCallLink?: string | null;
   googleCalendarUrl: string;
 }) {
+  const resend = getResend();
+  if (!resend) {
+    console.warn(
+      "[email] RESEND_API_KEY missing — skipping appointment confirmation",
+    );
+    return;
+  }
+
   const locationLine =
     appointmentType === "video"
       ? videoCallLink
@@ -758,6 +790,13 @@ export async function sendDoctorNewBookingNotification({
   startTime: string;
   appointmentType: "video" | "in_person";
 }) {
+  const resend = getResend();
+  if (!resend) {
+    console.warn(
+      "[email] RESEND_API_KEY missing — skipping doctor booking notification",
+    );
+    return;
+  }
   await resend.emails.send({
     from: FROM,
     to,

@@ -21,7 +21,7 @@ function getPageTitle(
   if (root === "tasks") return t("navigation.tasks");
   if (root === "documents") return t("navigation.documents");
   if (root === "calendar") return t("navigation.calendar");
-  if (root === "issues") return "Issues";
+  if (root === "issues") return t("navigation.issues");
   if (root === "settings") {
     if (segments[1] === "billing") return t("navigation.billing");
     return t("navigation.settings");

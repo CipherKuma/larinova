@@ -3,6 +3,13 @@ import { createClient } from "@/lib/supabase/server";
 import { transcribeAudio } from "@/lib/sarvam/client";
 import { getTranscriptionProvider } from "@/lib/transcription";
 
+// Verbose STT tracing is opt-in. It must never carry transcript text/PHI —
+// only non-content metadata (sizes, locale, provider) and only when enabled.
+const STT_DEBUG = process.env.DEBUG_STT === "1";
+function sttDebug(...args: unknown[]) {
+  if (STT_DEBUG) console.error(...args);
+}
+
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
@@ -28,7 +35,7 @@ export async function POST(request: NextRequest) {
     const locale: "in" | "id" =
       doctor?.locale === "id" ? "id" : clientLocale === "id" ? "id" : "in";
 
-    console.error("[TRANSCRIBE] Request:", {
+    sttDebug("[TRANSCRIBE] Request:", {
       locale,
       languageCode,
       clientLocale,
@@ -38,7 +45,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (!file) {
-      console.error("[TRANSCRIBE] No audio file in request");
+      sttDebug("[TRANSCRIBE] No audio file in request");
       return NextResponse.json(
         { error: "No audio file provided" },
         { status: 400 },
@@ -46,7 +53,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (file.size === 0) {
-      console.error("[TRANSCRIBE] Audio file is empty (0 bytes)");
+      sttDebug("[TRANSCRIBE] Audio file is empty (0 bytes)");
       return NextResponse.json(
         { error: "Audio file is empty" },
         { status: 400 },
@@ -62,16 +69,16 @@ export async function POST(request: NextRequest) {
           { status: 500 },
         );
       }
-      console.error("[TRANSCRIBE] Using Sarvam for India locale");
+      sttDebug("[TRANSCRIBE] Using Sarvam for India locale");
       const result = await transcribeAudio(apiKey, file, languageCode);
-      console.error("[TRANSCRIBE] Sarvam result:", {
+      sttDebug("[TRANSCRIBE] Sarvam result:", {
         transcriptLength: result.transcript?.length ?? 0,
       });
       return NextResponse.json(result);
     }
 
     // Indonesia: Deepgram batch transcription (full audio)
-    console.error("[TRANSCRIBE] Using Deepgram batch for Indonesia locale");
+    sttDebug("[TRANSCRIBE] Using Deepgram batch for Indonesia locale");
     const provider = getTranscriptionProvider("id");
     if (provider.mode !== "batch") {
       return NextResponse.json(
@@ -80,7 +87,7 @@ export async function POST(request: NextRequest) {
       );
     }
     const result = await provider.transcribe(file, { language: "id" });
-    console.error("[TRANSCRIBE] Deepgram result:", {
+    sttDebug("[TRANSCRIBE] Deepgram result:", {
       transcriptLength: result.transcript?.length ?? 0,
       segmentCount: result.segments?.length ?? 0,
     });
@@ -91,10 +98,11 @@ export async function POST(request: NextRequest) {
       provider: "deepgram",
     });
   } catch (error: unknown) {
-    const message =
-      error instanceof Error ? error.message : "Transcription failed";
-    const stack = error instanceof Error ? error.stack : undefined;
-    console.error("[TRANSCRIBE] ERROR:", { message, stack });
-    return NextResponse.json({ error: message }, { status: 500 });
+    // Log the error internally (no transcript/PHI — just the error object).
+    console.error("[TRANSCRIBE] ERROR:", error);
+    return NextResponse.json(
+      { error: "Transcription failed" },
+      { status: 500 },
+    );
   }
 }

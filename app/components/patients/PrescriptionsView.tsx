@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useTranslations } from "next-intl";
+import { AlertCircle, RefreshCw } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface PrescriptionItem {
   id: string;
@@ -40,14 +42,16 @@ export default function PrescriptionsView({
   const t = useTranslations("patients");
   const [prescriptions, setPrescriptions] = useState<Prescription[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
-  useEffect(() => {
-    async function fetchPrescriptions() {
-      const supabase = createClient();
-      const { data, error } = await supabase
-        .from("larinova_prescriptions")
-        .select(
-          `
+  const fetchPrescriptions = useCallback(async () => {
+    setLoading(true);
+    setError(false);
+    const supabase = createClient();
+    const { data, error: fetchError } = await supabase
+      .from("larinova_prescriptions")
+      .select(
+        `
           *,
           items:larinova_prescription_items (*),
           doctor:larinova_doctors!doctor_id (
@@ -55,20 +59,22 @@ export default function PrescriptionsView({
             specialization
           )
         `,
-        )
-        .eq("patient_id", patientId)
-        .order("created_at", { ascending: false });
+      )
+      .eq("patient_id", patientId)
+      .order("created_at", { ascending: false });
 
-      if (error) {
-        console.error("Error fetching prescriptions:", error);
-      } else {
-        setPrescriptions(data || []);
-      }
-      setLoading(false);
+    if (fetchError) {
+      console.error("Error fetching prescriptions:", fetchError);
+      setError(true);
+    } else {
+      setPrescriptions(data || []);
     }
-
-    fetchPrescriptions();
+    setLoading(false);
   }, [patientId]);
+
+  useEffect(() => {
+    fetchPrescriptions();
+  }, [fetchPrescriptions]);
 
   if (loading) {
     return (
@@ -76,6 +82,24 @@ export default function PrescriptionsView({
         <div className="text-sm text-muted-foreground">
           {t("loadingPrescriptions")}
         </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center py-12 text-center">
+        <AlertCircle className="w-8 h-8 text-destructive mb-3" />
+        <div className="text-sm font-medium text-foreground mb-1">
+          Couldn&rsquo;t load prescriptions
+        </div>
+        <div className="text-xs text-muted-foreground mb-4">
+          Something went wrong while loading. Please try again.
+        </div>
+        <Button variant="outline" size="sm" onClick={fetchPrescriptions}>
+          <RefreshCw className="w-4 h-4 mr-2" />
+          Retry
+        </Button>
       </div>
     );
   }
