@@ -7,6 +7,21 @@
 
 ---
 
+## UPDATE — 2026-06-19: fixes applied + RLS verified on production
+
+Commits `e5a6ca6` (hardening) + `0ea58d8` (RLS recursion fix) on `claude/upbeat-cori-0fd23e`. Build passes with no secrets, vitest 92/92, lint clean.
+
+**RLS migrations APPLIED + verified on prod (`afitpprgfsidrnrrhvzs`):**
+- `20260619000000` (tenant isolation), `20260619000100` (doctor signature), `20260619000200` (recursion fix) — applied via `psql` and recorded in `supabase_migrations`.
+- Functional isolation test (simulating PostgREST `request.jwt.claims`): a non-owner doctor and a random attacker now read **0** patients / consultations / prescriptions / transcripts / vitals; the **owning doctor still sees their own** data. Breach closed.
+- Applying for real caught a P0 the policy text hid: `larinova_patients` ↔ `larinova_appointments` policy **infinite recursion** (would have made all patient reads error). Fixed via a `SECURITY DEFINER` resolver (`20260619000200`).
+- Discovered 2 tables in prod but NOT in the repo (`larinova_vitals`, `larinova_investigation_decisions`, from untracked migrations `20260506110000/120000`) — verified they are already doctor-scoped and recursion-safe.
+- App boots against the live DB: sign-in 200, protected/admin routes redirect to sign-in, public REST returns `[]` for clinical tables to an anon caller, no runtime errors.
+
+**Still open:** backfill the 2 untracked drift migrations into the repo (needs pg17 `pg_dump`/`supabase db dump`); regenerate the expired `SUPABASE_ACCESS_TOKEN_LARINOVA` PAT (401s the CLI/Management API); product decisions (payment, KKI gating, `health_records` cross-doctor visibility); deploy ops (Razorpay webhook URL, Supabase SMTP, set `MSG91_WEBHOOK_SECRET`).
+
+---
+
 ## TL;DR verdict
 
 The product is **substantially built and architecturally sound** — the clinical AI layer, auth (OTP-only), Razorpay crypto, and the certificate *drafting* logic are genuinely good work. It is **not yet safe to sell or onboard real patients** because of one catastrophic data-isolation hole, a core feature (consult recording) that dies after ~1 minute, silent AI failures, a red test suite, and a missing "output half" of the documents module.
